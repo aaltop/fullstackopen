@@ -8,13 +8,11 @@
         browser->>server: POST */new_note
         Note right of browser: * is a stand-in for whatever the URL before the resource location happens to be
         activate server
-        Note right of browser: The server handles the request, creating and setting the new item in the notes list
-        and sending back a redirect
+        Note right of browser: The server handles the request, creating and setting the new item in the notes list and sending back a redirect
         server->>browser: Response 302 Found
         deactivate server
 
-        Note right of browser: From here, the steps are the same as when loading the */notes page
-        in the first place.
+        Note right of browser: From here, the steps are the same as when loading the */notes page in the first place, so the following is taken from the examples in the material.
 
         browser->>server: GET */notes
         activate server
