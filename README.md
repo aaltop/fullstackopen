@@ -1,0 +1,1 @@
+A repository for solutions to the problems on the [Full Stack Open](https://fullstackopen.com/) course.
