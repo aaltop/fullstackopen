@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from "axios"
+import AppBackend from './AppBackend'
 
 function Contact({person})
 {
@@ -59,11 +60,7 @@ const App = () => {
     const [nameFilter, setNameFilter] = useState('')
 
     useEffect(
-        () => {
-            axios
-            .get("http://localhost:3001/persons")
-            .then(response => setPersons(response.data))
-        },
+        () => { AppBackend.get_all().then(_persons => setPersons(_persons))},
         []
     )
 
@@ -77,7 +74,15 @@ const App = () => {
             return _persons
         }
         const newPerson = {name: newName, number: newNumber}
-        const newPersons = _persons.concat(newPerson)
+        const newPersons = {...persons}
+        // Does mutate the array created above, but not the original
+        // that the application would still currently refer to.
+        // I'm not sure how else to do this (as this current function
+        // needs to return the new array), apart from using async
+        // which we've not covered so I don't want to unnecessary
+        // complicate the application right now.
+        AppBackend.add_person(newPerson)
+            .then(_newPerson => newPersons.push(_newPerson))
         console.log(newPersons)
         return newPersons
     }
