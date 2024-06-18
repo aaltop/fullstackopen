@@ -71,12 +71,20 @@ const App = () => {
 
     function updatePersons(persons)
     {
-        // do not add if name already in phonebook
-        if (persons.map(person => person.name).includes(newName)) {
-            alert(`"${newName}" has already been added to the phonebook`)
-            // I think here it is actually correct to return the
-            // same object, because it has not changed?
-            return persons
+        // If name already in phonebook, ask to update the number
+        if (persons.map(person => person.name).includes(newName)) 
+        {
+
+            if (window.confirm(`"${newName}" is already in the phonebook, replace the old number with a new one?`))
+            {
+                const idx = persons.findIndex(person => person.name === newName)
+                AppBackend.update_person(persons[idx].id, {...persons[idx], number: newNumber})
+                const newPersons = [...persons]
+                newPersons[idx].number = newNumber
+                console.log(newPersons)
+                setPersons(newPersons)
+            }
+            return
         }
         const newPerson = {name: newName, number: newNumber}
         const newPersons = [...persons]
