@@ -2,23 +2,27 @@ import { useState, useEffect } from 'react'
 import axios from "axios"
 import AppBackend from './AppBackend'
 
-function Contact({person})
+
+
+function Contact({person, on_delete})
 {
+
     return (
         <tr>
             <td>{person.name}</td>
             <td>{person.number}</td>
+            <td><button type="button" onClick={ev => on_delete(person, ev)}>Delete</button></td>
         </tr>
     )
 }
 
 
-function ContactListing({persons})
+function ContactListing({persons, on_person_delete})
 {
 
     function map_func(person)
     {
-        return <Contact key={person.name} person={person} />
+        return <Contact key={person.id} person={person} on_delete={on_person_delete} />
     }
 
     return (
@@ -27,6 +31,7 @@ function ContactListing({persons})
             <tr>
                 <th>Person</th>
                 <th>Number</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -60,7 +65,7 @@ const App = () => {
     const [nameFilter, setNameFilter] = useState('')
 
     useEffect(
-        () => { AppBackend.get_all().then(_persons => setPersons(_persons))},
+        () => { AppBackend.get_all().then(persons => setPersons(persons))},
         []
     )
 
@@ -84,6 +89,16 @@ const App = () => {
                     setPersons(newPersons)
                 }
             )
+    }
+
+    function delete_person(person, ev)
+    {
+        if (window.confirm(`Delete contact ${person.name}?`))
+        {
+            AppBackend.delete_person(person.id).then(response => console.log(response))
+            setPersons(persons.filter(cur_person => cur_person.id !== person.id))
+            
+        }
     }
 
     function handleSubmitNewContact(ev)
@@ -137,7 +152,7 @@ const App = () => {
             </div>
         </form>
         <h2>Numbers</h2>
-        <ContactListing persons={filterName(persons)} />
+        <ContactListing persons={filterName(persons)} on_person_delete={delete_person} />
         </div>
     )
 }

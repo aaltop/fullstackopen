@@ -13,6 +13,11 @@ function add_person(person)
     return axios.post(persons_url, person).then(response => response.data)
 }
 
+function delete_person(person_id)
+{
+    return axios.delete(`${persons_url}/${person_id}`)
+}
+
 /**
  * Get the list of people. Returns a promise whose value will be
  * the array of people.
@@ -23,4 +28,4 @@ function get_all()
 }
 
 
-export default {add_person, get_all}
+export default {add_person, get_all, delete_person}
