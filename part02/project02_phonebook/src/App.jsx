@@ -64,27 +64,26 @@ const App = () => {
         []
     )
 
-    function updatePersons(_persons)
+    function updatePersons(persons)
     {
         // do not add if name already in phonebook
-        if (_persons.map(person => person.name).includes(newName)) {
+        if (persons.map(person => person.name).includes(newName)) {
             alert(`"${newName}" has already been added to the phonebook`)
             // I think here it is actually correct to return the
             // same object, because it has not changed?
-            return _persons
+            return persons
         }
         const newPerson = {name: newName, number: newNumber}
-        const newPersons = {...persons}
-        // Does mutate the array created above, but not the original
-        // that the application would still currently refer to.
-        // I'm not sure how else to do this (as this current function
-        // needs to return the new array), apart from using async
-        // which we've not covered so I don't want to unnecessary
-        // complicate the application right now.
+        const newPersons = [...persons]
         AppBackend.add_person(newPerson)
-            .then(_newPerson => newPersons.push(_newPerson))
-        console.log(newPersons)
-        return newPersons
+            .then(
+                _newPerson => {
+                    console.log("new person:", _newPerson)
+                    newPersons.push(_newPerson)
+                    console.log(newPersons)
+                    setPersons(newPersons)
+                }
+            )
     }
 
     function handleSubmitNewContact(ev)
@@ -92,7 +91,7 @@ const App = () => {
         ev.preventDefault()
         // use updater function so logging current state works
         // nicely
-        setPersons(updatePersons)
+        updatePersons(persons)
     }
 
     function filterName(_persons)

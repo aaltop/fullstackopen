@@ -10,7 +10,7 @@ const persons_url = "http://localhost:3001/persons"
  */
 function add_person(person)
 {
-    return axios.post(persons_url, person).then(response => {response.data})
+    return axios.post(persons_url, person).then(response => response.data)
 }
 
 /**
