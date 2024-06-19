@@ -57,17 +57,52 @@ function Input({info, value, onChange})
 }
 
 
+function Notification({message})
+{
+    const success_style = {
+        color: "green",
+        background: "lightgrey",
+        fontSize: 20,
+        borderStyle: "solid",
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10
+    }
+
+    if (message === null)
+    {
+        return null
+    }
+
+    return (
+        <div style={success_style}>
+            {message}
+        </div>
+    )
+
+    
+}
+
 
 const App = () => {
     const [persons, setPersons] = useState([]) 
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [nameFilter, setNameFilter] = useState('')
+    const [notification, setNotification] = useState(null)
 
     useEffect(
         () => { AppBackend.get_all().then(persons => setPersons(persons))},
         []
     )
+
+    function notify(message)
+    {
+        setNotification(message)
+        setTimeout(() => {
+            setNotification(null)
+        }, 5000);
+    }
 
     function updatePersons(persons)
     {
@@ -83,6 +118,7 @@ const App = () => {
                 newPersons[idx].number = newNumber
                 console.log(newPersons)
                 setPersons(newPersons)
+                notify(`The number of ${newName} was replaced with ${newNumber}.`)
             }
             return
         }
@@ -95,6 +131,7 @@ const App = () => {
                     newPersons.push(_newPerson)
                     console.log(newPersons)
                     setPersons(newPersons)
+                    notify(`"${_newPerson.name}" was added to the phonebook.`)
                 }
             )
     }
@@ -140,6 +177,7 @@ const App = () => {
             />
         </div>
         <h2>Add new</h2>
+        <Notification message={notification} />
         <form onSubmit={handleSubmitNewContact}>
             <div>
                 <Input
