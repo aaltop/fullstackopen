@@ -57,7 +57,7 @@ function Input({info, value, onChange})
 }
 
 
-function Notification({message})
+function Notification({message, success})
 {
     const success_style = {
         color: "green",
@@ -69,13 +69,18 @@ function Notification({message})
         marginBottom: 10
     }
 
+    const failure_style = {
+        ...success_style,
+        color: "red"
+    }
+
     if (message === null)
     {
         return null
     }
 
     return (
-        <div style={success_style}>
+        <div style={success ? success_style : failure_style}>
             {message}
         </div>
     )
@@ -89,18 +94,22 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [nameFilter, setNameFilter] = useState('')
-    const [notification, setNotification] = useState(null)
+    const [notification, setNotification] = useState({message: null, success: true})
 
     useEffect(
         () => { AppBackend.get_all().then(persons => setPersons(persons))},
         []
     )
 
-    function notify(message)
+    // a slight issue is that the notification is reset regardless
+    // of when it was previously changed, which means that if
+    // it gets changed in between calls to notify, it'll still get
+    // reset after 5 seconds
+    function notify(message, success=true)
     {
-        setNotification(message)
+        setNotification({message: message, success: success})
         setTimeout(() => {
-            setNotification(null)
+            setNotification({message: null, success: true})
         }, 5000);
     }
 
@@ -113,12 +122,33 @@ const App = () => {
             if (window.confirm(`"${newName}" is already in the phonebook, replace the old number with a new one?`))
             {
                 const idx = persons.findIndex(person => person.name === newName)
-                AppBackend.update_person(persons[idx].id, {...persons[idx], number: newNumber})
-                const newPersons = [...persons]
-                newPersons[idx].number = newNumber
-                console.log(newPersons)
-                setPersons(newPersons)
-                notify(`The number of ${newName} was replaced with ${newNumber}.`)
+                // set in backend, notify if already removed (frankly a slightly
+                // wacky way of doing it, should just add instead if
+                // it's not on the server, and then realistically
+                // it would be better to query the status of the person
+                // on the server first thing anyway. But then, I guess
+                // you still want to confirm whether the number should
+                // be changed before updating it anywhere... It's one more
+                // backend call vs. conflicting messages to the user.)
+                AppBackend
+                    .update_person(persons[idx].id, {...persons[idx], number: newNumber})
+                    // only update if found on server
+                    .then( () => {
+                            const newPersons = [...persons]
+                            newPersons[idx].number = newNumber
+                            console.log(newPersons)
+                            setPersons(newPersons)
+                            notify(`The number of ${newName} was replaced with ${newNumber}.`)
+                        }
+                    )
+                    // if not found, complain
+                    .catch( error => {
+                            if (error.response.status === 404)
+                            {
+                                notify(`"${newName}" has already been deleted from the server.`, false)
+                            }
+                        }
+                    )
             }
             return
         }
@@ -177,7 +207,7 @@ const App = () => {
             />
         </div>
         <h2>Add new</h2>
-        <Notification message={notification} />
+        <Notification {...notification} />
         <form onSubmit={handleSubmitNewContact}>
             <div>
                 <Input
