@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import AppBackend from './AppBackend'
 
 
-
+// Generic input line
 function Input({info, value, onChange})
 {
     return (
@@ -16,48 +16,96 @@ function Input({info, value, onChange})
 }
 
 
-function CountryInfo({countriesData, filteredCountries})
+// Shows the info panel for a country
+function CountryInfo({countryData})
 {
-    if (filteredCountries.length > 10)
-    {
-        return "Too many matches, specify another filter."
+
+    return (
+        <div>
+            <h2>{countryData.name.common}</h2>
+            <div>{`Capital ${countryData.capital}`}</div>
+            <div>{`area ${countryData.area}`}</div>
+            <br></br>
+            <div><b>{"languages:"}</b></div>
+            <ul>
+                {Object.values(countryData.languages).map( lang => {
+                            return <li key={lang}>{lang}</li>
+                        }
+                    )
+                }
+            </ul>
+            <div>
+                <img src={countryData.flags.png}></img>
+            </div>
+
+        </div>
+    )
+}
+
+
+// shows the name of a country and a button (which is currently
+// used to show the info for that country)
+function CountryListItem({countryName, onButtonPress})
+{
+
+    const margin = 10
+    const buttonStyle = {
+        marginLeft: margin,
+        marginRight: margin
     }
 
-    if (filteredCountries.length > 1)
+    return (
+        <div>
+            {countryName}
+            <button 
+                type="button" 
+                onClick={onButtonPress}
+                style={buttonStyle}
+            >
+                {"Show"}
+            </button>
+        </div>
+    )
+}
+
+// Lists the countries that match the filter, also handles setting
+// the correct country idx that is used for showing the info for that
+// country
+function CountryList({countriesData, filteredCountries, setShownCountryIdx})
+{
+
+    const matches = filteredCountries.length
+
+    if(matches > 10)
+    {
+        return "Too many matches, specify another filter"
+    }
+
+    if (matches > 0)
     {
         return (
             <div>
                 {filteredCountries.map(([_name, idx]) => {
-                    return <div key={idx}>{_name}</div>
+                    return <CountryListItem 
+                        key={idx} 
+                        countryName={_name}
+                        onButtonPress={() => setShownCountryIdx(idx)}
+                    />
                 }
             )}
             </div>
         )
     }
 
-    if (filteredCountries.length === 0)
-    {
-        return "No matches."
-    }
-
-    // TODO: In preparation for the next part, make another
-    // component "CountryList", which has the countries and
-    // the buttons that show the "CountryInfo" component
-    const [_name, idx] = filteredCountries[0]
-    const countryData = countriesData[idx]
-    return (
-        <div>
-            {`Capital of ${_name}: ${countryData.capital}`}
-        </div>
-    )
+    return "No matches."
 }
-
 
 const App = () => {
     const [countryFilter, setCountryFilter] = useState("")
     const [countriesData, setCountriesData] = useState(null)
     const [namesAndIdx, setNamesAndIdx] = useState(null)
     const [filteredCountries, setFilteredCountries] = useState(null)
+    const [shownCountryIdx, setShownCountryIdx] = useState(null)
 
 
     // get the country data, and also an array of the country
@@ -107,12 +155,22 @@ const App = () => {
         setFilteredCountries(filterCountries(namesAndIdx, newFilter))
     }
 
+
+
+    // if not initialised properly, show nothing
     if (countriesData === null || filteredCountries === null)
     {
         return null
     }
 
-    // gdfogndfgn
+    let countryInfo = null
+    if (shownCountryIdx !== null)
+    {
+        countryInfo = <CountryInfo
+            countryData={countriesData[shownCountryIdx]}
+        />
+    }
+
     return (
         <div>
         <h1>Data for countries</h1>
@@ -128,7 +186,12 @@ const App = () => {
             />
         </div>
 
-        <CountryInfo countriesData={countriesData} filteredCountries={filteredCountries} />
+        <CountryList
+            countriesData={countriesData}
+            filteredCountries={filteredCountries}
+            setShownCountryIdx={setShownCountryIdx}
+        />
+        {countryInfo}
 
         </div>
     )
