@@ -15,10 +15,70 @@ function Input({info, value, onChange})
     )
 }
 
+function WeatherInfo({latitude, longitude})
+{
+
+    const [weatherData, setWeatherData] = useState(null)
+
+    function init()
+    {
+
+        let ret = AppBackend.getWeatherData(latitude, longitude)
+
+        // some recursive shenanigans
+        if (!ret.success)
+        {
+            setTimeout(init, ret.timeOut)
+            return
+        }
+
+        ret.promiseData.then(data => {
+                console.log("Weather data got")
+                setWeatherData(data)
+            }
+        )
+    }
+
+    // should realistically also have the time when this was
+    // initialised as a dependency (but then that depends on
+    // how often the weather data gets updated)
+    useEffect(init, [latitude, longitude])
+
+    if (weatherData === null)
+    {
+        return null
+    }
+
+    const temp = weatherData.current.temperature_2m
+    const temp_units = weatherData.current_units.temperature_2m
+
+    const wind = weatherData.current.wind_speed_10m
+    const wind_units = weatherData.current_units.wind_speed_10m
+
+    const cloud_cover = weatherData.current.cloud_cover
+    const cloud_cover_units = weatherData.current_units.cloud_cover
+
+    return (
+        <div>
+            <div>
+                {`Temperature: ${temp}${temp_units}`}
+            </div>
+            <div>
+                {`Cloud Cover: ${cloud_cover}${cloud_cover_units}`}
+            </div>
+            <div>
+                {`Wind speed: ${wind} ${wind_units}`}
+            </div>
+        </div>
+    )
+
+}
 
 // Shows the info panel for a country
 function CountryInfo({countryData})
 {
+
+    const [latitude, longitude] = countryData.capitalInfo.latlng
 
     return (
         <div>
@@ -37,6 +97,8 @@ function CountryInfo({countryData})
             <div>
                 <img src={countryData.flags.png}></img>
             </div>
+            <h3>{`Weather in ${countryData.name.common}`}</h3>
+            <WeatherInfo latitude={latitude} longitude={longitude} />
 
         </div>
     )
