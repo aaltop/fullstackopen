@@ -1,7 +1,25 @@
 const express = require("express")
+const morgan = require("morgan")
+
+
 const app = express()
 
 app.use(express.json())
+
+
+// Define logging using morgan
+// ---------------------------
+
+morgan.token("post_data", (request, response) => {
+    return JSON.stringify(request.body)
+})
+
+
+// from the github page for morgan; seems to be the same as "tiny",
+// apart from the self-defined token, of course.
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :post_data"))
+
+// ============================
 
 let people = [
     { 
