@@ -1,0 +1,17 @@
+*.*
+!.gitignore
+!*.md
+!*.js
+!*.jsx
+!package.json
+!package-lock.json
+!*.html
+
+# vs code rest client
+!*.rest
+
+# node stuff
+node_modules
+
+# build file
+dist
