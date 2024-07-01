@@ -91,14 +91,36 @@ function Notification({message, success})
 
 const App = () => {
     const [persons, setPersons] = useState([]) 
+    const [filteredPersons, setFilteredPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [nameFilter, setNameFilter] = useState('')
     const [notification, setNotification] = useState({message: null, success: true})
 
     useEffect(
-        () => { AppBackend.get_all().then(persons => setPersons(persons))},
+        () => { AppBackend.get_all().then( persons => setPersons(persons))},
         []
+    )
+
+    function filterName(_persons, nameFilter)
+    {
+        console.log("name filter:", nameFilter)
+        // don't filter if the filter input is empty
+        if ("" === nameFilter) {
+            return _persons
+        }
+        return _persons.filter(
+            person => person.name.toLowerCase().includes(nameFilter)
+        )
+    }
+
+    // easier way to do it, but also need to "synchronise with external service"
+    // or whatever (because "persons" needs to be fetched from elsewhere),
+    // so it's okay use as well? (apart from the nameFilter part, but again,
+    // )
+    useEffect(
+        () => setFilteredPersons(filterName(persons, nameFilter)),
+        [persons]
     )
 
     // a slight issue is that the notification is reset regardless
@@ -184,18 +206,6 @@ const App = () => {
         updatePersons(persons)
     }
 
-    function filterName(_persons)
-    {
-        console.log("name filter:", nameFilter)
-        // don't filter if the filter input is empty
-        if ("" === nameFilter) {
-            return _persons
-        }
-        return _persons.filter(
-            person => person.name.toLowerCase().includes(nameFilter)
-        )
-    }
-
     return (
         <div>
         <h1>Phonebook</h1>
@@ -203,7 +213,11 @@ const App = () => {
             <Input 
                 info="filter shown with (case insensitive)"
                 value={nameFilter}
-                onChange={ev => setNameFilter(ev.target.value.toLowerCase())}
+                onChange={ev => {
+                    const filt = ev.target.value.toLowerCase()
+                    setNameFilter(filt)
+                    setFilteredPersons(filterName(persons, filt))
+                }}
             />
         </div>
         <h2>Add new</h2>
@@ -228,7 +242,7 @@ const App = () => {
             </div>
         </form>
         <h2>Numbers</h2>
-        <ContactListing persons={filterName(persons)} on_person_delete={delete_person} />
+        <ContactListing persons={filteredPersons} on_person_delete={delete_person} />
         </div>
     )
 }
