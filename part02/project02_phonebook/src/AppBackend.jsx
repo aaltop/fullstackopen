@@ -2,7 +2,7 @@ import axios from "axios"
 
 
 
-const persons_url = "http://localhost:3001/api/persons"
+const persons_url = "/api/persons"
 
 /**
  * Return the URL that points to the person with id `person_id`.

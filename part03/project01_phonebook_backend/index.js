@@ -5,9 +5,10 @@ const cors = require("cors")
 
 const app = express()
 // only enable CORS for the development frontend address for now
-app.use(cors({
-    origin: "http://localhost:5173"
-}))
+// app.use(cors({
+//     origin: "http://localhost:5173"
+// }))
+app.use(express.static("dist"))
 app.use(express.json())
 
 
