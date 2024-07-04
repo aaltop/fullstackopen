@@ -2,6 +2,8 @@ const express = require("express")
 const morgan = require("morgan")
 const cors = require("cors")
 
+const Person = require("./models/person")
+
 
 const app = express()
 // only enable CORS for the development frontend address for now
@@ -60,7 +62,16 @@ app.get("/info", (request, response) => {
 
 // get all
 app.get('/api/persons', (request, response) => {
-    response.json(people)
+    // I'd imagine it would in some sense be good to just
+    // keep a "local" in-memory copy of the server data updated. You'd
+    // only get the people data from the server at the start,
+    // then keep updating that array as you make updates (so a post
+    // of a new person updates the array and sends the new person to
+    // the server as well, though not necessarily in that order).
+    Person.find().then(result => {
+        people = result
+        response.json(result)
+    })
 })
 
 // get a person with the given id
@@ -83,13 +94,13 @@ app.post("/api/persons", (request, response) => {
 
     const personData = request.body
 
-    if (!personData.name) {
+    if (personData.name === undefined) {
         return response.status(400).json({
             error: "name missing"
         })
     }
 
-    if (!personData.number) {
+    if (personData.number === undefined) {
         return response.status(400).json({
             error: "number missing"
         })
@@ -102,10 +113,15 @@ app.post("/api/persons", (request, response) => {
         })
     }
 
+    const person = new Person({
+        name: personData.name,
+        number: personData.number
+    })
 
-    personData.id = String(Math.ceil(Math.random()*Number.MAX_SAFE_INTEGER))
-    people = people.concat(personData)
-    response.json(personData)
+    person.save().then(savedPerson => {
+        people = people.concat(savedPerson)
+        response.json(savedPerson)
+    })
 
 })
 
