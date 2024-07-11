@@ -6,12 +6,12 @@ const url = process.env.MONGODB_URL
 mongoose.set('strictQuery',false)
 
 mongoose.connect(url)
-.then(result => {
-    console.log('connected to MongoDB')
-})
-.catch(error => {
-    console.log('error connecting to MongoDB:', error.message)
-})
+    .then(() => {
+        console.log('connected to MongoDB')
+    })
+    .catch(error => {
+        console.log('error connecting to MongoDB:', error.message)
+    })
 
 const personSchema = new mongoose.Schema({
     name: String,
@@ -20,7 +20,7 @@ const personSchema = new mongoose.Schema({
 
 personSchema.set("toJSON", {
     flattenObjectIds: true,
-    transform: (doc, ret, options) => {
+    transform: (doc, ret) => {
         ret.id = ret._id
         delete ret._id
         delete ret.__v
