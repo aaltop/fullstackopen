@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from "axios"
 import AppBackend from './AppBackend'
 
 
@@ -168,6 +167,8 @@ const App = () => {
                             if (error.response.status === 404)
                             {
                                 notify(`"${newName}" has already been deleted from the server.`, false)
+                            } else {
+                                notify(error.response.data.error, false)
                             }
                         }
                     )
@@ -186,9 +187,16 @@ const App = () => {
                     notify(`"${_newPerson.name}" was added to the phonebook.`)
                 }
             )
+            .catch(
+                error => {
+                    console.log("COULD NOT ADD NEW PERSON")
+                    console.log(error)
+                    notify(error.response.data.error, false)
+                }
+            )
     }
 
-    function delete_person(person, ev)
+    function delete_person(person, _ev)
     {
         if (window.confirm(`Delete contact ${person.name}?`))
         {

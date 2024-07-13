@@ -15,3 +15,6 @@ node_modules
 
 # build file
 dist
+
+# ESlint
+!*eslint.config.mjs
