@@ -123,7 +123,7 @@ app.put("/api/persons/:id", (request, response, next) => {
     const id = request.params.id
     const newNumber = request.body.number
 
-    Person.findByIdAndUpdate(id, { number: newNumber }).then(result => {
+    Person.findByIdAndUpdate(id, { number: newNumber }, { runValidators: true }).then(result => {
         // turns out this findBy doesn't error if nothing's found,
         // which is fair, but still need to make it work like originally.
         // I suppose. So, return 404 if the result is null
