@@ -114,7 +114,6 @@ app.post("/api/persons", (request, response, next) => {
     person.save().then(savedPerson => {
         response.json(savedPerson)
     }).catch(error => {
-        console.log(error.response)
         next(error)
     })
 })
