@@ -40,7 +40,7 @@ if (num_args === 3) {
         name: process.argv[3],
         number: process.argv[4]
     })
-    
+
     person.save().then(result => {
         console.log(`Added ${result.name} number ${result.number} to phonebook.`)
         mongoose.connection.close()

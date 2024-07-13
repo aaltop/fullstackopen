@@ -21,6 +21,13 @@ export default [
         'error',
         4
       ],
+      "no-unused-vars": ["error", {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrors": "all",
+            "ignoreRestSiblings": false,
+            "reportUsedIgnorePattern": false
+        }],
       '@stylistic/js/semi': [
         'error',
         'never'
