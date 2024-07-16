@@ -13,7 +13,14 @@ function totalLikes(blogs)
         : blogs.reduce((prev, cur) => cur.likes + prev, 0)
 }
 
+function favoriteBlog(blogs)
+{
+    return (blogs.length === 0)
+        ? null
+        // only replace with current if more likes than previous
+        : blogs.reduce((prev, cur) => prev.likes < cur.likes ? cur : prev)
+}
 
 module.exports = {
-    dummy, totalLikes
+    dummy, totalLikes, favoriteBlog
 }
