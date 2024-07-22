@@ -84,6 +84,37 @@ describe("get /api/blogs", () => {
 
 })
 
+describe("post /api/blogs", () => {
+
+    const testBlog = {
+        title: "test",
+        author:"test",
+        url: "https://www.google.com/",
+        likes: 1
+        
+    }
+
+    test("Increases the number of blogs by one", async () => {
+        // I guess I should actually use this directly
+        // rather than using the get
+        const numBefore = await Blog.countDocuments()
+        // NOTE: could be an issue down the line if the blogs
+        // should be unique, but currently no such requirement
+        await (new Blog(testBlog)).save()
+        const numAfter = await Blog.countDocuments()
+        assert(numAfter === numBefore + 1)
+    })
+
+    test("adds a document that can be found with relevant parameters", async () => {
+        await Blog.deleteMany()
+        await api.post("/api/blogs")
+            .send(testBlog)
+            .expect(201)
+        assert(await Blog.exists(testBlog))
+    })
+
+})
+
 describe("Returned blog object", () => {
 
     beforeEach(async () => {
@@ -92,7 +123,7 @@ describe("Returned blog object", () => {
         await blogModel.save()
     })
 
-    test("Has 'id' field rather than '_id' field", async () => {
+    test("has 'id' field rather than '_id' field", async () => {
         const response = await api.get("/api/blogs")
         const blog = response.body[0]
         assert(Object.hasOwn(blog, "id"))
