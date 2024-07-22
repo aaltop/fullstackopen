@@ -152,3 +152,35 @@ describe("most blogs", () => {
     })
 
 })
+
+describe("most likes", () => {
+
+    test("of zero length list is null", () => {
+        const most = listHelper.mostLikes([])
+        assert.strictEqual(most, null)
+    })
+
+    test("of list of one is the author/likes of the one blog", () => {
+        const most = listHelper.mostLikes([blogs[0]])
+
+        const expected = {
+            author: "Michael Chan",
+            likes: 7,
+        }
+
+        assert.deepStrictEqual(most, expected)
+
+    })
+
+    test("of list of many is the author with most likes and the sum of their likes", () => {
+        const most = listHelper.mostLikes(blogs)
+
+        const expected = {
+            author: "Robert C. Martin",
+            likes: 22
+        }
+
+        assert.deepStrictEqual(most, expected)
+    })
+
+})

@@ -39,6 +39,27 @@ function mostBlogs(blogs)
 
 }
 
+// obviously this is almost exactly the same as the above, but
+// seeing as I don't think we've worked with objects much, I'm
+// not finna start fiddling with them. If only there was some sort
+// of collections.defaultdict or something...
+function mostLikes(blogs)
+{
+
+    if (blogs.length === 0) {
+        return null
+    }
+
+    const likesCounter = new Map(blogs.map(blog => [blog.author, 0]))
+    blogs.forEach(({author, likes}) => likesCounter.set(author, likesCounter.get(author)+likes))
+    const mostLikesAuthor = [...likesCounter].reduce((prev, cur) => prev[1] < cur[1] ? cur : prev)
+    return {
+        author: mostLikesAuthor[0],
+        likes: mostLikesAuthor[1]
+    }
+}
+
+
 module.exports = {
-    dummy, totalLikes, favoriteBlog, mostBlogs
+    dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes
 }
