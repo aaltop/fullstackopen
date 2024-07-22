@@ -84,6 +84,23 @@ describe("get /api/blogs", () => {
 
 })
 
+describe("Returned blog object", () => {
+
+    beforeEach(async () => {
+        await Blog.deleteMany()
+        blogModel = new Blog(blogs[0])
+        await blogModel.save()
+    })
+
+    test("Has 'id' field rather than '_id' field", async () => {
+        const response = await api.get("/api/blogs")
+        const blog = response.body[0]
+        assert(Object.hasOwn(blog, "id"))
+        assert(!Object.hasOwn(blog, "_id"))
+    })
+
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
