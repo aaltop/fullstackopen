@@ -113,6 +113,22 @@ describe("post /api/blogs", () => {
         assert(await Blog.exists(testBlog))
     })
 
+    test("missing 'title' property results in 400", async () => {
+        let tempBlog = {...testBlog}
+        delete tempBlog.title
+        await api.post("/api/blogs")
+            .send(tempBlog)
+            .expect(400)
+    })
+
+    test("missing 'url' property results in 400", async () => {
+        let tempBlog = {...testBlog}
+        delete tempBlog.url
+        await api.post("/api/blogs")
+            .send(tempBlog)
+            .expect(400)
+    })
+
 })
 
 describe("Returned blog object", () => {

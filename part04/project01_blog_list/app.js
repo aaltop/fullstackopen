@@ -1,5 +1,6 @@
 const logger = require("./utils/logger")
 const blogsRouter = require("./routers/blogs")
+const {errorHandler} = require("./utils/middleware")
 
 const express = require('express')
 const app = express()
@@ -21,5 +22,6 @@ mongoose.connect(mongoUrl)
 app.use(cors())
 app.use("/api/blogs", blogsRouter)
 
+app.use(errorHandler)
 
 module.exports = app
