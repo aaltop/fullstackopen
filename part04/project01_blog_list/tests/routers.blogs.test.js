@@ -131,6 +131,54 @@ describe("post /api/blogs", () => {
 
 })
 
+describe("delete /api/blogs/:id", () => {
+
+    const testBlog = {
+        _id: "5a422a851b54a676234d17f7",
+        title: "test",
+        author:"test",
+        url: "https://www.google.com/",
+        likes: 1
+    }
+
+    const id = testBlog._id
+    const urlWithId = `/api/blogs/${id}`
+
+    beforeEach(async () => {
+        await Blog.deleteMany()
+        await (new Blog(testBlog)).save()
+    })
+
+    test("deletes blog from backend", async () => {
+        // make sure that it actually is in the database before delete
+        assert(await Blog.findById(id))
+        await api.delete(urlWithId)
+            .expect(204)
+        assert(!(await Blog.findById(id)))
+    })
+
+    test("decreases document count by one", async () => {
+        await (new Blog({
+            _id: "5a422aa71b54a676234d17f8",
+            title: "Go To Statement Considered Harmful",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+            likes: 5,
+            __v: 0
+        })).save()
+
+        const numBefore = await Blog.countDocuments()
+        assert(numBefore === 2)
+
+        await api.delete(urlWithId)
+            .expect(204)
+
+        const numAfter = await Blog.countDocuments()
+        assert(numAfter === 1)
+    })
+
+})
+
 describe("Returned blog object", () => {
 
 
