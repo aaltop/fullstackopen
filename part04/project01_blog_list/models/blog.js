@@ -12,6 +12,9 @@ blogSchema.set("toJSON", {
     transform: (doc, ret) => {
         ret.id = ret._id.toString()
         delete ret._id
+        if (!Object.hasOwn(ret, "likes")) {
+            ret.likes = 0
+        }
         return ret
     }
 })

@@ -117,9 +117,16 @@ describe("post /api/blogs", () => {
 
 describe("Returned blog object", () => {
 
+
+    const testBlog = {
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+    }
+
     beforeEach(async () => {
         await Blog.deleteMany()
-        blogModel = new Blog(blogs[0])
+        blogModel = new Blog(testBlog)
         await blogModel.save()
     })
 
@@ -128,6 +135,12 @@ describe("Returned blog object", () => {
         const blog = response.body[0]
         assert(Object.hasOwn(blog, "id"))
         assert(!Object.hasOwn(blog, "_id"))
+    })
+
+    test("has missing 'likes' field default to zero likes", async () => {
+        const response = await api.get("/api/blogs")
+        const blog = response.body[0]
+        assert(blog.likes === 0)
     })
 
 })
