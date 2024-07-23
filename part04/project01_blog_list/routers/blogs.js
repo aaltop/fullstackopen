@@ -23,13 +23,32 @@ blogsRouter.post('/', async (request, response, next) => {
     }
 })
 
-blogsRouter.delete("/:id", async (request, response) => {
+blogsRouter.delete("/:id", async (request, response, next) => {
     try {
         const id = request.params.id
         await Blog.findByIdAndDelete(id)
         response.status(204).end()
-    } catch (expection) {
-        next(expection)
+    } catch (exception) {
+        next(exception)
+    }
+})
+
+// Not replacing all of the data, so use .patch
+blogsRouter.patch("/:id", async (request, response, next) => {
+    try {
+        const id = request.params.id
+        const body = request.body
+        const newContent = {
+            likes: body.likes
+        }
+        const modifiedBlog = await Blog.findByIdAndUpdate(
+            id,
+            newContent,
+            { new: true, runValidators: true}
+        )
+        response.status(200).json(modifiedBlog)
+    } catch (exception) {
+        next(exception)
     }
 })
 

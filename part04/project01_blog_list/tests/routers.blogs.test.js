@@ -179,6 +179,60 @@ describe("delete /api/blogs/:id", () => {
 
 })
 
+describe("patch /api/blogs/:id", () => {
+
+    const testBlog = {
+        _id: "5a422a851b54a676234d17f7",
+        title: "test",
+        author: "test",
+        url: "https://www.google.com/",
+        likes: 1
+    }
+    const id = testBlog._id
+    const urlWithId = `/api/blogs/${id}`
+
+    beforeEach(async () => {
+        await Blog.deleteMany()
+        await (new Blog(testBlog)).save()
+    })
+
+    test("modifies the 'likes' count correctly", async () => {
+
+        const newLikes = 5
+        const modifiedBlog = {...testBlog, likes: newLikes}
+
+        const response = await api.patch(urlWithId)
+            .send(modifiedBlog)
+            .expect(200)
+        const returnedBlog = response.body
+        assert(returnedBlog.likes === newLikes)
+    })
+
+    // liable to change in the future, I guess, but currently only
+    // likes should be changeable using patch
+    test("does not modify values besides 'likes'", async () => {
+
+
+        const modifiedBlog = {   
+            title: "new title",
+            author: "new author",
+            url: "https://www.bing.com/",
+            likes: 1
+        }
+        // get the correct form before patch attempt
+        let expectedBlog = await Blog.findById(id)
+        // Not the best, I guess I should define toObject()?
+        expectedBlog = JSON.parse(JSON.stringify(expectedBlog))
+
+        const response = await api.patch(urlWithId)
+            .send(modifiedBlog)
+            .expect(200)
+        const returnedBlog = response.body
+
+        assert.deepStrictEqual(returnedBlog, expectedBlog)
+    })
+})
+
 describe("Returned blog object", () => {
 
 
