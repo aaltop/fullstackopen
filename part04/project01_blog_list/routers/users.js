@@ -11,6 +11,9 @@ usersRouter.use(express.json())
 usersRouter.post("/", async (request, response, next) => {
     const rawUserData = request.body
     const password = rawUserData.password
+    if (!password) {
+        return response.status(400).json({ error: "password required" })
+    }
     try {
         const passwordHash = await bcrypt.hash(password, 10)
         delete rawUserData.password
@@ -21,6 +24,11 @@ usersRouter.post("/", async (request, response, next) => {
     } catch (exception) {
         next(exception)
     }   
+})
+
+usersRouter.get("/", async (request, response, next) => {
+    const users = await User.find()
+    response.json(users)
 })
 
 

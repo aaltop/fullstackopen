@@ -19,6 +19,10 @@ userSchema.set("toJSON", {
         ret.id = ret._id.toString()
         delete ret._id
         delete ret.passwordHash
+        delete ret.__v
+        if (!Object.hasOwn(ret, "name")) {
+            ret.name = null
+        }
     }
 })
 
