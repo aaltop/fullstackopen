@@ -13,7 +13,10 @@ usersRouter.post("/", async (request, response, next) => {
     const password = rawUserData.password
     if (!password) {
         return response.status(400).json({ error: "password required" })
+    } else if (password.length < 3) {
+        return response.status(400).json({ error: "password needs to be at least three (3) characters long" })
     }
+
     try {
         const passwordHash = await bcrypt.hash(password, 10)
         delete rawUserData.password

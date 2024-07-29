@@ -27,9 +27,11 @@ describe("post /api/users", () => {
         name: "John Doe"
     }
 
-    test("increases the number of documents by one when successful", async () => {
-        // avoid problems with unique
+    beforeEach(async () => {
         await User.deleteMany()
+    })
+
+    test("increases the number of documents by one when successful", async () => {
         const numBefore = await User.countDocuments()
         await api.post("/api/users")
             .send(testUser)
@@ -42,18 +44,18 @@ describe("post /api/users", () => {
     // I guess sort of not, because the router is the thing that actually
     // handles creating the password hash.
     test("raises 400 error when trying to add a non-unique username", async () => {
-        await User.deleteMany()
         await api.post("/api/users")
             .send(testUser)
             .expect(201)
         // just send the same
+        const numBefore = await User.countDocuments()
         await api.post("/api/users")
             .send(testUser)
             .expect(400)
+        assert.strictEqual(numBefore, await User.countDocuments())
     })
 
     test("adds a document that can be found with relevant parameters", async () => {
-        await User.deleteMany()
         await api.post("/api/users")
             .send(testUser)
             .expect(201)
@@ -63,32 +65,51 @@ describe("post /api/users", () => {
     })
 
     test("raises 400 error when no username specified", async () => {
-        await User.deleteMany()
         let exampleUser = {...testUser}
         delete exampleUser.username
+        const numBefore = await User.countDocuments()
         await api.post("/api/users")
             .send(exampleUser)
             .expect(400)
+        assert.strictEqual(numBefore, await User.countDocuments())
     })
 
     test("raises 400 error when no password specified", async () => {
-        await User.deleteMany()
         let exampleUser = {...testUser}
         delete exampleUser.password
+        const numBefore = await User.countDocuments()
         await api.post("/api/users")
             .send(exampleUser)
             .expect(400)
+        assert.strictEqual(numBefore, await User.countDocuments())
     })
 
     // mainly testing that it does not return anything related to 
     // the password, but good to be entirely sure about the return
     test("does not return unwanted values in response body", async () => {
-        await User.deleteMany()
         const response = await api.post("/api/users")
             .send(testUser)
             .expect(201)
 
         validateProperties(response.body)
+    })
+
+    test("raises 400 error with relevant error message if username is less than three characters", async () => {
+        const numBefore = await User.countDocuments()
+        const response = await api.post("/api/users")
+            .send({ username: "no", password: "an0k#ypass5ana", name: "Guy Man"})
+            .expect(400)
+        assert.strictEqual(numBefore, await User.countDocuments())
+        assert(response.body.error.includes("User validation failed: username"))
+    })
+
+    test("raises 400 error with relevant error message if password is less than three characters", async () => {
+        const numBefore = await User.countDocuments()
+        const response = await api.post("/api/users")
+            .send({ username: "MachoManRandySavage", password: "no", name: "Guy Man"})
+            .expect(400)
+        assert.strictEqual(numBefore, await User.countDocuments())
+        assert(response.body.error.includes("password needs to be at least three (3) characters long"))
     })
 })
 
