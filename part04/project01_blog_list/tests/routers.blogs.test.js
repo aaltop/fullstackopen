@@ -100,7 +100,9 @@ describe("post /api/blogs", () => {
         const numBefore = await Blog.countDocuments()
         // NOTE: could be an issue down the line if the blogs
         // should be unique, but currently no such requirement
-        await (new Blog(testBlog)).save()
+        await api.post("/api/blogs")
+            .send(testBlog)
+            .expect(201)
         const numAfter = await Blog.countDocuments()
         assert(numAfter === numBefore + 1)
     })
