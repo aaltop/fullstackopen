@@ -1,6 +1,7 @@
 const logger = require("./utils/logger")
 const blogsRouter = require("./routers/blogs")
 const usersRouter = require("./routers/users")
+const loginRouter = require("./routers/login")
 const {errorHandler} = require("./utils/middleware")
 
 const express = require('express')
@@ -25,6 +26,7 @@ app.use(morgan("tiny"))
 app.use(cors())
 app.use("/api/blogs", blogsRouter)
 app.use("/api/users", usersRouter)
+app.use("/api/login", loginRouter)
 
 
 app.use(errorHandler)
