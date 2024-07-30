@@ -1,4 +1,5 @@
 const Blog = require("../models/blog")
+const User = require("../models/user")
 
 const express = require("express")
 const blogsRouter = express.Router()
@@ -8,12 +9,14 @@ blogsRouter.use(express.json())
 
 blogsRouter.get('/', async (request, response) => {
 
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate("user")
     response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response, next) => {
-    const blog = new Blog(request.body)
+    let blogObject = request.body
+    blogObject.user = (await User.findOne())._id
+    const blog = new Blog(blogObject)
 
     try {
         const result = await blog.save()

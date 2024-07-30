@@ -1,13 +1,27 @@
 const app = require("../app")
 const Blog = require("../models/blog")
+const User = require("../models/user")
 
 const supertest = require("supertest")
 const mongoose = require("mongoose")
-const {describe, test, after, beforeEach} = require("node:test")
+const {describe, test, after, beforeEach, before} = require("node:test")
 const assert = require("node:assert")
 
 
 const api = supertest(app)
+const testUser = {
+    username: "Anonymous",
+    passwordHash: "$2a$10$rTF93JOhkjuQH.YTulTXzuypHbidKXTKhutIO9WRrbTXcWUlYdzo.",
+    name: "John Doe",
+    _id: "66a76abe395794810ce7faef"
+}
+
+before(async () => {
+    if (!(await User.findOne())) {
+        await (new User(testUser)).save()
+    }
+})
+
 const blogs = [
     {
         _id: "5a422a851b54a676234d17f7",
