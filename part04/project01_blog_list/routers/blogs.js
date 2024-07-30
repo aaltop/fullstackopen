@@ -15,11 +15,14 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response, next) => {
     let blogObject = request.body
-    blogObject.user = (await User.findOne())._id
+    let blogCreator = await User.findOne()
+    blogObject.user = blogCreator._id
     const blog = new Blog(blogObject)
 
     try {
         const result = await blog.save()
+        blogCreator.blogs = blogCreator.blogs.concat(result._id)
+        await blogCreator.save()
         response.status(201).json(result)
     } catch (exception) {
         next(exception)

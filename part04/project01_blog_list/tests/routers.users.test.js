@@ -13,7 +13,7 @@ const api = supertest(app)
 // the wanted property set
 function validateProperties(responseUser)
 {
-    const expectedProperties = ["username", "name", "id"].sort()
+    const expectedProperties = ["username", "name", "id", "blogs"].sort()
     const userProperties = Object.getOwnPropertyNames(responseUser).sort()
     assert.deepStrictEqual(userProperties, expectedProperties)
 }
