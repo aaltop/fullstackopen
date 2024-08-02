@@ -1,11 +1,15 @@
 const Blog = require("../models/blog")
 const User = require("../models/user")
+const middleware = require("../utils/middleware")
+const {TOKEN_SECRET} = require("../utils/env")
 
 const express = require("express")
+const jwt = require("jsonwebtoken")
+
+
 const blogsRouter = express.Router()
-
-
 blogsRouter.use(express.json())
+blogsRouter.use(middleware.bearerTokenParser)
 
 blogsRouter.get('/', async (request, response) => {
 
@@ -14,15 +18,24 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response, next) => {
-    let blogObject = request.body
-    let blogCreator = await User.findOne()
-    blogObject.user = blogCreator._id
-    const blog = new Blog(blogObject)
 
     try {
+        
+        const decodedToken = jwt.verify(request.token, TOKEN_SECRET)
+        if (!decodedToken.id) {
+            return response.status(401).json({ error: "invalid token" })
+        }
+
+        let blogObject = request.body
+        let blogCreator = await User.findById(decodedToken.id)
+        blogObject.user = blogCreator._id
+
+        const blog = new Blog(blogObject)
         const result = await blog.save()
+
         blogCreator.blogs = blogCreator.blogs.concat(result._id)
         await blogCreator.save()
+
         response.status(201).json(result)
     } catch (exception) {
         next(exception)

@@ -34,7 +34,7 @@ loginRouter.post("/", async (request, response, next) => {
         {expiresIn: "4h"}
     )
 
-    response.status(200).send({ token })
+    response.status(200).json({ token })
 
     
 })

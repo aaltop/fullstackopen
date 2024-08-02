@@ -2,7 +2,7 @@ const logger = require("./utils/logger")
 const blogsRouter = require("./routers/blogs")
 const usersRouter = require("./routers/users")
 const loginRouter = require("./routers/login")
-const {errorHandler} = require("./utils/middleware")
+const middleware = require("./utils/middleware")
 
 const express = require('express')
 const app = express()
@@ -29,6 +29,6 @@ app.use("/api/users", usersRouter)
 app.use("/api/login", loginRouter)
 
 
-app.use(errorHandler)
+app.use(middleware.errorHandler)
 
 module.exports = app
