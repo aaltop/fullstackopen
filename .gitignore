@@ -1,6 +1,6 @@
 *.*
 !.gitignore
-!*.md
+!README.md
 !*.js
 !*.jsx
 !package.json
