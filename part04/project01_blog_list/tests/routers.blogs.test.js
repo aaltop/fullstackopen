@@ -7,44 +7,41 @@
 const app = require("../app")
 const Blog = require("../models/blog")
 const User = require("../models/user")
-const {TEST_SECRET} = require("../utils/env")
 
 const supertest = require("supertest")
 const mongoose = require("mongoose")
 const {describe, test, after, beforeEach, before} = require("node:test")
 const assert = require("node:assert")
-const jwt = require("jsonwebtoken")
 
 const api = supertest(app)
+
 const testUser = {
     username: "Anonymous",
     password: "pass",
     name: "John Doe"
 }
 
-let userToken = null
-
 function getAuthString(token)
 {
     return `Bearer ${token}`
 }
 
-before(async () => {
+async function initializeLogin()
+{
     await User.deleteMany()
     await api.post("/api/users")
         .send(testUser)
         .expect(201)
 
-    console.log("TOP SCOPE BEFORE")
     const numDocs = await User.countDocuments()
     console.log("More than zero users: ", numDocs > 0)
 
     const loginResponse = await api.post("/api/login")
         .send(testUser)
         .expect(200)
-    userToken = loginResponse.body.token
-    
-})
+
+    return loginResponse.body.token
+}
 
 const blogs = [
     {
@@ -130,34 +127,10 @@ describe("post /api/blogs", () => {
         url: "https://www.google.com/",
         likes: 1
     }
+    let userToken = null
 
-
-    // NOTE: This is weird. I don't know exactly how it's supposed to
-    // work, but if I don't have this, the top scope before does not
-    // run (or does not run completely (?!), as it prints only some of
-    // the logged stuff; is it left awaiting? I guess...). 
-    // In turn, if I do have this, the top scope does run completely,
-    // and the tests are successful? (It)
-    //
-    // EDIT: For whatever reason, it does seem that the tests don't
-    // wait for the top scope "before" to run if this is not here.
-    // Obviously I'm curious as to whether I should even have
-    // that top scope before, though there is equally a top scope
-    // "after", so you'd think it should be okay (the docs say 
-    // "This function creates a hook that runs 
-    // before executing a suite", and do set it in a "describe" block,
-    // but then, why is it allowed/does it run in the top scope,
-    // if that should not be allowed?). At the same time,
-    // it DOES run if this is here, suggesting that it is sort of
-    // supposed to run, but something is scuffed with it.
-    //
-    // At any rate, the issue seems to be with initialising the
-    // database, because once the top scope "before" does appear to
-    // run as expected (before everything else here, naturally),
-    // then everything seems to work as expected
-    beforeEach(async () => {
-        const numUsers = await User.countDocuments()
-        console.log("More than zero users: ", numUsers > 0)
+    before(async () => {
+        userToken = await initializeLogin()
     })
 
     test("returns 401 error if no authorization header", async () => {
@@ -198,14 +171,6 @@ describe("post /api/blogs", () => {
         const numBefore = await Blog.countDocuments()
 
         assert(await User.countDocuments() > 0)
-
-        // const loginResponse = await api.post("/api/login")
-        // .send(testUser)
-        // .expect(200)
-
-        // console.log("LOGIN RESPONSE", loginResponse.body.token)
-        // const authString = `Bearer ${loginResponse.body.token}`
-
 
         // NOTE: could be an issue down the line if the blogs
         // should be unique, but currently no such requirement
