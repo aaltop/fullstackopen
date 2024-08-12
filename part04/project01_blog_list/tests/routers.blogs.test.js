@@ -21,6 +21,14 @@ const testUser = {
     name: "John Doe"
 }
 
+const wrongUser = {
+    username: "hackerman",
+    password: "mackerhan",
+    name: "Mister Evil"
+}
+
+const falseAuthorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIiLCJpYXQiOjE3MjI1ODk2OTd9._1zYKnyz8OdENTe4Qj9Rtekk9fmJd40ALtmoPXpfq58"
+
 function getAuthString(token)
 {
     return `Bearer ${token}`
@@ -33,14 +41,21 @@ async function initializeLogin()
         .send(testUser)
         .expect(201)
 
-    const numDocs = await User.countDocuments()
-    console.log("More than zero users: ", numDocs > 0)
+    await api.post("/api/users")
+        .send(wrongUser)
+        .expect(201)
 
-    const loginResponse = await api.post("/api/login")
+    let loginResponse = await api.post("/api/login")
         .send(testUser)
         .expect(200)
+    const correctToken = loginResponse.body.token
 
-    return loginResponse.body.token
+    loginResponse = await api.post("/api/login")
+        .send(wrongUser)
+        .expect(200)
+    const wrongToken = loginResponse.body.token
+    
+    return {correctToken, wrongToken}
 }
 
 const blogs = [
@@ -128,9 +143,12 @@ describe("post /api/blogs", () => {
         likes: 1
     }
     let userToken = null
+    let wrongToken = null
 
     before(async () => {
-        userToken = await initializeLogin()
+        const tokens = await initializeLogin()
+        userToken = tokens.correctToken
+        wrongToken = tokens.wrongToken
     })
 
     test("returns 401 error if no authorization header", async () => {
@@ -157,7 +175,7 @@ describe("post /api/blogs", () => {
         await api.post("/api/blogs")
         // I'm actually just going to hope and pray that it never happens
         // to be the same, though it would be kinda funny
-            .set("authorization", `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIiLCJpYXQiOjE3MjI1ODk2OTd9._1zYKnyz8OdENTe4Qj9Rtekk9fmJd40ALtmoPXpfq58`)
+            .set("authorization", falseAuthorization)
             .send(testBlog)
             .expect(401)
 
@@ -214,25 +232,41 @@ describe("post /api/blogs", () => {
 describe("delete /api/blogs/:id", () => {
 
     const testBlog = {
-        _id: "5a422a851b54a676234d17f7",
         title: "test",
         author:"test",
         url: "https://www.google.com/",
         likes: 1
     }
 
-    const id = testBlog._id
-    const urlWithId = `/api/blogs/${id}`
+    let id = null
+    function urlWithId(id)
+    {
+        return `/api/blogs/${id}`
+    }
+    let userToken = null
+    let wrongToken = null
+
+    before(async () => {
+        const tokens = await initializeLogin()
+        userToken = tokens.correctToken
+        wrongToken = tokens.wrongToken
+    })
 
     beforeEach(async () => {
         await Blog.deleteMany()
-        await (new Blog(testBlog)).save()
+        const response = await api.post("/api/blogs")
+            .set("authorization", getAuthString(userToken))
+            .send(testBlog)
+            .expect(201)
+
+        id = response.body.id
     })
 
     test("deletes blog from backend", async () => {
         // make sure that it actually is in the database before delete
         assert(await Blog.findById(id))
-        await api.delete(urlWithId)
+        await api.delete(urlWithId(id))
+            .set("authorization", getAuthString(userToken))
             .expect(204)
         assert(!(await Blog.findById(id)))
     })
@@ -250,12 +284,62 @@ describe("delete /api/blogs/:id", () => {
         const numBefore = await Blog.countDocuments()
         assert(numBefore === 2)
 
-        await api.delete(urlWithId)
+        await api.delete(urlWithId(id))
+            .set("authorization", getAuthString(userToken))
             .expect(204)
 
         const numAfter = await Blog.countDocuments()
         assert(numAfter === 1)
     })
+
+    test("returns 401 error if missing authorization token", async () => {
+        const numBefore = await Blog.countDocuments()
+
+        await api.delete(urlWithId(id))
+            .expect(401)
+
+        const numAfter = await Blog.countDocuments()
+        assert.strictEqual(numAfter, numBefore)
+    })
+
+    test("returns 401 error if nonexistent authorization token", async () => {
+        const numBefore = await Blog.countDocuments()
+
+        await api.delete(urlWithId(id))
+            .set("authorization", falseAuthorization)
+            .expect(401)
+
+        const numAfter = await Blog.countDocuments()
+        assert.strictEqual(numAfter, numBefore)
+    })
+
+    // Don't really want to give the ability to query the database
+    // for the existence of a blog with a given id, so just send
+    // 404 even when the blog exists but the credentials are wrong
+    test("returns 404 error if incorrect authorization token", async () => {
+        const numBefore = await Blog.countDocuments()
+
+        await api.delete(urlWithId(id))
+            .set("authorization", getAuthString(wrongToken))
+            .expect(404)
+
+        const numAfter = await Blog.countDocuments()
+        assert.strictEqual(numAfter, numBefore)
+    })
+
+    test("returns 404 error if a blog with the given id does not exist", async () => {
+        const numBefore = await Blog.countDocuments()
+
+        // hardcoding's a little sketchy, but eh
+        await api.delete(urlWithId("5a4aaaa71b54a676234d17f8"))
+            .set("authorization", getAuthString(userToken))
+            .expect(404)
+
+        const numAfter = await Blog.countDocuments()
+        assert.strictEqual(numAfter, numBefore)
+    })
+
+
 
 })
 

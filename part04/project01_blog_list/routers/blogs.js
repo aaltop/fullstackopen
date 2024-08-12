@@ -44,7 +44,26 @@ blogsRouter.post('/', async (request, response, next) => {
 
 blogsRouter.delete("/:id", async (request, response, next) => {
     try {
+
+        const decodedToken = jwt.verify(request.token, TOKEN_SECRET)
+        if (!decodedToken.id) {
+            return response.status(401).json({ error: "invalid token" })
+        }
+
         const id = request.params.id
+        const blog = await Blog.findById(id)
+
+        // Don't really want to give the ability to query the database
+        // for the existence of a blog with a given id, so just send
+        // 404 even when the blog exists but the credentials are wrong.
+        // An issue is that the the blog needs to be non-null before
+        // the second part can be determined, and if the second part
+        // takes long to evaluate, there could be a possibility for
+        // a timing attack. Shouldn't really take that long, though.
+        if (!blog || !(blog.user.toString() === decodedToken.id.toString())) {
+            return response.status(404).end()
+        }
+
         await Blog.findByIdAndDelete(id)
         response.status(204).end()
     } catch (exception) {
