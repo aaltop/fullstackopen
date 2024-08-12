@@ -1,10 +1,8 @@
 const Blog = require("../models/blog")
 const User = require("../models/user")
 const middleware = require("../utils/middleware")
-const {TOKEN_SECRET} = require("../utils/env")
 
 const express = require("express")
-const jwt = require("jsonwebtoken")
 
 
 const blogsRouter = express.Router()
@@ -17,17 +15,12 @@ blogsRouter.get('/', async (request, response) => {
     response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response, next) => {
 
     try {
-        
-        const decodedToken = jwt.verify(request.token, TOKEN_SECRET)
-        if (!decodedToken.id) {
-            return response.status(401).json({ error: "invalid token" })
-        }
 
         let blogObject = request.body
-        let blogCreator = await User.findById(decodedToken.id)
+        let blogCreator = await User.findById(request.user)
         blogObject.user = blogCreator._id
 
         const blog = new Blog(blogObject)
@@ -42,13 +35,8 @@ blogsRouter.post('/', async (request, response, next) => {
     }
 })
 
-blogsRouter.delete("/:id", async (request, response, next) => {
+blogsRouter.delete("/:id", middleware.userExtractor, async (request, response, next) => {
     try {
-
-        const decodedToken = jwt.verify(request.token, TOKEN_SECRET)
-        if (!decodedToken.id) {
-            return response.status(401).json({ error: "invalid token" })
-        }
 
         const id = request.params.id
         const blog = await Blog.findById(id)
@@ -60,7 +48,7 @@ blogsRouter.delete("/:id", async (request, response, next) => {
         // the second part can be determined, and if the second part
         // takes long to evaluate, there could be a possibility for
         // a timing attack. Shouldn't really take that long, though.
-        if (!blog || !(blog.user.toString() === decodedToken.id.toString())) {
+        if (!blog || !(blog.user.toString() === request.user.toString())) {
             return response.status(404).end()
         }
 

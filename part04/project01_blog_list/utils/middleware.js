@@ -1,4 +1,6 @@
+const {TOKEN_SECRET} = require("../utils/env")
 
+const jwt = require("jsonwebtoken")
 
 function errorHandler(error, request, response, _next)
 {
@@ -34,6 +36,19 @@ function bearerTokenParser(request, response, next)
     next()
 }
 
+function userExtractor(request, response, next)
+{
+    const decodedToken = jwt.verify(request.token, TOKEN_SECRET)
+    // using this middleware means that an id is expected, so if
+    // it is not found, the token is assumed to be invalid
+    if (!decodedToken.id) {
+        return response.status(401).json({ error: "invalid token" })
+    }
+
+    request.user = decodedToken.id
+    next()
+}
+
 module.exports = {
-    errorHandler, bearerTokenParser
+    errorHandler, bearerTokenParser, userExtractor
 }
