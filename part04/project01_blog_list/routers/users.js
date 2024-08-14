@@ -1,7 +1,10 @@
 const User = require("../models/user")
+const middleware = require("../utils/middleware")
+const security = require("../utils/security")
 
 const express = require("express")
 const bcrypt = require("bcryptjs")
+
 
 
 const usersRouter = express.Router()
@@ -29,10 +32,25 @@ usersRouter.post("/", async (request, response, next) => {
     }   
 })
 
-usersRouter.get("/", async (request, response, next) => {
+usersRouter.get("/", middleware.bearerTokenParser, async (request, response, next) => {
     const users = await User.find().populate("blogs")
     response.json(users)
 })
+
+usersRouter.get(
+    "/:username",
+    middleware.bearerTokenParser,
+    middleware.userExtractor,
+    async (request, response, next) => {
+        console.log("MAJRO LOGGING ACTION")
+        console.log(request.params.username, request.username)
+        if (request.params.username !== request.username) {
+            return response.status(404).end()
+        }
+        const user = await User.findById(request.user).populate("blogs")
+        response.json(user)
+    }
+)
 
 
 module.exports = usersRouter

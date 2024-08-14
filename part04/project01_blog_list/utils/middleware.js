@@ -46,6 +46,7 @@ function userExtractor(request, response, next)
     }
 
     request.user = decodedToken.id
+    request.username = decodedToken.username
     next()
 }
 

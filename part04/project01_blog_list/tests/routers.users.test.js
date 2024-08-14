@@ -3,7 +3,7 @@ const User = require("../models/user")
 
 const supertest = require("supertest")
 const mongoose = require("mongoose")
-const {describe, test, after, beforeEach} = require("node:test")
+const {describe, test, after, beforeEach, before} = require("node:test")
 const assert = require("node:assert")
 
 
@@ -117,7 +117,7 @@ describe("post /api/users", () => {
 describe("get /api/users", () => {
 
 
-    const testBlogs = [
+    const testUsers = [
         {
             "username": "Anonymous",
             "password": "pass",
@@ -129,19 +129,25 @@ describe("get /api/users", () => {
         }
 
     ]
-    const numUsers = testBlogs.length
+    const numUsers = testUsers.length
+    let firstToken = null
 
     beforeEach(async () => {
         await User.deleteMany()
         // kind of wacky that I need to call this, as that's
         // where the password hashing is happening. Is this actually
         // the recommended way of doing it?
-        const promiseArray = testBlogs.map(blog => {
+        const promiseArray = testUsers.map(blog => {
             return api.post("/api/users")
                 .send(blog)
                 .expect(201)
         })
         await Promise.all(promiseArray)
+        const response = await api.post("/api/login")
+            .send(testUsers[0])
+            .expect(200)
+
+        firstToken = response.body.token
     })
 
     test("returns the expected number of items in a list", async () => {
@@ -159,6 +165,52 @@ describe("get /api/users", () => {
             validateProperties(user)
         }
     })
+})
+
+describe("get /api/users/:username", () => {
+
+    testUser = {
+        "username": "Anonymous",
+        "password": "pass",
+        "name": "John Doe"
+    }
+    let testToken = null
+    const postUrl = `/api/users/${testUser.username}`
+    const falseAuthorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIiLCJpYXQiOjE3MjI1ODk2OTd9._1zYKnyz8OdENTe4Qj9Rtekk9fmJd40ALtmoPXpfq58"
+
+    before(async () => {
+        await User.deleteMany()
+
+        await api.post("/api/users")
+            .send(testUser)
+            .expect(201)
+
+        const response = await api.post("/api/login")
+            .send(testUser)
+            .expect(200)
+
+        testToken = response.body.token
+    })
+
+    test("returns user given valid and correct auth token", async () => {
+        const response = await api.get(postUrl)
+            .set("authorization", `Bearer ${testToken}`)
+            .expect(200)
+
+        validateProperties(response.body)
+    })
+
+    test("returns 401 error given no authorization", async () => {
+        const response = await api.get(postUrl)
+            .expect(401)
+    })
+
+    test("returns 401 error given invalid authorization", async () => {
+        const response = await api.get(postUrl)
+            .set("authorization", falseAuthorization)
+            .expect(401)
+    })
+
 })
 
 
