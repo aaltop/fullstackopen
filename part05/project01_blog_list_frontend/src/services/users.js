@@ -9,4 +9,18 @@ async function getAll()
     return response.data
 }
 
-export default { getAll }
+async function getUser(username, token)
+{
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const response = await axios.get(`${baseUrl}/${username}`, config)
+    return response.data
+}
+
+export default {
+    getAll: getAll,
+    getUser: getUser
+}

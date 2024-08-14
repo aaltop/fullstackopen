@@ -10,32 +10,41 @@ import { useState, useEffect } from 'react'
 const App = () => {
     const [blogs, setBlogs] = useState([])
     // for token
-    const [user, setUser] = useState(null)
-    const [username, setUsername] = useState(null)
+    const [user, setUser] = useState(window.localStorage.getItem("user"))
+    const [username, setUsername] = useState(window.localStorage.getItem("username"))
     const [name, setName] = useState(null)
 
-    async function fetchBlogs()
+    async function fetchUser()
     {
-        const users = await userService.getAll()
-        const currUser = users.find(us => us.username === username)
-        setBlogs(currUser.blogs)
-        setName(currUser.name)
+        const userData = await userService.getUser(username, user)
+        setBlogs(userData.blogs)
+        setName(userData.name)
     }
 
+    function logOut()
+    {
+        window.localStorage.removeItem("user")
+        window.localStorage.removeItem("username")
+        window.location.reload()
+    }
+
+
+
     useEffect(() => {
-        console.log("fetch blogs")
+        console.log("fetch user data")
         if (user) {
-            fetchBlogs()
+            fetchUser()
         }
-    }, [username])
+    }, [user])
 
     async function attemptLogin(ev, username, password)
     {
         ev.preventDefault()
         const token = await loginService.login(username, password)
-        console.log("TOKEN", token)
         setUser(token)
         if (token) {
+            window.localStorage.setItem("user", token)
+            window.localStorage.setItem("username", username)
             setUsername(username)
         }
     }
@@ -51,6 +60,7 @@ const App = () => {
         <div>
             <div>
             {name} is logged in
+            <button type="button" onClick={logOut}>Log Out</button>
             </div>
             <h2>blogs</h2>
             {blogs.map(blog =>
