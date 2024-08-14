@@ -42,8 +42,6 @@ usersRouter.get(
     middleware.bearerTokenParser,
     middleware.userExtractor,
     async (request, response, next) => {
-        console.log("MAJRO LOGGING ACTION")
-        console.log(request.params.username, request.username)
         if (request.params.username !== request.username) {
             return response.status(404).end()
         }
