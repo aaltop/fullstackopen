@@ -86,10 +86,14 @@ const App = () => {
             console.log(responseBlog)
             setBlogs(blogs.concat(responseBlog))
             _setNotification(`Added new blog "${title}" from ${author}`, true, 5000)
+            //true for success
+            return true
         } catch (e) {
             if (e.name === "AxiosError" && e.response.status === 400) {
                 _setNotification(e.response.data.error, false, 5000)
             }
+            // false for failure
+            return false
         }
     }
 

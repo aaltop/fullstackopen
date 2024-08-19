@@ -7,9 +7,10 @@ function BlogAddForm({submitAction})
     const [url, setUrl] = useState("")
     const [visible, setVisible] = useState(false)
 
-    function passValues(ev)
+    async function passValues(ev)
     {
-        submitAction(ev, title, author, url)
+        const success = await submitAction(ev, title, author, url)
+        setVisible(!success)
     }
 
     return (
