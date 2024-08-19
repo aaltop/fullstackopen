@@ -13,12 +13,20 @@ function Blog({ blog }) {
         outlineColor: color.blogOutline,
         width: "fit-content",
         margin: "10px",
-        padding: "5px"
+        padding: "5px",
+        display: "flex",
+        flexDirection: "row",
+        justifyItems: "end" // Huh? this is supposed to be "ignored" by flex, but it's not?
     }
 
     const simple = (
         <div style={simpleStyle}>
-            {blog.title} {blog.author} <button type="button" onClick={() => setVerbose(true)}>Show</button>
+            <div>
+                {blog.title} {blog.author}
+            </div>
+            <div>
+                <button type="button" onClick={() => setVerbose(true)}>Show</button>
+            </div>
         </div>
     )
 

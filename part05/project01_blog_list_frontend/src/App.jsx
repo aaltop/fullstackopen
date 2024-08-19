@@ -97,18 +97,24 @@ const App = () => {
         }
     }
 
+    const rootStyle = {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
+    }
+
     if (null === user) {
         return (
-            <>
+            <div style={rootStyle}>
                 <Notification text={notification.text} success={notification.success}/>
                 <LoginForm submitAction={attemptLogin}/>
-            </>
+            </div>
         )
     }
 
     return (
         
-        <div>
+        <div style={rootStyle}>
             <Notification text={notification.text} success={notification.success}/>
             <div>
             {name} is logged in
