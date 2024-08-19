@@ -5,6 +5,7 @@ function BlogAddForm({submitAction})
     const [title, setTitle] = useState("")
     const [author, setAuthor] = useState("")
     const [url, setUrl] = useState("")
+    const [visible, setVisible] = useState(false)
 
     function passValues(ev)
     {
@@ -12,6 +13,11 @@ function BlogAddForm({submitAction})
     }
 
     return (
+        <div>
+        <div style={{display: visible ? "none" : ""}}>
+            <button type="button" onClick={() => setVisible(true)}>New Blog</button>
+        </div>
+        <div style={{display: visible ? "" : "none"}}>
         <form onSubmit={passValues}>
             <div>
                 Title <input
@@ -36,8 +42,11 @@ function BlogAddForm({submitAction})
             </div>
             <div>
                 <button type="submit">Add Blog</button>
+                <button type="button" onClick={() => setVisible(false)}>Cancel</button>
             </div>
         </form>
+        </div>
+        </div>
     )
 
 }
