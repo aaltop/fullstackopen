@@ -24,7 +24,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response, next) 
         blogObject.user = blogCreator._id
 
         const blog = new Blog(blogObject)
-        const result = await blog.save()
+        let result = await (await blog.save()).populate("user")
 
         blogCreator.blogs = blogCreator.blogs.concat(result._id)
         await blogCreator.save()
@@ -67,11 +67,12 @@ blogsRouter.patch("/:id", async (request, response, next) => {
         const newContent = {
             likes: body.likes
         }
-        const modifiedBlog = await Blog.findByIdAndUpdate(
+        let modifiedBlog = await Blog.findByIdAndUpdate(
             id,
             newContent,
             { new: true, runValidators: true}
         )
+        modifiedBlog = await modifiedBlog.populate("user")
         response.status(200).json(modifiedBlog)
     } catch (exception) {
         next(exception)

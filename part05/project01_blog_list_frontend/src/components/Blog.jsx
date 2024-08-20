@@ -5,7 +5,7 @@ import {useState} from "react"
 
 
 
-function Blog({ blog, updateBlog }) {
+function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
 
     const [verbose, setVerbose] = useState(false)
 
@@ -20,6 +20,10 @@ function Blog({ blog, updateBlog }) {
         flexDirection: "row",
         justifyItems: "end" // Huh? this is supposed to be "ignored" by flex, but it's not?
     }
+
+    const displayDelete = blog.user 
+        ? (blog.user.username === clientUserData.username)
+        : false
 
     const simple = (
         <div style={simpleStyle}>
@@ -67,6 +71,9 @@ function Blog({ blog, updateBlog }) {
                 </div>
                 <div>
                     {blog.author}
+                </div>
+                <div style={{display: displayDelete ? "" : "none"}}>
+                        <button type="button" onClick={ deleteBlog }>Delete</button>
                 </div>
             </div>
             <div>

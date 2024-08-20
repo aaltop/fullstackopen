@@ -22,7 +22,6 @@ const App = () => {
     {
         try {
             const userData = await userService.getUser(username, user)
-            setBlogs(userData.blogs)
             setName(userData.name)
         } catch (e) {
             if (e.response.status === 401 && e.response.data.error.includes("Expired token")) {
@@ -34,6 +33,11 @@ const App = () => {
 
     }
 
+    async function fetchBlogs()
+    {
+        setBlogs(await blogService.getAll())
+    }
+
     function logOut()
     {
         window.localStorage.removeItem("user")
@@ -43,10 +47,12 @@ const App = () => {
 
 
 
+    // initialise
     useEffect(() => {
-        console.log("fetch user data")
+        console.log("Fetch data")
         if (user) {
             fetchUser()
+            fetchBlogs()
         }
     }, [user])
 
@@ -112,11 +118,29 @@ const App = () => {
         }
     }
 
+    /**
+     * Update blog on client side.
+     */
     function updateBlog(newBlog, blogIdx)
     {
         const newBlogs = [...blogs]
         newBlogs[blogIdx] = newBlog
         setBlogs(newBlogs)
+    }
+
+    /**
+     * Delete blog on server and client.
+     */
+    function deleteBlog(blog, blogIdx)
+    {
+        if (!window.confirm(`Delete "${blog.title}" by ${blog.author}?`)) {
+            return false
+        }
+        blogService.deleteBlog(blog, user)
+        const newBlogs = [...blogs]
+        setBlogs(newBlogs.filter((_blog, index) => index !== blogIdx))
+        _setNotification(`Deleted "${blog.title}" by ${blog.author}`, true, 5000)
+        return true
     }
 
     const rootStyle = {
@@ -147,9 +171,11 @@ const App = () => {
             <h2>Blogs</h2>
             {blogs.map( (blog, blogIdx) =>
                 <Blog
-                    key={blog.id}
-                    blog={blog}
-                    updateBlog={newBlog => updateBlog(newBlog, blogIdx)}
+                    key={ blog.id }
+                    blog={ blog }
+                    clientUserData={{ username }}
+                    updateBlog={ newBlog => updateBlog(newBlog, blogIdx) }
+                    deleteBlog={() => deleteBlog(blog, blogIdx)}
                 />
             )}
         </div>
