@@ -20,9 +20,17 @@ const App = () => {
 
     async function fetchUser()
     {
-        const userData = await userService.getUser(username, user)
-        setBlogs(userData.blogs)
-        setName(userData.name)
+        try {
+            const userData = await userService.getUser(username, user)
+            setBlogs(userData.blogs)
+            setName(userData.name)
+        } catch (e) {
+            if (e.response.status === 401 && e.response.data.error.includes("Expired token")) {
+                logOut()
+            } else {
+                throw e
+            }
+        }
 
     }
 

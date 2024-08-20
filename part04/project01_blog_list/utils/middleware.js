@@ -16,8 +16,11 @@ function errorHandler(error, request, response, _next)
         // error message back, doesn't feel like a great idea
         return response.status(400).json({ error: "Encountered duplicate key" })
     } else if (error.name === "JsonWebTokenError") {
-        console.log(error)
+
         return response.status(401).json({ error: "invalid token" })
+    } else if (error.name === "TokenExpiredError") {
+
+        return response.status(401).json({ error: "Expired token" })
     }
 
     console.log("UNHANDLED ERROR:", error.name)
