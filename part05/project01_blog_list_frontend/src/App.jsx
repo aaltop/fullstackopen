@@ -65,6 +65,7 @@ const App = () => {
 
     async function attemptLogin(ev, username, password)
     {
+
         ev.preventDefault()
         const token = await loginService.login(username, password)
         setUser(token)
@@ -75,6 +76,7 @@ const App = () => {
         } else {
             _setNotification("Invalid username or password", false, 5000)
         }
+
     }
 
     async function AddBlog(ev, title, author, url)
@@ -95,6 +97,13 @@ const App = () => {
             // false for failure
             return false
         }
+    }
+
+    function updateBlog(newBlog, blogIdx)
+    {
+        const newBlogs = [...blogs]
+        newBlogs[blogIdx] = newBlog
+        setBlogs(newBlogs)
     }
 
     const rootStyle = {
@@ -123,8 +132,12 @@ const App = () => {
             <h2>Add new blog</h2>
                 <BlogAddForm submitAction={AddBlog}/>
             <h2>Blogs</h2>
-            {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
+            {blogs.map( (blog, blogIdx) =>
+                <Blog
+                    key={blog.id}
+                    blog={blog}
+                    updateBlog={newBlog => updateBlog(newBlog, blogIdx)}
+                />
             )}
         </div>
     )

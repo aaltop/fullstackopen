@@ -1,9 +1,11 @@
 import {lightMode as color} from "../style/color"
+import blogService from "../services/blogs"
 
 import {useState} from "react"
 
 
-function Blog({ blog }) {
+
+function Blog({ blog, updateBlog }) {
 
     const [verbose, setVerbose] = useState(false)
 
@@ -51,7 +53,17 @@ function Blog({ blog }) {
                     {blog.url}
                 </div>
                 <div>
-                    likes {blog.likes} <button type="button">like</button>
+                    likes {blog.likes} 
+                    <button 
+                        type="button" 
+                        style={{margin: "5px"}}
+                        onClick={async () => {
+                            const newBlog = await blogService.addLikes(blog.id, blog.likes+1)
+                            updateBlog(newBlog)
+                        }}
+                    >
+                        like
+                    </button>
                 </div>
                 <div>
                     {blog.author}

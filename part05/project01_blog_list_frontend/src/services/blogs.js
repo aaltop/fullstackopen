@@ -17,7 +17,15 @@ async function addBlog(blog, token)
     return response.data
 }
 
+async function addLikes(blogId, newLikesCount)
+{
+
+    const response = await axios.patch(baseUrl + "/" + blogId, { likes: newLikesCount })
+    return response.data
+}
+
 export default {
     getAll: getAll,
-    addBlog: addBlog
+    addBlog: addBlog,
+    addLikes: addLikes
 }
