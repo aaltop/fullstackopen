@@ -1,7 +1,8 @@
-import {lightMode as color} from "../style/color"
+import { lightMode as color } from "../style/color"
 import blogService from "../services/blogs"
 
-import {useState} from "react"
+import { useState } from "react"
+import PropTypes from "prop-types"
 
 
 
@@ -21,7 +22,7 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
         justifyItems: "end" // Huh? this is supposed to be "ignored" by flex, but it's not?
     }
 
-    const displayDelete = blog.user 
+    const displayDelete = blog.user
         ? (blog.user.username === clientUserData.username)
         : false
 
@@ -57,10 +58,10 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
                     {blog.url}
                 </div>
                 <div>
-                    likes {blog.likes} 
-                    <button 
-                        type="button" 
-                        style={{margin: "5px"}}
+                    likes {blog.likes}
+                    <button
+                        type="button"
+                        style={{ margin: "5px" }}
                         onClick={async () => {
                             const newBlog = await blogService.addLikes(blog.id, blog.likes+1)
                             updateBlog(newBlog)
@@ -72,8 +73,8 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
                 <div>
                     {blog.author}
                 </div>
-                <div style={{display: displayDelete ? "" : "none"}}>
-                        <button type="button" onClick={ deleteBlog }>Delete</button>
+                <div style={{ display: displayDelete ? "" : "none" }}>
+                    <button type="button" onClick={ deleteBlog }>Delete</button>
                 </div>
             </div>
             <div>
@@ -83,6 +84,13 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
     )
 
     return full
+}
+
+Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    clientUserData: PropTypes.object.isRequired,
+    updateBlog: PropTypes.func.isRequired,
+    deleteBlog: PropTypes.func.isRequired
 }
 
 export default Blog

@@ -1,7 +1,7 @@
-import {useState} from "react"
+import { useState } from "react"
 
 
-function Notification({text, success = true})
+function Notification({ text, success = true })
 {
 
     const successStyle = {

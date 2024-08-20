@@ -1,6 +1,6 @@
-import {useState} from "react"
+import { useState } from "react"
 
-function LoginForm({submitAction})
+function LoginForm({ submitAction })
 {
 
     const [username, setUsername] = useState("")
@@ -16,8 +16,8 @@ function LoginForm({submitAction})
         <form onSubmit={passValues}>
             <div>
                 <input
-                    type="text" 
-                    value={username} 
+                    type="text"
+                    value={username}
                     onChange={ev => setUsername(ev.target.value)}
                 ></input>
             </div>

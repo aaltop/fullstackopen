@@ -1,14 +1,13 @@
-
-import Blog from './components/Blog'
+import Blog from "./components/Blog"
 import LoginForm from "./components/LoginForm"
 import BlogAddForm from "./components/BlogAddForm"
 import Notification from "./components/Notification"
 
-import blogService from './services/blogs'
+import blogService from "./services/blogs"
 import loginService from "./services/login"
 import userService from "./services/users"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react"
 
 const App = () => {
     const [blogs, _setBlogs] = useState([])
@@ -16,7 +15,7 @@ const App = () => {
     const [user, setUser] = useState(window.localStorage.getItem("user"))
     const [username, setUsername] = useState(window.localStorage.getItem("username"))
     const [name, setName] = useState(null)
-    const [notification, setNotification] = useState({text: null, timeoutId: null, success: true})
+    const [notification, setNotification] = useState({ text: null, timeoutId: null, success: true })
 
     async function fetchUser()
     {
@@ -54,7 +53,15 @@ const App = () => {
             fetchUser()
             fetchBlogs()
         }
-    }, [user])
+    // sure react, I really should have fetchUser as dependency
+    // as that will not be reached regardless unless user is truthy...
+    // To be fair, though, I guess this is a little silly as if user
+    // is set to any falsy value, it's not going to do anything, but the effect
+    // will still run. Still, I want to initialise when opening the
+    // the application, and I guess this is the way to do it?
+    // could call the just the fetch functions themselves once logging
+    // in and not have the dependency here, though.
+    }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function _setNotification(text, success, timeout)
     {
@@ -101,7 +108,7 @@ const App = () => {
     async function AddBlog(ev, title, author, url)
     {
         ev.preventDefault()
-        const blog = {title, author, url}
+        const blog = { title, author, url }
         try {
             const responseBlog = await blogService.addBlog(blog, user)
             console.log(responseBlog)
@@ -159,15 +166,14 @@ const App = () => {
     }
 
     return (
-        
         <div style={rootStyle}>
             <Notification text={notification.text} success={notification.success}/>
             <div>
-            {name} is logged in
-            <button type="button" onClick={logOut}>Log Out</button>
+                {name} is logged in
+                <button type="button" onClick={logOut}>Log Out</button>
             </div>
             <h2>Add new blog</h2>
-                <BlogAddForm submitAction={AddBlog}/>
+            <BlogAddForm submitAction={AddBlog}/>
             <h2>Blogs</h2>
             {blogs.map( (blog, blogIdx) =>
                 <Blog
