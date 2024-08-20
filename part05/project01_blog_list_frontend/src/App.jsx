@@ -11,7 +11,7 @@ import userService from "./services/users"
 import { useState, useEffect } from 'react'
 
 const App = () => {
-    const [blogs, setBlogs] = useState([])
+    const [blogs, _setBlogs] = useState([])
     // for token
     const [user, setUser] = useState(window.localStorage.getItem("user"))
     const [username, setUsername] = useState(window.localStorage.getItem("username"))
@@ -85,6 +85,11 @@ const App = () => {
             _setNotification("Invalid username or password", false, 5000)
         }
 
+    }
+
+    function setBlogs(blogs)
+    {
+        _setBlogs(blogs.toSorted((x, y) => y.likes - x.likes))
     }
 
     async function AddBlog(ev, title, author, url)
