@@ -27,12 +27,12 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
         : false
 
     const simple = (
-        <div style={simpleStyle} className="simple-blog-view">
+        <div style={simpleStyle} className="blog-simple-view">
             <div>
                 {blog.title} {blog.author}
             </div>
             <div>
-                <button type="button" onClick={() => setVerbose(true)}>Show</button>
+                <button type="button" className="blog-simple-button-set-verbose" onClick={() => setVerbose(true)}>Show</button>
             </div>
         </div>
     )
@@ -49,7 +49,7 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
     }
 
     const full = (
-        <div style={fullStyle} className="verbose-blog-view">
+        <div style={fullStyle} className="blog-verbose-view">
             <div>
                 <div>
                     {blog.title}
@@ -78,7 +78,7 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
                 </div>
             </div>
             <div>
-                <button type="button" onClick={() => setVerbose(false)}>Hide</button>
+                <button type="button" className="blog-verbose-button-set-verbose" onClick={() => setVerbose(false)}>Hide</button>
             </div>
         </div>
     )

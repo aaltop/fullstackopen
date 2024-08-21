@@ -1,6 +1,6 @@
 import Blog from "./Blog"
 
-import { render, screen } from "@testing-library/react"
+import { render, screen, fireEvent } from "@testing-library/react"
 import { describe, test, expect, vi } from "vitest"
 
 describe("Blog element", () => {
@@ -16,12 +16,22 @@ describe("Blog element", () => {
         likes: 0
     }
 
+    const shownByDefault = [
+        testBlog.title,
+        testBlog.author
+    ]
+
+    const notShownByDefault = [
+        testBlog.url,
+        testBlog.likes
+    ]
+
     const matchingUserData = {
         username: testBlog.username
     }
 
-    test("renders only title and author by default", () => {
-
+    function renderBlog()
+    {
         const updateBlog = vi.fn()
         const deleteBlog = vi.fn()
 
@@ -31,16 +41,33 @@ describe("Blog element", () => {
             updateBlog={updateBlog}
             deleteBlog={deleteBlog}
         />)
+    }
 
-        screen.getByText(testBlog.author, { exact: false })
-        screen.getByText(testBlog.title, { exact: false })
+    test("renders only title and author by default", () => {
 
+        renderBlog()
 
-        // might cause some issues for debugging?
-        const expectedNull = [testBlog.url, testBlog.likes]
-        expectedNull.forEach(elem => {
-            expect(screen.queryByText(elem, { exact: false })).toBeNull()
+        shownByDefault.forEach(val => {
+            screen.getByText(val, { exact: false })
         })
+
+        notShownByDefault.forEach(val => {
+            expect(screen.queryByText(val, { exact: false })).toBeNull()
+        })
+    })
+
+    test("renders expected values after 'Show' click", () => {
+
+        renderBlog()
+
+        const button = screen.getByText("Show")
+        fireEvent.click(button)
+
+        const shownInVerbose = shownByDefault.concat(notShownByDefault)
+        shownInVerbose.forEach(val => {
+            screen.getByText(val, { exact: false })
+        })
+
     })
 
 })
