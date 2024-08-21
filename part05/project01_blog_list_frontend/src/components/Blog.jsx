@@ -27,7 +27,7 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
         : false
 
     const simple = (
-        <div style={simpleStyle}>
+        <div style={simpleStyle} className="simple-blog-view">
             <div>
                 {blog.title} {blog.author}
             </div>
@@ -49,7 +49,7 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
     }
 
     const full = (
-        <div style={fullStyle}>
+        <div style={fullStyle} className="verbose-blog-view">
             <div>
                 <div>
                     {blog.title}
