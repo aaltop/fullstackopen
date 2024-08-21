@@ -21,24 +21,27 @@ function BlogAddForm({ submitAction })
             <div style={{ display: visible ? "" : "none" }}>
                 <form onSubmit={passValues}>
                     <div>
-                        Title <input
+                        <label htmlFor="blog-add-form-title-input">Title</label> <input
                             type="text"
                             value={title}
                             onChange={ev => setTitle(ev.target.value)}
+                            id="blog-add-form-title-input"
                         ></input>
                     </div>
                     <div>
-                        Author <input
+                        <label htmlFor="blog-add-form-author-input">Author</label> <input
                             type="text"
                             value={author}
                             onChange={ev => setAuthor(ev.target.value)}
+                            id="blog-add-form-author-input"
                         ></input>
                     </div>
                     <div>
-                        Url <input
+                        <label htmlFor="blog-add-form-url-input">Url</label> <input
                             type="text"
                             value={url}
                             onChange={ev => setUrl(ev.target.value)}
+                            id="blog-add-form-url-input"
                         ></input>
                     </div>
                     <div>
