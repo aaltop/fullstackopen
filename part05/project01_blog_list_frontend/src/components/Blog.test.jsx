@@ -32,15 +32,23 @@ describe("Blog element", () => {
 
     function renderBlog()
     {
-        const updateBlog = vi.fn()
         const deleteBlog = vi.fn()
+        const onLike = vi.fn()
 
         render(<Blog
             blog={testBlog}
             clientUserData={matchingUserData}
-            updateBlog={updateBlog}
             deleteBlog={deleteBlog}
+            onLike={onLike}
         />)
+
+        return { deleteBlog, onLike }
+    }
+
+    function toggleVerbose()
+    {
+        const button = screen.queryByText("Show") ?? screen.queryByText("Hide")
+        fireEvent.click(button)
     }
 
     test("renders only title and author by default", () => {
@@ -59,15 +67,26 @@ describe("Blog element", () => {
     test("renders expected values after 'Show' click", () => {
 
         renderBlog()
-
-        const button = screen.getByText("Show")
-        fireEvent.click(button)
+        toggleVerbose()
 
         const shownInVerbose = shownByDefault.concat(notShownByDefault)
         shownInVerbose.forEach(val => {
             screen.getByText(val, { exact: false })
         })
 
+    })
+
+    test("accepts likes clicks correctly", () => {
+
+        const { onLike } = renderBlog()
+        toggleVerbose()
+
+        const likesButton = screen.getByText("like")
+        fireEvent.click(likesButton)
+        expect(onLike.mock.calls).toHaveLength(1)
+
+        fireEvent.click(likesButton)
+        expect(onLike.mock.calls).toHaveLength(2)
     })
 
 })

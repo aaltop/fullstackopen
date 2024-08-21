@@ -150,6 +150,12 @@ const App = () => {
         return true
     }
 
+    async function addBlogLike(blog, blogIdx)
+    {
+        const newBlog = await blogService.addLikes(blog.id, blog.likes+1)
+        updateBlog(newBlog, blogIdx)
+    }
+
     const rootStyle = {
         display: "flex",
         flexDirection: "column",
@@ -180,8 +186,8 @@ const App = () => {
                     key={ blog.id }
                     blog={ blog }
                     clientUserData={{ username }}
-                    updateBlog={ newBlog => updateBlog(newBlog, blogIdx) }
                     deleteBlog={() => deleteBlog(blog, blogIdx)}
+                    onLike={() => addBlogLike(blog, blogIdx)}
                 />
             )}
         </div>

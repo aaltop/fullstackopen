@@ -1,12 +1,11 @@
 import { lightMode as color } from "../style/color"
-import blogService from "../services/blogs"
 
 import { useState } from "react"
 import PropTypes from "prop-types"
 
 
 
-function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
+function Blog({ blog, clientUserData, deleteBlog, onLike }) {
 
     const [verbose, setVerbose] = useState(false)
 
@@ -62,10 +61,7 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
                     <button
                         type="button"
                         style={{ margin: "5px" }}
-                        onClick={async () => {
-                            const newBlog = await blogService.addLikes(blog.id, blog.likes+1)
-                            updateBlog(newBlog)
-                        }}
+                        onClick={onLike}
                     >
                         like
                     </button>
@@ -89,8 +85,8 @@ function Blog({ blog, clientUserData, updateBlog, deleteBlog }) {
 Blog.propTypes = {
     blog: PropTypes.object.isRequired,
     clientUserData: PropTypes.object.isRequired,
-    updateBlog: PropTypes.func.isRequired,
-    deleteBlog: PropTypes.func.isRequired
+    deleteBlog: PropTypes.func.isRequired,
+    onLike: PropTypes.func.isRequired
 }
 
 export default Blog
