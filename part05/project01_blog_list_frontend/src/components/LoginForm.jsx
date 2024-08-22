@@ -15,17 +15,21 @@ function LoginForm({ submitAction })
 
         <form onSubmit={passValues}>
             <div>
+                <label htmlFor="login-form-username">Username </label>
                 <input
                     type="text"
                     value={username}
                     onChange={ev => setUsername(ev.target.value)}
+                    id="login-form-username"
                 ></input>
             </div>
             <div>
+                <label htmlFor="login-form-password">Password </label>
                 <input
                     type="password"
                     value={password}
                     onChange={ev => setPassword(ev.target.value)}
+                    id="login-form-password"
                 ></input>
             </div>
             <div>

@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "test": "playwright test",
+        "test": "playwright test --project chromium --reporter=line",
         "test:report": "playwright show-report"
     },
     "keywords": [],
@@ -11,7 +11,10 @@
     "license": "ISC",
     "description": "",
     "devDependencies": {
+        "@eslint/js": "^9.9.0",
         "@playwright/test": "^1.46.1",
-        "@types/node": "^22.5.0"
+        "@types/node": "^22.5.0",
+        "eslint": "^9.9.0",
+        "globals": "^15.9.0"
     }
 }
