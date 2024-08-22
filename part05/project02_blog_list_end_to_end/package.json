@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "test": "playwright test --project chromium --reporter=line",
+        "test": "playwright test --project chromium --reporter=line --workers=1",
         "test:report": "playwright show-report"
     },
     "keywords": [],
