@@ -54,6 +54,42 @@ describe("Blog app", () => {
                 page.getByText("Invalid username or password")
             ).toBeVisible()
         })
+
+        describe("When logged in", () => {
+            beforeEach(async ({ page }) => {
+                const { username, password } = testUser
+                login(page, username, password)
+            })
+
+            async function createBlog(page, title, author, url)
+            {
+                await page.getByRole("button", { name: "New Blog" }).click()
+                await page.getByLabel("Title").fill(title)
+                await page.getByLabel("Author").fill(author)
+                await page.getByLabel("Url").fill(url)
+                await page.getByText("Add Blog").click()
+            }
+
+            test("a new blog can be created", async ({ page }) => {
+                const title = "title"
+                const author = "author"
+                const url = "www.example.org"
+                await createBlog(page, title, author, url)
+
+                await expect(
+                    page.getByText("Added new blog")
+                ).toBeVisible()
+
+                await expect(
+                    page.getByText(`${title} ${author}`, { exact: true })
+                ).toBeVisible()
+
+                await expect(
+                    page.getByRole("button", { name: "Show" })
+                ).toBeVisible()
+            })
+        })
+
     })
 
 })

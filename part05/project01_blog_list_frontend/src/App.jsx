@@ -111,7 +111,6 @@ const App = () => {
         const blog = { title, author, url }
         try {
             const responseBlog = await blogService.addBlog(blog, user)
-            console.log(responseBlog)
             setBlogs(blogs.concat(responseBlog))
             _setNotification(`Added new blog "${title}" from ${author}`, true, 5000)
             //true for success
