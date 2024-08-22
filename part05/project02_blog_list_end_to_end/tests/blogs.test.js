@@ -70,10 +70,14 @@ describe("Blog app", () => {
                 await page.getByText("Add Blog").click()
             }
 
+            const testBlog = {
+                title: "title",
+                author: "author",
+                url: "www.example.org"
+            }
+
             test("a new blog can be created", async ({ page }) => {
-                const title = "title"
-                const author = "author"
-                const url = "www.example.org"
+                const { title, author, url } = testBlog
                 await createBlog(page, title, author, url)
 
                 await expect(
@@ -87,6 +91,29 @@ describe("Blog app", () => {
                 await expect(
                     page.getByRole("button", { name: "Show" })
                 ).toBeVisible()
+            })
+
+            test("created blog can be liked", async ({ page }) => {
+                const { title, author, url } = testBlog
+                await createBlog(page, title, author, url)
+
+                await page.getByRole("button", { name: "Show" }).click()
+
+                const likeButton = page.getByRole("button", { name: "Like" })
+                const likeDiv = likeButton.locator("..")
+
+                await expect(
+                    likeDiv
+                ).toBeVisible()
+
+                await expect(
+                    likeDiv
+                ).toHaveText(/likes 0/)
+
+                await likeButton.click()
+                await expect(
+                    likeDiv
+                ).toHaveText(/likes 1/)
             })
         })
 
