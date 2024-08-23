@@ -71,8 +71,8 @@ describe("Blog app", () => {
             }
 
             const testBlog = {
-                title: "title",
-                author: "author",
+                title: "test blog title",
+                author: "test blog author",
                 url: "www.example.org"
             }
 
@@ -126,6 +126,46 @@ describe("Blog app", () => {
                 deleteButton.click()
                 page.on("dialog", dialog => dialog.accept())
                 await expect(deleteButton).not.toBeVisible()
+            })
+
+            const otherUser = {
+                username: "other_username",
+                password: "other_password",
+                name: "Jane Doe"
+            }
+
+            // Well, the "visible to maker" part is really tested above,
+            // while this ensures the "only" part
+            test("blog delete is only visible to maker", async ({ page, request }) => {
+
+                // create the blog
+                const { title, author, url } = testBlog
+                await createBlog(page, title, author, url)
+
+                // log out
+                await page.getByRole("button", { name: "Log out" }).click()
+                await request.post("api/users", { data: otherUser })
+
+                // login with other user
+                const { username, password } = otherUser
+                await login(page, username, password)
+
+                // test blog existence, test delete non-existence
+                // ----------------------------------------------
+                await page.getByRole("button", { name: "Show" }).click()
+                // assumes testBlog title is unique to the page,
+                // so should choose a sufficiently unique one (
+                // just "ensuring" that the blog is actually there, a button
+                // with a "show" might not be unique to the blogs)
+                await expect(
+                    page.getByText(testBlog.title).first()
+                ).toBeVisible()
+
+                await expect(
+                    page.getByRole("button", { name: "Delete" })
+                ).not.toBeVisible()
+                // ================================================
+
             })
         })
 
