@@ -115,6 +115,18 @@ describe("Blog app", () => {
                     likeDiv
                 ).toHaveText(/likes 1/)
             })
+
+            test("created blog can be deleted", async ({ page }) => {
+                const { title, author, url } = testBlog
+                await createBlog(page, title, author, url)
+                await page.getByRole("button", { name: "Show" }).click()
+
+                const deleteButton = page.getByRole("button", { name: "Delete" })
+                await expect(deleteButton).toBeVisible()
+                deleteButton.click()
+                page.on("dialog", dialog => dialog.accept())
+                await expect(deleteButton).not.toBeVisible()
+            })
         })
 
     })
