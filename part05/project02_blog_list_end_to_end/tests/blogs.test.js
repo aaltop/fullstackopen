@@ -68,6 +68,7 @@ describe("Blog app", () => {
                 await page.getByLabel("Author").fill(author)
                 await page.getByLabel("Url").fill(url)
                 await page.getByText("Add Blog").click()
+                await page.getByText(`${title} ${author}`).waitFor()
             }
 
             const testBlog = {
@@ -165,6 +166,48 @@ describe("Blog app", () => {
                     page.getByRole("button", { name: "Delete" })
                 ).not.toBeVisible()
                 // ================================================
+
+            })
+
+            test("blogs are sorted by likes in descending order", async ({ page }) => {
+                test.slow()
+
+                const { title, author, url } = testBlog
+                await createBlog(page, title, author, url)
+                await createBlog(page, title + " 2", author, url)
+                await createBlog(page, title + " 3", author, url)
+
+                let showButtons = await page.getByRole("button", { name: "Show" }).all()
+
+                // like each blog a different number of times (blog 3 gets 2 likes,
+                // blog 2 gets 1...)
+                for (let i = 0; i < showButtons.length; ++i)
+                {
+                    showButtons[i].click()
+                    const likeButton = page.getByRole("button", { name: "Like" })
+                    for (let j = 0; j < i; ++j) {
+                        await likeButton.click()
+                        await page.getByText(`likes ${j+1}`).waitFor()
+                    }
+                    await page.getByRole("button", { name: "Hide" }).click()
+
+                }
+
+                // no need to check the last one, because only three blogs
+                // and two degrees of freedom for location (and it's
+                // also easier as that one doesn't have the number in
+                // the title :D though could add the number)
+                showButtons = await page.getByRole("button", { name: "Show" }).all()
+                for (let i = showButtons.length; i > 1; --i)
+                {
+                    // hmm, maybe it would be better to use test ids
+                    // expect "latest" blog to be first in list, see above
+                    // loop
+                    const blog = showButtons[3-i].locator("../..")
+
+                    await expect(blog).toContainText(`${title} ${i}`)
+                }
+
 
             })
         })
