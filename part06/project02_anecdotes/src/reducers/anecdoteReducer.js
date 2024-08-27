@@ -30,14 +30,25 @@ export function addVote(id)
         payload: { id }
     }
 }
+
+const addAnecdoteAction = route+"addAnecdote"
+export function addAnecdote(anecdote)
+{
+    return {
+        type: addAnecdoteAction,
+        payload: { anecdote }
+    }
+}
 // ===================
 
 function reducer(state = initialState, action)
 {
     console.log("state now: ", state)
     console.log("action", action)
-    switch (action.type) {
+    switch (action.type)
+    {
         case voteAction:
+        {
             const { id } = action.payload
             return state.map(anecdote => {
                 if (anecdote.id !== id) return anecdote
@@ -46,9 +57,15 @@ function reducer(state = initialState, action)
                     votes: anecdote.votes + 1
                 }
             })
+        }
+        case addAnecdoteAction:
+        {
+            const { anecdote } = action.payload
+            return state.concat(asObject(anecdote))
+        }
 
-        default:
-            return state
+
+        default: return state
     }
 }
 
