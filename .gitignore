@@ -17,4 +17,4 @@ node_modules
 dist
 
 # ESlint
-!*eslint.config.mjs
+!*eslint.config.cjs

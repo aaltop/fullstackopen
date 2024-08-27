@@ -6,9 +6,7 @@ const anecdotesAtStart = [
     "Premature optimization is the root of all evil.",
     "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it."
 ]
-
 const getId = () => (100000 * Math.random()).toFixed(0)
-
 const asObject = (anecdote) => {
     return {
         content: anecdote,
@@ -16,14 +14,42 @@ const asObject = (anecdote) => {
         votes: 0
     }
 }
-
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
+
+
+// Action creators
+// ----------------
+const route = "anecdotes/"
+
+const voteAction = route+"vote"
+export function addVote(id)
+{
+    return {
+        type: voteAction,
+        payload: { id }
+    }
+}
+// ===================
+
+function reducer(state = initialState, action)
+{
     console.log("state now: ", state)
     console.log("action", action)
+    switch (action.type) {
+        case voteAction:
+            const { id } = action.payload
+            return state.map(anecdote => {
+                if (anecdote.id !== id) return anecdote
+                return {
+                    ...anecdote,
+                    votes: anecdote.votes + 1
+                }
+            })
 
-    return state
+        default:
+            return state
+    }
 }
 
 export default reducer
