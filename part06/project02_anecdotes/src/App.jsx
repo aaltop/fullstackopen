@@ -1,22 +1,19 @@
 import { addVote, addAnecdote } from "./reducers/anecdoteReducer"
 
-import { useSelector, useDispatch } from "react-redux"
+import AnecdoteForm from "./components/AnecdoteForm"
+
+import { useSelector, useDispatch, shallowEqual } from "react-redux"
 
 const App = () => {
-    const anecdotes = useSelector(state => state.toSorted( (a, b) => b.votes - a.votes ))
+    // using shallowEqual because otherwise a new array is created each time
+    // which does not compare correctly with the previous one,
+    // forcing a re-render even if the new array is actually the same
+    const anecdotes = useSelector(state => state.toSorted( (a, b) => b.votes - a.votes ), shallowEqual)
     const dispatch = useDispatch()
 
     const vote = (id) => {
         console.log("vote", id)
         dispatch(addVote(id))
-    }
-
-    function newAnecdote(ev)
-    {
-        ev.preventDefault()
-        const anecdote = ev.target.anecdote.value
-        console.log("New anecdote", anecdote)
-        dispatch(addAnecdote(anecdote))
     }
 
     return (
@@ -34,10 +31,7 @@ const App = () => {
                 </div>
             )}
             <h2>create new</h2>
-            <form onSubmit={ newAnecdote }>
-                <div><input name="anecdote"/></div>
-                <button>create</button>
-            </form>
+            <AnecdoteForm />
         </div>
     )
 }
