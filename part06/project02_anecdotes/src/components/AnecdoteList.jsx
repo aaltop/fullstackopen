@@ -9,7 +9,12 @@ export default function AnecdoteList()
     // using shallowEqual because otherwise a new array is created each time
     // which does not compare correctly with the previous one,
     // forcing a re-render even if the new array is actually the same
-    const anecdotes = useSelector(state => state.toSorted( (a, b) => b.votes - a.votes ), shallowEqual)
+    const anecdotes = useSelector(({ anecdotes, filter }) => {
+        const filteredAnecdotes = anecdotes.filter(anec => {
+            return anec.content.toLowerCase().includes(filter)
+        })
+        return filteredAnecdotes.toSorted( (a, b) => b.votes - a.votes )
+    }, shallowEqual)
     const dispatch = useDispatch()
 
     function vote(id)
