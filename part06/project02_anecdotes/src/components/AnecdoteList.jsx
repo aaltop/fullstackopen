@@ -11,7 +11,7 @@ export default function AnecdoteList()
     // forcing a re-render even if the new array is actually the same
     const anecdotes = useSelector(({ anecdotes, filter }) => {
         const filteredAnecdotes = anecdotes.filter(anec => {
-            return anec.content.toLowerCase().includes(filter)
+            return anec.content.toLowerCase().includes(filter.toLowerCase())
         })
         return filteredAnecdotes.toSorted( (a, b) => b.votes - a.votes )
     }, shallowEqual)
