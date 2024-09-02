@@ -1,4 +1,5 @@
 import { addAnecdote } from "../reducers/anecdoteReducer"
+import { changeNotification, resetNotification } from "../reducers/notificationReducer"
 
 import { useDispatch } from "react-redux"
 
@@ -13,6 +14,10 @@ export default function AnecdoteForm({ onSubmit })
         const anecdote = ev.target.anecdote.value
         console.log("New anecdote", anecdote)
         dispatch(addAnecdote(anecdote))
+
+        // should probably put this timed notification code somewhere global
+        const timeoutId = setTimeout(() => dispatch(resetNotification()), 5000)
+        dispatch(changeNotification(`New anecdote: "${anecdote}"`, timeoutId))
     }
 
     // Don't know if it's a recommended thing to do,

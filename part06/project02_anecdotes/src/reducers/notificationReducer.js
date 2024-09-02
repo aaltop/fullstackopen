@@ -1,17 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = "This is a placeholder value for the notification"
+const initialState = {
+    message: "",
+    timeoutId: null
+}
 
 const notificationSlice = createSlice({
     name: "notification",
     initialState,
     reducers: {
-        changeNotification(state, action)
+        changeNotification: {
+            reducer: (state, action) => {
+                const { message, timeoutId } = action.payload
+                clearTimeout(state.timeoutId)
+                return {
+                    message,
+                    timeoutId
+                }
+            },
+            prepare: (message, timeoutId) => {
+                return { payload: { message, timeoutId } }
+            }
+        },
+        resetNotification(state, action)
         {
-            return action.payload
+            return initialState
         }
     }
 })
 
-export const { changeNotification } = notificationSlice.actions
+export const { changeNotification, resetNotification } = notificationSlice.actions
 export default notificationSlice.reducer
