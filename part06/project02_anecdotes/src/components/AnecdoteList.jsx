@@ -23,8 +23,7 @@ export default function AnecdoteList()
         console.log("vote", id)
         dispatch(addVote(id))
         const content = anecdotes.find(anec => anec.id === id).content
-        const timeoutId = setTimeout(() => dispatch(resetNotification()), 5000)
-        dispatch(changeNotification(`You voted "${content}"`, timeoutId))
+        dispatch(changeNotification(`You voted "${content}"`, 5))
     }
 
     return (
