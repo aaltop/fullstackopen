@@ -12,6 +12,13 @@ async function getAll()
     return response.data
 }
 
+async function createNew(anecdote)
+{
+    const response = await axios.post(baseUrl, anecdote)
+    return response.data
+}
+
 export default {
-    getAll
+    getAll,
+    createNew
 }
