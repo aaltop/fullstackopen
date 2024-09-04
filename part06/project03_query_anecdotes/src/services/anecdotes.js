@@ -4,6 +4,10 @@ import axios from "axios"
 
 
 const baseUrl = config.baseUrlPrefix + "anecdotes"
+function urlWithId(id)
+{
+    return baseUrl + "/" + id
+}
 
 async function getAll()
 {
@@ -18,7 +22,15 @@ async function createNew(anecdote)
     return response.data
 }
 
+async function addVote(anecdote)
+{
+    const data = { votes: anecdote.votes + 1 }
+    const response = await axios.patch(urlWithId(anecdote.id), data)
+    return response.data
+}
+
 export default {
     getAll,
-    createNew
+    createNew,
+    addVote
 }
