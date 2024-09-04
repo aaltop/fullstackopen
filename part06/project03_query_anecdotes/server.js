@@ -1,3 +1,6 @@
+import server_config from "./src/services/config.js"
+const { SERVER_PORT } = server_config
+
 import jsonServer from 'json-server'
 
 const server = jsonServer.create()
@@ -23,6 +26,6 @@ server.use(jsonServer.bodyParser)
 server.use(validator)
 server.use(router)
 
-server.listen(3001, () => {
+server.listen(SERVER_PORT, () => {
   console.log('JSON Server is running')
 })
