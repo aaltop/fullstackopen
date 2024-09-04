@@ -2,7 +2,7 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import anecdoteService from "./services/anecdotes"
 
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 const App = () => {
 
@@ -12,8 +12,10 @@ const App = () => {
 
     const anecdotesQuery = useQuery({
         queryKey: ["anecdotes"],
-        queryFn: anecdoteService.getAll
+        queryFn: anecdoteService.getAll,
+        refetchOnWindowFocus: false
     })
+
 
     if (anecdotesQuery.isPending)
     {
