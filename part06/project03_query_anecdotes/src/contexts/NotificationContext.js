@@ -24,6 +24,13 @@ export function resetNotification()
     }
 }
 
+export function notifyWithTimeout(dispatch, message, timeoutSecs = 5)
+{
+    const timeout = timeoutSecs*1000
+    const timeoutId = setTimeout(() => dispatch(resetNotification()), timeout)
+    dispatch(changeNotification(message, timeoutId))
+}
+
 function reducer(state, action)
 {
     switch (action.type)
