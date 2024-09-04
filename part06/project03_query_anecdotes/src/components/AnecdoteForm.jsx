@@ -1,9 +1,13 @@
 import anecdoteService from "../services/anecdotes"
+import { NotificationContext, changeNotification, resetNotification } from "../contexts/NotificationContext"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useContext } from "react"
 
 
 const AnecdoteForm = () => {
+
+    const [ _notifState, notifDispatch ] = useContext(NotificationContext)
 
     const queryClient = useQueryClient()
 
@@ -21,6 +25,12 @@ const AnecdoteForm = () => {
         const content = event.target.anecdote.value
         event.target.anecdote.value = ''
         addAnecdoteMutation.mutate(content)
+
+        const timeoutId = setTimeout(
+            () => notifDispatch(resetNotification()),
+            5000
+        )
+        notifDispatch(changeNotification(`New anecdote "${content}"`, timeoutId))
     }
 
     return (
