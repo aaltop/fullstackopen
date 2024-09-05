@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
 import AnecdoteList from './components/AnecdoteList'
 import Menu from './components/Menu'
 import Footer from './components/Footer'
 import About from './components/About'
 import CreateNew from './components/CreateNew'
+import Anecdote from './components/Anecdote'
 
 
 import { useState } from 'react'
@@ -48,6 +48,17 @@ const router = createBrowserRouter([
                 <CreateNew />
             </Layout>
         )
+    },
+    {
+        path: "/anecdotes/:id",
+        element: (
+            <Layout>
+                <Anecdote />
+            </Layout>
+        ),
+        loader: ({ params }) => {
+            return { id: params.id }
+        }
     }
 ])
 
