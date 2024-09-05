@@ -4,6 +4,7 @@ import Footer from './components/Footer'
 import About from './components/About'
 import CreateNew from './components/CreateNew'
 import Anecdote from './components/Anecdote'
+import Notification from './components/Notification'
 
 
 import { useState } from 'react'
@@ -18,6 +19,7 @@ function Layout(props)
         <div>
             <h1>Software anecdotes</h1>
             <Menu />
+            <Notification />
             {props.children}
             <Footer />
         </div>

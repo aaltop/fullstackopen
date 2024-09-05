@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { AnecdotesContext, newAnecdote } from "../contexts/AnecdotesContext"
+import { NotificationContext, notifyWithTimeout } from "../contexts/NotificationContext"
 
 import { useState, useContext } from "react"
+import { useNavigate } from "react-router-dom"
 
 
 export default function CreateNew()
@@ -12,10 +14,14 @@ export default function CreateNew()
     const [info, setInfo] = useState('')
 
     const [ anecdotes, anecdotesDispatch ] = useContext(AnecdotesContext)
+    const [ notif, notifDispatch ] = useContext(NotificationContext)
+    const navigate = useNavigate()
   
     const handleSubmit = (e) => {
-      e.preventDefault()
-      anecdotesDispatch(newAnecdote(content, author, info))
+        e.preventDefault()
+        anecdotesDispatch(newAnecdote(content, author, info))
+        notifyWithTimeout(notifDispatch, `a new anecdote ${content} created!`, 5)
+        navigate("/")
     }
   
     return (

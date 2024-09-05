@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 // This is from my solution for the previous part's project 03
-import AnecdotesContextProps from "./AnecdotesContext";
+import AnecdotesContextProps from "./AnecdotesContext"
+import NotificationContextProps from "./NotificationContext"
 
-import { useReducer } from "react";
+import { useReducer } from "react"
 
 
 function createContext({ context, reducer, initialState })
@@ -21,3 +22,4 @@ function createContext({ context, reducer, initialState })
 
 
 export const AnecdotesContextProvider = createContext(AnecdotesContextProps)
+export const NotificationContextProvider = createContext(NotificationContextProps)
