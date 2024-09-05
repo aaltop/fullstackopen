@@ -1,22 +1,21 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState } from "react"
+import { AnecdotesContext, newAnecdote } from "../contexts/AnecdotesContext"
+
+import { useState, useContext } from "react"
 
 
-export default function CreateNew(props)
+export default function CreateNew()
 {
     const [content, setContent] = useState('')
     const [author, setAuthor] = useState('')
     const [info, setInfo] = useState('')
-  
+
+    const [ anecdotes, anecdotesDispatch ] = useContext(AnecdotesContext)
   
     const handleSubmit = (e) => {
       e.preventDefault()
-      props.addNew({
-        content,
-        author,
-        info,
-        votes: 0
-      })
+      anecdotesDispatch(newAnecdote(content, author, info))
     }
   
     return (
