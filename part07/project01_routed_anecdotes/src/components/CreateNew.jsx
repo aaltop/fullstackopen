@@ -1,17 +1,16 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import { AnecdotesContext, newAnecdote } from "../contexts/AnecdotesContext"
 import { NotificationContext, notifyWithTimeout } from "../contexts/NotificationContext"
+import { useField } from "../hooks"
 
-import { useState, useContext } from "react"
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 
 
 export default function CreateNew()
 {
-    const [content, setContent] = useState('')
-    const [author, setAuthor] = useState('')
-    const [info, setInfo] = useState('')
+    const content = useField()
+    const author = useField()
+    const info = useField()
 
     const [ anecdotes, anecdotesDispatch ] = useContext(AnecdotesContext)
     const [ notif, notifDispatch ] = useContext(NotificationContext)
@@ -19,8 +18,8 @@ export default function CreateNew()
   
     const handleSubmit = (e) => {
         e.preventDefault()
-        anecdotesDispatch(newAnecdote(content, author, info))
-        notifyWithTimeout(notifDispatch, `a new anecdote ${content} created!`, 5)
+        anecdotesDispatch(newAnecdote(content.value, author.value, info.value))
+        notifyWithTimeout(notifDispatch, `a new anecdote ${content.value} created!`, 5)
         navigate("/")
     }
   
@@ -30,15 +29,15 @@ export default function CreateNew()
         <form onSubmit={handleSubmit}>
           <div>
             content
-            <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+            <input {...content} />
           </div>
           <div>
             author
-            <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+            <input {...author} />
           </div>
           <div>
             url for more info
-            <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+            <input {...info} />
           </div>
           <button>create</button>
         </form>
