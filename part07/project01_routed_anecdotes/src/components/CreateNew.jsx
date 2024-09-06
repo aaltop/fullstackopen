@@ -8,9 +8,10 @@ import { useNavigate } from "react-router-dom"
 
 export default function CreateNew()
 {
-    const content = useField()
-    const author = useField()
-    const info = useField()
+    // Wow, can't believe the rename works, didn't even look it up
+    const { inputProps: content, reset: contentReset } = useField()
+    const { inputProps: author, reset: authorReset } = useField()
+    const { inputProps: info, reset: infoReset } = useField()
 
     const [ anecdotes, anecdotesDispatch ] = useContext(AnecdotesContext)
     const [ notif, notifDispatch ] = useContext(NotificationContext)
@@ -21,6 +22,15 @@ export default function CreateNew()
         anecdotesDispatch(newAnecdote(content.value, author.value, info.value))
         notifyWithTimeout(notifDispatch, `a new anecdote ${content.value} created!`, 5)
         navigate("/")
+    }
+
+    function resetForm(e)
+    {
+        // doesn't seem to do anything anyways, but still
+        e.preventDefault()
+        contentReset()
+        authorReset()
+        infoReset()
     }
   
     return (
@@ -40,6 +50,7 @@ export default function CreateNew()
             <input {...info} />
           </div>
           <button>create</button>
+          <button type="reset" onClick={resetForm}>reset</button>
         </form>
       </div>
     )
