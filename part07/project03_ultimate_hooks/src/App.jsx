@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 
 const useField = (type) => {
@@ -18,14 +18,33 @@ const useField = (type) => {
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  // supposed "proper" way of doing it, seeing as the linter
+  // complains otherwise, and I imagine that this is needed or
+  // otherwise the the function won't compare equal? Though in reality
+  // I could just have baseUrl as dependency to the useEffect, but
+  // with increasing number of destructuring a direct dependency to
+  // an indirect one, it'd be difficult to keep track of. Ultimately,
+  // I know that getAll should effectively not change (I think?), and therefore
+  // React complains for naught. In this case, however, the function
+  // should actually be moved outside the component.
+  const getAll = useCallback(async () => {
+    const data = (await axios.get(baseUrl)).data
+    setResources(data)
+  }, [baseUrl])
 
-  const create = (resource) => {
-    // ...
+  async function create(resource)
+  {
+    const data = (await axios.post(baseUrl, resource)).data
+    setResources(resources.concat(data))
   }
 
+  useEffect(() => {
+    getAll()
+  }, [getAll])
+
   const service = {
-    create
+    create,
+    getAll
   }
 
   return [
