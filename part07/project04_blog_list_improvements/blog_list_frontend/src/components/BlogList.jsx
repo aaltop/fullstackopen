@@ -2,12 +2,18 @@ import blogService from "../services/blogs"
 
 import Blog from "./Blog"
 
-import { useQueryClient, useQuery } from "@tanstack/react-query"
+import { UserContext } from "../contexts/UserContext"
+import { NotificationContext, notifyWithTimeout } from "../contexts/NotificationContext"
+
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query"
+import { useContext } from "react"
 
 
 export default function BlogList({ username })
 {
     const queryClient = useQueryClient()
+    const user = useContext(UserContext)[0]
+    const notificationDispatch = useContext(NotificationContext)[1]
 
     const blogsQuery = useQuery({
         queryKey: ["blogs"],
@@ -17,10 +23,41 @@ export default function BlogList({ username })
         }
     })
 
+    const blogDeleteMutation = useMutation({
+        mutationFn: async ({ blog, blogIdx }) => {
+            await blogService.deleteBlog(blog, user.token)
+            return { blog, blogIdx }
+        },
+        onSuccess: ({ blog, blogIdx }) => {
+            const blogs = queryClient.getQueryData(["blogs"])
+            queryClient.setQueryData(
+                ["blogs"],
+                blogs.filter((_blog, index) => index !== blogIdx)
+            )
+            notifyWithTimeout(
+                notificationDispatch,
+                `Deleted "${blog.title}" by ${blog.author}`,
+                true,
+                5000
+            )
+        }
+    })
+
+    const blogs = blogsQuery.data
+
+    function deleteBlog(blog, blogIdx)
+    {
+        if (!window.confirm(`Delete "${blog.title}" by ${blog.author}?`)) {
+            return false
+        }
+        blogDeleteMutation.mutate({ blog, blogIdx })
+        return true
+    }
+
 
     return (
         <div>
-            {blogsQuery.data?.map( (blog, blogIdx) =>
+            {blogs?.map( (blog, blogIdx) =>
                 <Blog
                     key={ blog.id }
                     blog={ blog }

@@ -85,11 +85,6 @@ const App = () => {
 
     }
 
-    function setBlogs(blogs)
-    {
-        _setBlogs(blogs.toSorted((x, y) => y.likes - x.likes))
-    }
-
     /**
      * Update blog on client side.
      */
