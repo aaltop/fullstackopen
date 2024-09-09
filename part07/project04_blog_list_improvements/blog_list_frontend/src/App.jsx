@@ -3,11 +3,13 @@ import LoginForm from "./components/LoginForm"
 import BlogAddForm from "./components/BlogAddForm"
 import Notification from "./components/Notification"
 
+import { NotificationContext, notifyWithTimeout } from "./contexts/NotificationContext"
+
 import blogService from "./services/blogs"
 import loginService from "./services/login"
 import userService from "./services/users"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 
 const App = () => {
     const [blogs, _setBlogs] = useState([])
@@ -15,7 +17,7 @@ const App = () => {
     const [user, setUser] = useState(window.localStorage.getItem("user"))
     const [username, setUsername] = useState(window.localStorage.getItem("username"))
     const [name, setName] = useState(null)
-    const [notification, setNotification] = useState({ text: null, timeoutId: null, success: true })
+    const [notification, notificationDispatch] = useContext(NotificationContext)
 
     async function fetchUser()
     {
@@ -63,24 +65,13 @@ const App = () => {
     // in and not have the dependency here, though.
     }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    function _setNotification(text, success, timeout)
+    function _setNotification(text, success, timeoutMilli)
     {
-
-        if (notification.timeoutId) {
-            clearTimeout(notification.timeoutId)
-        }
-
-        const emptyNotification = {
-            text: null,
-            timeoutId: null,
-            success: true
-        }
-        setNotification(
-            {
-                text: text,
-                success: success,
-                timeoutId: setTimeout(() => setNotification(emptyNotification), timeout)
-            }
+        notifyWithTimeout(
+            notificationDispatch,
+            text,
+            success,
+            timeoutMilli
         )
     }
 

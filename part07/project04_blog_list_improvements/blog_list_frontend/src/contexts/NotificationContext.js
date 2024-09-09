@@ -49,10 +49,9 @@ export function resetNotification()
 
 // ====================
 
-export function notifyWithTimeout(dispatch, text, success = true, timeoutSecs = 5)
+export function notifyWithTimeout(dispatch, text, success = true, timeoutMilli)
 {
-    const timeout = timeoutSecs*1000
-    const timeoutId = setTimeout(() => dispatch(resetNotification), timeout)
+    const timeoutId = setTimeout(() => dispatch(resetNotification()), timeoutMilli)
     dispatch(changeNotification(text, timeoutId, success))
 }
 
