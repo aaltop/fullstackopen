@@ -6,11 +6,10 @@ import BlogList from "./components/BlogList"
 import { NotificationContext, notifyWithTimeout } from "./contexts/NotificationContext"
 import { UserContext, setUser } from "./contexts/UserContext"
 
-import blogService from "./services/blogs"
 import loginService from "./services/login"
 import userService from "./services/users"
 
-import { useState, useEffect, useContext } from "react"
+import { useEffect, useContext } from "react"
 
 const App = () => {
 
@@ -24,6 +23,7 @@ const App = () => {
         window.location.reload()
     }
 
+    // get cached user info if possible
     useEffect(() => {
         const token = window.localStorage.getItem("token")
         const username = window.localStorage.getItem("username")
@@ -83,37 +83,6 @@ const App = () => {
             _setNotification("Invalid username or password", false, 5000)
         }
 
-    }
-
-    /**
-     * Update blog on client side.
-     */
-    function updateBlog(newBlog, blogIdx)
-    {
-        const newBlogs = [...blogs]
-        newBlogs[blogIdx] = newBlog
-        setBlogs(newBlogs)
-    }
-
-    /**
-     * Delete blog on server and client.
-     */
-    function deleteBlog(blog, blogIdx)
-    {
-        if (!window.confirm(`Delete "${blog.title}" by ${blog.author}?`)) {
-            return false
-        }
-        blogService.deleteBlog(blog, user.token)
-        const newBlogs = [...blogs]
-        setBlogs(newBlogs.filter((_blog, index) => index !== blogIdx))
-        _setNotification(`Deleted "${blog.title}" by ${blog.author}`, true, 5000)
-        return true
-    }
-
-    async function addBlogLike(blog, blogIdx)
-    {
-        const newBlog = await blogService.addLikes(blog.id, blog.likes+1)
-        updateBlog(newBlog, blogIdx)
     }
 
     const rootStyle = {

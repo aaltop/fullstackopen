@@ -43,6 +43,7 @@ export default function BlogList({ username })
         }
     })
 
+
     const blogs = blogsQuery.data
 
     function deleteBlog(blog, blogIdx)
@@ -52,6 +53,24 @@ export default function BlogList({ username })
         }
         blogDeleteMutation.mutate({ blog, blogIdx })
         return true
+    }
+
+    function updateBlog(newBlog, blogIdx)
+    {
+        queryClient.setQueryData(
+            ["blogs"],
+            (oldBlogs) => {
+                const newBlogs = [...oldBlogs]
+                newBlogs[blogIdx] = newBlog
+                return newBlogs.toSorted((x, y) => y.likes - x.likes)
+            }
+        )
+    }
+
+    async function addBlogLike(blog, blogIdx)
+    {
+        const newBlog = await blogService.addLikes(blog.id, blog.likes+1)
+        updateBlog(newBlog, blogIdx)
     }
 
 
