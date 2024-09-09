@@ -1,30 +1,40 @@
-import Blog from "./components/Blog"
 import LoginForm from "./components/LoginForm"
 import BlogAddForm from "./components/BlogAddForm"
 import Notification from "./components/Notification"
+import BlogList from "./components/BlogList"
 
 import { NotificationContext, notifyWithTimeout } from "./contexts/NotificationContext"
+import { UserContext, setUser } from "./contexts/UserContext"
 
 import blogService from "./services/blogs"
 import loginService from "./services/login"
 import userService from "./services/users"
 
 import { useState, useEffect, useContext } from "react"
-import BlogList from "./components/BlogList"
 
 const App = () => {
 
-    // for token
-    const [user, setUser] = useState(window.localStorage.getItem("user"))
-    const [username, setUsername] = useState(window.localStorage.getItem("username"))
-    const [name, setName] = useState(null)
     const [notification, notificationDispatch] = useContext(NotificationContext)
+    const [user, userDispatch] = useContext(UserContext)
+
+    function logOut()
+    {
+        window.localStorage.removeItem("token")
+        window.localStorage.removeItem("username")
+        window.location.reload()
+    }
+
+    useEffect(() => {
+        const token = window.localStorage.getItem("token")
+        const username = window.localStorage.getItem("username")
+        userDispatch(setUser({ ...user, username, token }))
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     async function fetchUser()
     {
         try {
-            const userData = await userService.getUser(username, user)
-            setName(userData.name)
+            const userData = await userService.getUser(user.username, user.token)
+            userDispatch(setUser({ ...user, name: userData.name }))
         } catch (e) {
             if (e.response.status === 401 && e.response.data.error.includes("Expired token")) {
                 logOut()
@@ -32,29 +42,13 @@ const App = () => {
                 throw e
             }
         }
-
     }
-
-    async function fetchBlogs()
-    {
-        setBlogs(await blogService.getAll())
-    }
-
-    function logOut()
-    {
-        window.localStorage.removeItem("user")
-        window.localStorage.removeItem("username")
-        window.location.reload()
-    }
-
-
 
     // initialise
     useEffect(() => {
         console.log("Fetch data")
-        if (user) {
+        if (user.token) {
             fetchUser()
-            // fetchBlogs()
         }
     // sure react, I really should have fetchUser as dependency
     // as that will not be reached regardless unless user is truthy...
@@ -64,7 +58,7 @@ const App = () => {
     // the application, and I guess this is the way to do it?
     // could call the just the fetch functions themselves once logging
     // in and not have the dependency here, though.
-    }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [user.token]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function _setNotification(text, success, timeoutMilli)
     {
@@ -81,11 +75,10 @@ const App = () => {
 
         ev.preventDefault()
         const token = await loginService.login(username, password)
-        setUser(token)
         if (token) {
-            window.localStorage.setItem("user", token)
+            window.localStorage.setItem("token", token)
             window.localStorage.setItem("username", username)
-            setUsername(username)
+            userDispatch(setUser({ ...user, username, token }))
         } else {
             _setNotification("Invalid username or password", false, 5000)
         }
@@ -115,7 +108,7 @@ const App = () => {
         if (!window.confirm(`Delete "${blog.title}" by ${blog.author}?`)) {
             return false
         }
-        blogService.deleteBlog(blog, user)
+        blogService.deleteBlog(blog, user.token)
         const newBlogs = [...blogs]
         setBlogs(newBlogs.filter((_blog, index) => index !== blogIdx))
         _setNotification(`Deleted "${blog.title}" by ${blog.author}`, true, 5000)
@@ -134,7 +127,7 @@ const App = () => {
         alignItems: "center"
     }
 
-    if (null === user) {
+    if (null === user.token) {
         return (
             <div style={rootStyle}>
                 <Notification text={notification.text} success={notification.success}/>
@@ -147,13 +140,13 @@ const App = () => {
         <div style={rootStyle}>
             <Notification text={notification.text} success={notification.success}/>
             <div>
-                {name} is logged in
+                {user.name} is logged in
                 <button type="button" onClick={logOut}>Log Out</button>
             </div>
             <h2>Add new blog</h2>
-            <BlogAddForm user={user}/>
+            <BlogAddForm user={user.token}/>
             <h2>Blogs</h2>
-            <BlogList username={username} />
+            <BlogList username={user.username} />
         </div>
     )
 }

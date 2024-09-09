@@ -1,6 +1,7 @@
-import { useReducer } from "react"
 import { NotificationContextProps } from "./NotificationContext"
+import { UserContextProps } from "./UserContext"
 
+import { useReducer } from "react"
 
 
 function getContextProvider({ context, reducer, initialState })
@@ -22,3 +23,4 @@ function getContextProvider({ context, reducer, initialState })
 
 
 export const NotificationContextProvider = getContextProvider(NotificationContextProps)
+export const UserContextProvider = getContextProvider(UserContextProps)
