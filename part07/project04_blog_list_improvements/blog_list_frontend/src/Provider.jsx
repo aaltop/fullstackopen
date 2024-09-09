@@ -2,28 +2,30 @@
 
 import {
     NotificationContextProvider,
-    UserContextProvider
+    UserContextProvider,
 } from "./contexts/contextProviders"
 
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
+import {
+    QueryClientProvider,
+    QueryClient,
+} from "@tanstack/react-query"
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            refetchOnWindowFocus: false
-        }
-    }
+            refetchOnWindowFocus: false,
+        },
+    },
 })
 
-export default function Provider(props)
-{
+export default function Provider(props) {
     return (
         <QueryClientProvider client={queryClient}>
-        <NotificationContextProvider>
-        <UserContextProvider>
-            {props.children}
-        </UserContextProvider>
-        </NotificationContextProvider>
+            <NotificationContextProvider>
+                <UserContextProvider>
+                    {props.children}
+                </UserContextProvider>
+            </NotificationContextProvider>
         </QueryClientProvider>
     )
 }

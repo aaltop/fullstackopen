@@ -1,9 +1,6 @@
 import { useState } from "react"
 
-
-function Notification({ text, success = true })
-{
-
+function Notification({ text, success = true }) {
     const successStyle = {
         color: "#111d8c",
         background: "lightgrey",
@@ -12,12 +9,12 @@ function Notification({ text, success = true })
         borderRadius: 5,
         padding: 10,
         marginBottom: 10,
-        width: "fit-content"
+        width: "fit-content",
     }
 
     const failureStyle = {
         ...successStyle,
-        color: "#b5471b"
+        color: "#b5471b",
     }
 
     if (!text) {
