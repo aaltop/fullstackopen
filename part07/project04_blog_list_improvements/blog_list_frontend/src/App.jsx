@@ -10,9 +10,10 @@ import loginService from "./services/login"
 import userService from "./services/users"
 
 import { useState, useEffect, useContext } from "react"
+import BlogList from "./components/BlogList"
 
 const App = () => {
-    const [blogs, _setBlogs] = useState([])
+
     // for token
     const [user, setUser] = useState(window.localStorage.getItem("user"))
     const [username, setUsername] = useState(window.localStorage.getItem("username"))
@@ -53,7 +54,7 @@ const App = () => {
         console.log("Fetch data")
         if (user) {
             fetchUser()
-            fetchBlogs()
+            // fetchBlogs()
         }
     // sure react, I really should have fetchUser as dependency
     // as that will not be reached regardless unless user is truthy...
@@ -94,25 +95,6 @@ const App = () => {
     function setBlogs(blogs)
     {
         _setBlogs(blogs.toSorted((x, y) => y.likes - x.likes))
-    }
-
-    async function AddBlog(ev, title, author, url)
-    {
-        ev.preventDefault()
-        const blog = { title, author, url }
-        try {
-            const responseBlog = await blogService.addBlog(blog, user)
-            setBlogs(blogs.concat(responseBlog))
-            _setNotification(`Added new blog "${title}" from ${author}`, true, 5000)
-            //true for success
-            return true
-        } catch (e) {
-            if (e.name === "AxiosError" && e.response.status === 400) {
-                _setNotification(e.response.data.error, false, 5000)
-            }
-            // false for failure
-            return false
-        }
     }
 
     /**
@@ -169,17 +151,9 @@ const App = () => {
                 <button type="button" onClick={logOut}>Log Out</button>
             </div>
             <h2>Add new blog</h2>
-            <BlogAddForm submitAction={AddBlog}/>
+            <BlogAddForm user={user}/>
             <h2>Blogs</h2>
-            {blogs.map( (blog, blogIdx) =>
-                <Blog
-                    key={ blog.id }
-                    blog={ blog }
-                    clientUserData={{ username }}
-                    deleteBlog={() => deleteBlog(blog, blogIdx)}
-                    onLike={() => addBlogLike(blog, blogIdx)}
-                />
-            )}
+            <BlogList username={username} />
         </div>
     )
 }
