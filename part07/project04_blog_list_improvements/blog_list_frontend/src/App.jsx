@@ -2,6 +2,7 @@ import LoginForm from "./components/LoginForm"
 import BlogAddForm from "./components/BlogAddForm"
 import Notification from "./components/Notification"
 import BlogList from "./components/BlogList"
+import UsersView from "./components/UsersView"
 
 import {
     NotificationContext,
@@ -62,8 +63,8 @@ const App = () => {
 
     // initialise
     useEffect(() => {
-        console.log("Fetch data")
         if (user.token) {
+            console.log("Fetch data")
             fetchUser()
         }
         // sure react, I really should have fetchUser as dependency
@@ -143,6 +144,8 @@ const App = () => {
             <BlogAddForm user={user.token} />
             <h2>Blogs</h2>
             <BlogList username={user.username} />
+            <h2>Users</h2>
+            <UsersView />
         </div>
     )
 }
