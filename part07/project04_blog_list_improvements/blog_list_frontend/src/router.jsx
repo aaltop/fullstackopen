@@ -1,11 +1,12 @@
 import App from "./App"
 import BlogsView from "./components/BlogsView"
+import UsersView from "./components/UsersView"
+import User from "./components/User"
 
 import {
     createBrowserRouter,
     RouterProvider,
 } from "react-router-dom"
-import UsersView from "./components/UsersView"
 
 const router = createBrowserRouter([
     {
@@ -23,6 +24,15 @@ const router = createBrowserRouter([
                 <UsersView />
             </App>
         ),
+    },
+    {
+        path: "/users/:id",
+        element: (
+            <App>
+                <User />
+            </App>
+        ),
+        loader: ({ params }) => params.id,
     },
 ])
 

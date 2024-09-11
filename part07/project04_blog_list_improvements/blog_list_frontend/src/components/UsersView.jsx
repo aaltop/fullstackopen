@@ -1,12 +1,10 @@
-import userService from "../services/users"
+import userQueries from "../queries/users"
 
 import { useQuery } from "@tanstack/react-query"
+import { Link } from "react-router-dom"
 
 export default function UsersView() {
-    const users = useQuery({
-        queryKey: ["users"],
-        queryFn: userService.getAll,
-    }).data
+    const users = useQuery(userQueries.queryUsers()).data
 
     return (
         <div>
@@ -22,7 +20,13 @@ export default function UsersView() {
                     {users?.map(user => {
                         return (
                             <tr key={user.username}>
-                                <td>{user.name}</td>
+                                <td>
+                                    <Link
+                                        to={user.id.toString()}
+                                    >
+                                        {user.name}
+                                    </Link>
+                                </td>
                                 <td>{user.blogs.length}</td>
                             </tr>
                         )
