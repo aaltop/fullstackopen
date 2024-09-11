@@ -1,8 +1,6 @@
 import LoginForm from "./components/LoginForm"
-import BlogAddForm from "./components/BlogAddForm"
+import Menu from "./components/Menu"
 import Notification from "./components/Notification"
-import BlogList from "./components/BlogList"
-import UsersView from "./components/UsersView"
 
 import {
     NotificationContext,
@@ -18,7 +16,7 @@ import userService from "./services/users"
 
 import { useEffect, useContext } from "react"
 
-const App = () => {
+const App = props => {
     const [notification, notificationDispatch] = useContext(
         NotificationContext
     )
@@ -140,12 +138,8 @@ const App = () => {
                     Log Out
                 </button>
             </div>
-            <h2>Add new blog</h2>
-            <BlogAddForm user={user.token} />
-            <h2>Blogs</h2>
-            <BlogList username={user.username} />
-            <h2>Users</h2>
-            <UsersView />
+            <Menu />
+            {props.children}
         </div>
     )
 }
