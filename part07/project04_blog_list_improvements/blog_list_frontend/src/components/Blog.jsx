@@ -1,58 +1,99 @@
 import { lightMode as color } from "../style/color"
+import { UserContext } from "../contexts/UserContext"
+import blogsQueries from "../queries/blogs"
+import {
+    NotificationContext,
+    notifyWithTimeout,
+} from "../contexts/NotificationContext"
+import blogService from "../services/blogs"
 
-import { useState } from "react"
 import PropTypes from "prop-types"
+import {
+    useQueryClient,
+    useQuery,
+    useMutation,
+} from "@tanstack/react-query"
+import { useContext } from "react"
+import {
+    useNavigate,
+    useLoaderData,
+} from "react-router-dom"
 
-function Blog({
-    blog,
-    clientUserData,
-    deleteBlog,
-    onLike,
-}) {
-    const [verbose, setVerbose] = useState(false)
+function Blog({ blog, onDelete, onLike }) {
+    // Hooks
+    // -------------
+    const user = useContext(UserContext)[0]
 
-    const simpleStyle = {
+    const queryClient = useQueryClient()
+    const notificationDispatch = useContext(
+        NotificationContext
+    )[1]
+
+    const blogQuery = useQuery(
+        blogsQueries.queryBlog(useLoaderData())
+    )
+    const navigate = useNavigate()
+
+    const blogDeleteMutation = useMutation({
+        mutationFn: async ({ blog }) => {
+            await blogService.deleteBlog(blog, user.token)
+            return { blog }
+        },
+        onSuccess: ({ blog }) => {
+            notifyWithTimeout(
+                notificationDispatch,
+                `Deleted "${blog.title}" by ${blog.author}`,
+                true,
+                5000
+            )
+
+            // get back to the main view, which SHOULD be the blogs view
+            navigate("/")
+        },
+    })
+
+    // =======================
+
+    if (!blogQuery.isSuccess) return null
+
+    blog = blog ?? blogQuery.data
+
+    function deleteBlog(ev) {
+        if (
+            !window.confirm(
+                `Delete "${blog.title}" by ${blog.author}?`
+            )
+        ) {
+            return false
+        }
+        blogDeleteMutation.mutate({ blog })
+        return true
+    }
+
+    async function addBlogLike(ev) {
+        const newBlog = await blogService.addLikes(
+            blog.id,
+            blog.likes + 1
+        )
+        queryClient.setQueryData(
+            blogsQueries.queryBlog(blog.id).queryKey,
+            old => newBlog
+        )
+    }
+
+    const displayDelete = blog.user
+        ? blog.user.username === user.username
+        : false
+
+    const fullStyle = {
         outlineWidth: "thin",
         outlineStyle: "solid",
         outlineColor: color.blogOutline,
         width: "fit-content",
         margin: "10px",
         padding: "5px",
-        display: "flex",
         flexDirection: "row",
         justifyItems: "end", // Huh? this is supposed to be "ignored" by flex, but it's not?
-    }
-
-    const displayDelete = blog.user
-        ? blog.user.username === clientUserData.username
-        : false
-
-    const simple = (
-        <div
-            style={simpleStyle}
-            className="blog-simple-view"
-        >
-            <div>
-                {blog.title} {blog.author}
-            </div>
-            <div>
-                <button
-                    type="button"
-                    className="blog-simple-button-set-verbose"
-                    onClick={() => setVerbose(true)}
-                >
-                    Show
-                </button>
-            </div>
-        </div>
-    )
-
-    if (!verbose) {
-        return simple
-    }
-
-    const fullStyle = {
-        ...simpleStyle,
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         gridGap: "20px",
@@ -71,7 +112,7 @@ function Blog({
                     <button
                         type="button"
                         style={{ margin: "5px" }}
-                        onClick={onLike}
+                        onClick={onLike ?? addBlogLike}
                     >
                         like
                     </button>
@@ -86,20 +127,11 @@ function Blog({
                 >
                     <button
                         type="button"
-                        onClick={deleteBlog}
+                        onClick={onDelete ?? deleteBlog}
                     >
                         Delete
                     </button>
                 </div>
-            </div>
-            <div>
-                <button
-                    type="button"
-                    className="blog-verbose-button-set-verbose"
-                    onClick={() => setVerbose(false)}
-                >
-                    Hide
-                </button>
             </div>
         </div>
     )
@@ -108,10 +140,9 @@ function Blog({
 }
 
 Blog.propTypes = {
-    blog: PropTypes.object.isRequired,
-    clientUserData: PropTypes.object.isRequired,
-    deleteBlog: PropTypes.func.isRequired,
-    onLike: PropTypes.func.isRequired,
+    blog: PropTypes.object,
+    onDelete: PropTypes.func,
+    onLike: PropTypes.func,
 }
 
 export default Blog

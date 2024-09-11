@@ -2,6 +2,7 @@ import App from "./App"
 import BlogsView from "./components/BlogsView"
 import UsersView from "./components/UsersView"
 import User from "./components/User"
+import Blog from "./components/Blog"
 
 import {
     createBrowserRouter,
@@ -30,6 +31,15 @@ const router = createBrowserRouter([
         element: (
             <App>
                 <User />
+            </App>
+        ),
+        loader: ({ params }) => params.id,
+    },
+    {
+        path: "/blogs/:id",
+        element: (
+            <App>
+                <Blog />
             </App>
         ),
         loader: ({ params }) => params.id,
