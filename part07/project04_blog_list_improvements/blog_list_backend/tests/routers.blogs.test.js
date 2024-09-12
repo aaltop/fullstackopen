@@ -273,8 +273,22 @@ describe("post /api/blogs/:id/comments", () => {
             .send(testComment)
             .expect(201)
 
-        const comments = (await Blog.findById(id)).comments
+        let comments = (await Blog.findById(id)).comments
         assert.strictEqual(comments[0], testComment.comment)
+
+        const anotherComment = {
+            comment: "Another comment",
+        }
+        await api
+            .post(`/api/blogs/${id}/comments`)
+            .send({ comment: "Another comment" })
+            .expect(201)
+
+        comments = (await Blog.findById(id)).comments
+        assert.strictEqual(
+            comments[1],
+            anotherComment.comment
+        )
     })
 
     test("returns 400 error if invalid id", async () => {
