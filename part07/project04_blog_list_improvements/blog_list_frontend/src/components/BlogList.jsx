@@ -11,15 +11,19 @@ const BlogBlock = styled(BaseLink)`
     outline-width: thin;
     outline-style: solid;
     outline-color: ${color.blogOutline};
-    width: fit-content;
     margin: 10px;
     padding: 5px;
+    width: fit-content;
+    min-width: 100%;
+
+    /* flex stuff */
     display: flex;
-    flex-direction: row;
-    justify-items: end;
+    justify-content: center;
+    align-items: center;
 
     /* Link style */
     text-decoration-line: none;
+    font-size: larger;
 
     &:hover {
         background-color: #fbff87;

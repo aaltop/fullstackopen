@@ -4,9 +4,12 @@ export const FlexDiv = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: auto;
+    min-width: 50%;
 `
 
-export const AppDiv = styled(FlexDiv)``
+export const AppDiv = styled(FlexDiv)`
+    font-family: sans-serif;
+    font-size: large;
+`
 
 export const BlogListDiv = styled(FlexDiv)``
