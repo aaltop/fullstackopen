@@ -6,6 +6,7 @@ import {
     notifyWithTimeout,
 } from "../contexts/NotificationContext"
 import blogService from "../services/blogs"
+import BlogComments from "./BlogComments"
 
 import PropTypes from "prop-types"
 import {
@@ -136,7 +137,14 @@ function Blog({ blog, onDelete, onLike }) {
         </div>
     )
 
-    return full
+    const blogAndComments = (
+        <div>
+            {full}
+            <BlogComments blog={blog} />
+        </div>
+    )
+
+    return blogAndComments
 }
 
 Blog.propTypes = {

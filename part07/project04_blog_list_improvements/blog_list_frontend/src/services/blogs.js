@@ -39,9 +39,19 @@ async function addLikes(blogId, newLikesCount) {
     return response.data
 }
 
+async function addComment(blogId, comment) {
+    const response = await axios.post(
+        `${baseUrl}/${blogId}/comments`,
+        { comment }
+    )
+
+    return response.data
+}
+
 export default {
     getAll: getAll,
     addBlog: addBlog,
     deleteBlog: deleteBlog,
     addLikes: addLikes,
+    addComment: addComment,
 }
