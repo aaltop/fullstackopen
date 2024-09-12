@@ -276,6 +276,28 @@ describe("post /api/blogs/:id/comments", () => {
         const comments = (await Blog.findById(id)).comments
         assert.strictEqual(comments[0], testComment.comment)
     })
+
+    test("returns 400 error if invalid id", async () => {
+        await api
+            .post("/api/blogs/doesnotexist/comments")
+            .send(testComment)
+            .expect(400)
+    })
+
+    test("returns 404 error if nonexistent id", async () => {
+        const fakeId = new mongoose.Types.ObjectId()
+        // could do it properly, but what are the changes of it
+        // being the same?
+        assert.notStrictEqual(
+            id.toString(),
+            fakeId.toString()
+        )
+
+        await api
+            .post(`/api/blogs/${fakeId}/comments`)
+            .send(testComment)
+            .expect(404)
+    })
 })
 
 describe("delete /api/blogs/:id", () => {
