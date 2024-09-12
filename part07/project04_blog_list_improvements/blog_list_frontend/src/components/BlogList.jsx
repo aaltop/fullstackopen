@@ -1,35 +1,46 @@
 import blogsQueries from "../queries/blogs"
+
 import { lightMode as color } from "../style/color"
+import { BlogListDiv } from "../style/div"
+import { Link as BaseLink } from "../style/link"
 
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
+import styled from "styled-components"
+
+const BlogBlock = styled(BaseLink)`
+    outline-width: thin;
+    outline-style: solid;
+    outline-color: ${color.blogOutline};
+    width: fit-content;
+    margin: 10px;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-items: end;
+
+    /* Link style */
+    text-decoration-line: none;
+
+    &:hover {
+        background-color: #fbff87;
+    }
+`
 
 export default function BlogList() {
     const blogsQuery = useQuery(blogsQueries.queryBlogs())
 
     const blogs = blogsQuery.data
 
-    const blogStyle = {
-        outlineWidth: "thin",
-        outlineStyle: "solid",
-        outlineColor: color.blogOutline,
-        width: "fit-content",
-        margin: "10px",
-        padding: "5px",
-        display: "flex",
-        flexDirection: "row",
-        justifyItems: "end", // Huh? this is supposed to be "ignored" by flex, but it's not?
-    }
-
     return (
-        <div>
+        <BlogListDiv>
             {blogs?.map((blog, blogIdx) => (
-                <div style={blogStyle} key={blog.id}>
-                    <Link to={`/blogs/${blog.id}`}>
-                        {blog.title}
-                    </Link>
-                </div>
+                <BlogBlock
+                    to={`/blogs/${blog.id}`}
+                    key={blog.id}
+                >
+                    {blog.title}
+                </BlogBlock>
             ))}
-        </div>
+        </BlogListDiv>
     )
 }

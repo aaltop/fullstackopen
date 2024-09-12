@@ -1,8 +1,16 @@
+// local imports
+// ---------------------
+
 import blogService from "../services/blogs"
+
 import {
     NotificationContext,
     notifyWithTimeout,
 } from "../contexts/NotificationContext"
+
+import { FlexDiv } from "../style/div"
+
+// =========================
 
 import { useState, useContext } from "react"
 import {
@@ -78,7 +86,7 @@ function BlogAddForm({ user }) {
     }
 
     return (
-        <div>
+        <>
             <div style={{ display: visible ? "none" : "" }}>
                 <button
                     type="button"
@@ -87,7 +95,9 @@ function BlogAddForm({ user }) {
                     New Blog
                 </button>
             </div>
-            <div style={{ display: visible ? "" : "none" }}>
+            <FlexDiv
+                style={{ display: visible ? "" : "none" }}
+            >
                 <form onSubmit={passValues}>
                     <div>
                         <label htmlFor="blog-add-form-title-input">
@@ -142,8 +152,8 @@ function BlogAddForm({ user }) {
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
+            </FlexDiv>
+        </>
     )
 }
 

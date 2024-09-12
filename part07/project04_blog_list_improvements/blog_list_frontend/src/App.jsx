@@ -1,3 +1,6 @@
+// Local imports
+// -----------------
+
 import LoginForm from "./components/LoginForm"
 import Menu from "./components/Menu"
 import Notification from "./components/Notification"
@@ -13,6 +16,10 @@ import {
 
 import loginService from "./services/login"
 import userService from "./services/users"
+
+import { AppDiv } from "./style/div"
+
+// =======================
 
 import { useEffect, useContext } from "react"
 
@@ -108,26 +115,20 @@ const App = props => {
         }
     }
 
-    const rootStyle = {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-    }
-
     if (null === user.token) {
         return (
-            <div style={rootStyle}>
+            <AppDiv>
                 <Notification
                     text={notification.text}
                     success={notification.success}
                 />
                 <LoginForm submitAction={attemptLogin} />
-            </div>
+            </AppDiv>
         )
     }
 
     return (
-        <div style={rootStyle}>
+        <AppDiv>
             <Notification
                 text={notification.text}
                 success={notification.success}
@@ -140,7 +141,7 @@ const App = props => {
             </div>
             <Menu />
             {props.children}
-        </div>
+        </AppDiv>
     )
 }
 
