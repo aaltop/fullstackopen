@@ -102,7 +102,7 @@ function Blog({ blog, onDelete, onLike }) {
     const full = (
         <BlogDiv>
             <h1>{blog.title}</h1>
-            <Link>{blog.url}</Link>
+            <Link to={blog.url}>{blog.url}</Link>
             <div>
                 {blog.likes} likes
                 <button

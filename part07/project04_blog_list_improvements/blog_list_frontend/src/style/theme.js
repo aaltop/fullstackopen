@@ -7,6 +7,8 @@ const theme = {
     success: "#111d8c",
     failure: "#b5471b",
     blogOutline: "#000000",
+    backgroundColor: "#333",
+    bkgSoftHighlight: "#444",
     ...link,
 }
 

@@ -22,10 +22,16 @@ const BlogBlock = styled(BaseLink)`
 
     /* Link style */
     text-decoration-line: none;
+    color: white;
     font-size: larger;
 
     &:hover {
-        background-color: #fbff87;
+        background-color: ${props =>
+            props.theme.bkgSoftHighlight};
+    }
+
+    &:visited {
+        color: #888;
     }
 `
 

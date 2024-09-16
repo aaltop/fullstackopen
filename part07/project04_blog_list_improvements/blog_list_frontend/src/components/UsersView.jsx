@@ -1,7 +1,7 @@
 import userQueries from "../queries/users"
 
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
+import { Link } from "../style/link"
 
 export default function UsersView() {
     const users = useQuery(userQueries.queryUsers()).data

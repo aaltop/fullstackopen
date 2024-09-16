@@ -8,7 +8,7 @@ import {
     notifyWithTimeout,
 } from "../contexts/NotificationContext"
 
-import { FlexDiv } from "../style/div"
+import { GridDiv } from "../style/div"
 
 // =========================
 
@@ -17,6 +17,11 @@ import {
     useQueryClient,
     useMutation,
 } from "@tanstack/react-query"
+import styled from "styled-components"
+
+const FormDiv = styled(GridDiv)`
+    grid-template-columns: 1fr 2fr;
+`
 
 function BlogAddForm({ user }) {
     const queryClient = useQueryClient()
@@ -95,64 +100,50 @@ function BlogAddForm({ user }) {
                     New Blog
                 </button>
             </div>
-            <FlexDiv
+            <FormDiv
+                as="form"
+                onSubmit={passValues}
                 style={{ display: visible ? "" : "none" }}
             >
-                <form onSubmit={passValues}>
-                    <div>
-                        <label htmlFor="blog-add-form-title-input">
-                            Title
-                        </label>{" "}
-                        <input
-                            type="text"
-                            value={title}
-                            onChange={ev =>
-                                setTitle(ev.target.value)
-                            }
-                            id="blog-add-form-title-input"
-                        ></input>
-                    </div>
-                    <div>
-                        <label htmlFor="blog-add-form-author-input">
-                            Author
-                        </label>{" "}
-                        <input
-                            type="text"
-                            value={author}
-                            onChange={ev =>
-                                setAuthor(ev.target.value)
-                            }
-                            id="blog-add-form-author-input"
-                        ></input>
-                    </div>
-                    <div>
-                        <label htmlFor="blog-add-form-url-input">
-                            Url
-                        </label>{" "}
-                        <input
-                            type="text"
-                            value={url}
-                            onChange={ev =>
-                                setUrl(ev.target.value)
-                            }
-                            id="blog-add-form-url-input"
-                        ></input>
-                    </div>
-                    <div>
-                        <button type="submit">
-                            Add Blog
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setVisible(false)
-                            }
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </FlexDiv>
+                <label htmlFor="blog-add-form-title-input">
+                    Title
+                </label>{" "}
+                <input
+                    type="text"
+                    value={title}
+                    onChange={ev =>
+                        setTitle(ev.target.value)
+                    }
+                    id="blog-add-form-title-input"
+                ></input>
+                <label htmlFor="blog-add-form-author-input">
+                    Author
+                </label>{" "}
+                <input
+                    type="text"
+                    value={author}
+                    onChange={ev =>
+                        setAuthor(ev.target.value)
+                    }
+                    id="blog-add-form-author-input"
+                ></input>
+                <label htmlFor="blog-add-form-url-input">
+                    Url
+                </label>{" "}
+                <input
+                    type="text"
+                    value={url}
+                    onChange={ev => setUrl(ev.target.value)}
+                    id="blog-add-form-url-input"
+                ></input>
+                <button type="submit">Add Blog</button>
+                <button
+                    type="button"
+                    onClick={() => setVisible(false)}
+                >
+                    Cancel
+                </button>
+            </FormDiv>
         </>
     )
 }
