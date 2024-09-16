@@ -9,6 +9,7 @@ import {
 import blogService from "../services/blogs"
 import BlogComments from "./BlogComments"
 import { Link } from "../style/link"
+import { GridDiv } from "../style/div"
 // =========================
 
 import PropTypes from "prop-types"
@@ -24,13 +25,12 @@ import {
 } from "react-router-dom"
 import styled from "styled-components"
 
-const BlogDiv = styled.div`
-    outline-width: thin;
-    outline-style: solid;
-    outline-color: ${props => props.theme.blogOutline};
-    width: fit-content;
+const BlogDiv = styled(GridDiv)`
     margin: 10px;
     padding: 5px;
+    gap: 0.5em;
+
+    border-block: 1px solid #999;
 `
 
 function Blog({ blog, onDelete, onLike }) {

@@ -1,8 +1,16 @@
 import blogService from "../services/blogs"
 import blogsQueries from "../queries/blogs"
 
+import { GridDiv } from "../style/div"
+
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
+import styled from "styled-components"
+
+const Comment = styled.li`
+    text-align: start;
+    margin: 1em;
+`
 
 export default function BlogComments({
     blog,
@@ -26,7 +34,7 @@ export default function BlogComments({
     }
 
     return (
-        <div>
+        <GridDiv>
             <h2>Comments ({blog.comments.length})</h2>
             <form
                 onSubmit={ev => submitComment(ev, comment)}
@@ -44,13 +52,11 @@ export default function BlogComments({
                 ></input>
                 <button type="submit">Send</button>
             </form>
-            <div>
-                <ul>
-                    {blog.comments.map((comm, i) => (
-                        <li key={i}>{comm}</li>
-                    ))}
-                </ul>
-            </div>
-        </div>
+            <ul>
+                {blog.comments.map((comm, i) => (
+                    <Comment key={i}>{comm}</Comment>
+                ))}
+            </ul>
+        </GridDiv>
     )
 }

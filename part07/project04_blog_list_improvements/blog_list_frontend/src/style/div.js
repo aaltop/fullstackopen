@@ -7,6 +7,12 @@ export const FlexDiv = styled.div`
     min-width: 50%;
 `
 
+export const GridDiv = styled.div`
+    display: grid;
+    align-items: center;
+    text-align: center;
+`
+
 export const AppDiv = styled(FlexDiv)`
     font-family: sans-serif;
     font-size: large;
