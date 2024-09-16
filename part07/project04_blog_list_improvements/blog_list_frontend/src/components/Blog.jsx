@@ -99,8 +99,6 @@ function Blog({ blog, onDelete, onLike }) {
         ? blog.user.username === user.username
         : false
 
-    console.log(blog.user)
-
     const full = (
         <BlogDiv>
             <h1>{blog.title}</h1>

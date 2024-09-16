@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link } from "../style/link"
 
 export default function Menu() {
     const padding = {
