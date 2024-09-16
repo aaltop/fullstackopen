@@ -1,6 +1,5 @@
 import blogsQueries from "../queries/blogs"
 
-import { lightMode as color } from "../style/color"
 import { BlogListDiv } from "../style/div"
 import { Link as BaseLink } from "../style/link"
 
@@ -10,7 +9,7 @@ import styled from "styled-components"
 const BlogBlock = styled(BaseLink)`
     outline-width: thin;
     outline-style: solid;
-    outline-color: ${color.blogOutline};
+    outline-color: ${props => props.theme.blogOutline};
     margin: 10px;
     padding: 5px;
     width: fit-content;

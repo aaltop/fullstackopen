@@ -10,6 +10,9 @@ import {
     QueryClient,
 } from "@tanstack/react-query"
 
+import { ThemeProvider } from "styled-components"
+import theme from "./style/theme"
+
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -23,7 +26,9 @@ export default function Provider(props) {
         <QueryClientProvider client={queryClient}>
             <NotificationContextProvider>
                 <UserContextProvider>
-                    {props.children}
+                    <ThemeProvider theme={theme}>
+                        {props.children}
+                    </ThemeProvider>
                 </UserContextProvider>
             </NotificationContextProvider>
         </QueryClientProvider>

@@ -1,4 +1,5 @@
-import { lightMode as color } from "../style/color"
+// Local imports
+// -----------------
 import { UserContext } from "../contexts/UserContext"
 import blogsQueries from "../queries/blogs"
 import {
@@ -7,6 +8,8 @@ import {
 } from "../contexts/NotificationContext"
 import blogService from "../services/blogs"
 import BlogComments from "./BlogComments"
+import { Link } from "../style/link"
+// =========================
 
 import PropTypes from "prop-types"
 import {
@@ -19,6 +22,16 @@ import {
     useNavigate,
     useLoaderData,
 } from "react-router-dom"
+import styled from "styled-components"
+
+const BlogDiv = styled.div`
+    outline-width: thin;
+    outline-style: solid;
+    outline-color: ${props => props.theme.blogOutline};
+    width: fit-content;
+    margin: 10px;
+    padding: 5px;
+`
 
 function Blog({ blog, onDelete, onLike }) {
     // Hooks
@@ -86,55 +99,36 @@ function Blog({ blog, onDelete, onLike }) {
         ? blog.user.username === user.username
         : false
 
-    const fullStyle = {
-        outlineWidth: "thin",
-        outlineStyle: "solid",
-        outlineColor: color.blogOutline,
-        width: "fit-content",
-        margin: "10px",
-        padding: "5px",
-        flexDirection: "row",
-        justifyItems: "end", // Huh? this is supposed to be "ignored" by flex, but it's not?
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gridGap: "20px",
-    }
+    console.log(blog.user)
 
     const full = (
-        <div
-            style={fullStyle}
-            className="blog-verbose-view"
-        >
+        <BlogDiv>
+            <h1>{blog.title}</h1>
+            <Link>{blog.url}</Link>
             <div>
-                <div>{blog.title}</div>
-                <div>{blog.url}</div>
-                <div>
-                    likes {blog.likes}
-                    <button
-                        type="button"
-                        style={{ margin: "5px" }}
-                        onClick={onLike ?? addBlogLike}
-                    >
-                        like
-                    </button>
-                </div>
-                <div>{blog.author}</div>
-                <div
-                    style={{
-                        display: displayDelete
-                            ? ""
-                            : "none",
-                    }}
+                {blog.likes} likes
+                <button
+                    type="button"
+                    style={{ margin: "5px" }}
+                    onClick={onLike ?? addBlogLike}
                 >
-                    <button
-                        type="button"
-                        onClick={onDelete ?? deleteBlog}
-                    >
-                        Delete
-                    </button>
-                </div>
+                    like
+                </button>
             </div>
-        </div>
+            by {blog.author}
+            <div
+                style={{
+                    display: displayDelete ? "" : "none",
+                }}
+            >
+                <button
+                    type="button"
+                    onClick={onDelete ?? deleteBlog}
+                >
+                    Delete
+                </button>
+            </div>
+        </BlogDiv>
     )
 
     const blogAndComments = (

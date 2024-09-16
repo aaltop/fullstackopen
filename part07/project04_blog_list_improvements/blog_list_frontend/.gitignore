@@ -5,3 +5,5 @@
 
 # eslint
 !*eslintrc.cjs
+
+!*.css
