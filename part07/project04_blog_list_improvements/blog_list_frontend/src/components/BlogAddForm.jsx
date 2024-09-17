@@ -8,7 +8,7 @@ import {
     notifyWithTimeout,
 } from "../contexts/NotificationContext"
 
-import { GridDiv } from "../style/div"
+import { FormDiv } from "../style/div"
 import { Button } from "../style/button"
 
 // =========================
@@ -18,11 +18,6 @@ import {
     useQueryClient,
     useMutation,
 } from "@tanstack/react-query"
-import styled from "styled-components"
-
-const FormDiv = styled(GridDiv)`
-    grid-template-columns: 1fr 2fr;
-`
 
 function BlogAddForm({ user }) {
     const queryClient = useQueryClient()

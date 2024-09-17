@@ -1,4 +1,5 @@
 import { Button } from "../style/button"
+import { FormDiv } from "../style/div"
 
 import { useState } from "react"
 
@@ -11,37 +12,31 @@ function LoginForm({ submitAction }) {
     }
 
     return (
-        <form onSubmit={passValues}>
-            <div>
-                <label htmlFor="login-form-username">
-                    Username{" "}
-                </label>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={ev =>
-                        setUsername(ev.target.value)
-                    }
-                    id="login-form-username"
-                ></input>
-            </div>
-            <div>
-                <label htmlFor="login-form-password">
-                    Password{" "}
-                </label>
-                <input
-                    type="password"
-                    value={password}
-                    onChange={ev =>
-                        setPassword(ev.target.value)
-                    }
-                    id="login-form-password"
-                ></input>
-            </div>
-            <div>
-                <Button type="submit">Login</Button>
-            </div>
-        </form>
+        <FormDiv as="form" onSubmit={passValues}>
+            <label htmlFor="login-form-username">
+                Username{" "}
+            </label>
+            <input
+                type="text"
+                value={username}
+                onChange={ev =>
+                    setUsername(ev.target.value)
+                }
+                id="login-form-username"
+            ></input>
+            <label htmlFor="login-form-password">
+                Password{" "}
+            </label>
+            <input
+                type="password"
+                value={password}
+                onChange={ev =>
+                    setPassword(ev.target.value)
+                }
+                id="login-form-password"
+            ></input>
+            <Button type="submit">Login</Button>
+        </FormDiv>
     )
 }
 

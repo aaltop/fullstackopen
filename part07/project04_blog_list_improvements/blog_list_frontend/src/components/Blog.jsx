@@ -8,8 +8,10 @@ import {
 } from "../contexts/NotificationContext"
 import blogService from "../services/blogs"
 import BlogComments from "./BlogComments"
+
 import { Link } from "../style/link"
 import { GridDiv } from "../style/div"
+import { Button } from "../style/button"
 // =========================
 
 import PropTypes from "prop-types"
@@ -105,13 +107,13 @@ function Blog({ blog, onDelete, onLike }) {
             <Link to={blog.url}>{blog.url}</Link>
             <div>
                 {blog.likes} likes
-                <button
+                <Button
                     type="button"
                     style={{ margin: "5px" }}
                     onClick={onLike ?? addBlogLike}
                 >
                     like
-                </button>
+                </Button>
             </div>
             by {blog.author}
             <div
@@ -119,12 +121,12 @@ function Blog({ blog, onDelete, onLike }) {
                     display: displayDelete ? "" : "none",
                 }}
             >
-                <button
+                <Button
                     type="button"
                     onClick={onDelete ?? deleteBlog}
                 >
                     Delete
-                </button>
+                </Button>
             </div>
         </BlogDiv>
     )

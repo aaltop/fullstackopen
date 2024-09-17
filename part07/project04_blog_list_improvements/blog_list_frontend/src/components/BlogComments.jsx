@@ -2,6 +2,7 @@ import blogService from "../services/blogs"
 import blogsQueries from "../queries/blogs"
 
 import { GridDiv } from "../style/div"
+import { Button } from "../style/button"
 
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
@@ -50,7 +51,7 @@ export default function BlogComments({
                     }
                     id="blog-comments-comment-input"
                 ></input>
-                <button type="submit">Send</button>
+                <Button type="submit">Send</Button>
             </form>
             <ul>
                 {blog.comments.map((comm, i) => (

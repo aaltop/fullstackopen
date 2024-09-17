@@ -7,8 +7,8 @@ import { useQuery } from "@tanstack/react-query"
 import styled from "styled-components"
 
 const BlogBlock = styled(BaseLink)`
-    outline-width: thin;
-    outline-style: solid;
+    outline-width: 2px;
+    outline-style: groove;
     outline-color: ${props => props.theme.blogOutline};
     margin: 10px;
     padding: 5px;
