@@ -13,9 +13,4 @@ export const GridDiv = styled.div`
     text-align: center;
 `
 
-export const AppDiv = styled(FlexDiv)`
-    font-family: sans-serif;
-    font-size: large;
-`
-
 export const BlogListDiv = styled(FlexDiv)``

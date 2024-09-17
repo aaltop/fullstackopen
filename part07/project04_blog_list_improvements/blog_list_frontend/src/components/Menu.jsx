@@ -1,3 +1,5 @@
+import { Nav } from "../style/view"
+
 import { NavLink } from "react-router-dom"
 
 import styled from "styled-components"
@@ -12,7 +14,7 @@ const MenuItem = styled(NavLink)`
     }
 
     &:hover {
-        // background-color: ${props =>
+        background-color: ${props =>
             props.theme.bkgSoftHighlight};
 
         text-decoration: underline;
@@ -22,29 +24,22 @@ const MenuItem = styled(NavLink)`
 function reactStyler({ isActive }) {
     return isActive
         ? {
-              borderLeft: "5px solid #d60",
-              backgroundColor: "#930",
+              borderLeft: "5px solid rgb(from #e73 r g b)",
+              backgroundColor: "rgb(from #e73 r g b / 30%)",
               paddingLeft: "5px",
           }
         : {}
 }
 
-const NavBar = styled.nav`
-    display: grid;
-    grid-template-columns: 1fr;
-    // border: 2px solid black;
-    width: 200px;
-`
-
 export default function Menu() {
     return (
-        <NavBar>
+        <Nav>
             <MenuItem to="/" style={reactStyler}>
                 Blogs
             </MenuItem>
             <MenuItem to="/users" style={reactStyler}>
                 Users
             </MenuItem>
-        </NavBar>
+        </Nav>
     )
 }

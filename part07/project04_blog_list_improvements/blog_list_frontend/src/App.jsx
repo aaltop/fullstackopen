@@ -17,7 +17,7 @@ import {
 import loginService from "./services/login"
 import userService from "./services/users"
 
-import { AppDiv } from "./style/div"
+import { AppDiv, Header, MainView } from "./style/view"
 
 // =======================
 
@@ -118,29 +118,36 @@ const App = props => {
     if (null === user.token) {
         return (
             <AppDiv>
-                <Notification
-                    text={notification.text}
-                    success={notification.success}
-                />
-                <LoginForm submitAction={attemptLogin} />
+                <MainView>
+                    <Notification
+                        text={notification.text}
+                        success={notification.success}
+                    />
+                    <LoginForm
+                        submitAction={attemptLogin}
+                    />
+                </MainView>
             </AppDiv>
         )
     }
 
     return (
         <AppDiv>
-            <Notification
-                text={notification.text}
-                success={notification.success}
-            />
-            <div>
+            <Header>
                 {user.name} is logged in
                 <button type="button" onClick={logOut}>
                     Log Out
                 </button>
-            </div>
+            </Header>
+
             <Menu />
-            {props.children}
+            <MainView>
+                <Notification
+                    text={notification.text}
+                    success={notification.success}
+                />
+                {props.children}
+            </MainView>
         </AppDiv>
     )
 }
