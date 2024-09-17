@@ -18,6 +18,7 @@ import loginService from "./services/login"
 import userService from "./services/users"
 
 import { AppDiv, Header, MainView } from "./style/view"
+import { Button } from "./style/button"
 
 // =======================
 
@@ -134,10 +135,22 @@ const App = props => {
     return (
         <AppDiv>
             <Header>
-                {user.name} is logged in
-                <button type="button" onClick={logOut}>
-                    Log Out
-                </button>
+                <div style={{ gridArea: "user-info" }}>
+                    <span
+                        style={{
+                            fontWeight: "bold",
+                            color: "orange",
+                        }}
+                    >
+                        {user.name}
+                    </span>{" "}
+                    <br />
+                    is logged in
+                    <br />
+                    <Button type="button" onClick={logOut}>
+                        Log Out
+                    </Button>
+                </div>
             </Header>
 
             <Menu />

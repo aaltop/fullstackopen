@@ -8,6 +8,7 @@ const MenuItem = styled(NavLink)`
     font-size: larger;
     text-decoration: none;
     color: white;
+    padding-block: 0.5em;
 
     &:visited {
         color: white;

@@ -9,6 +9,7 @@ import {
 } from "../contexts/NotificationContext"
 
 import { GridDiv } from "../style/div"
+import { Button } from "../style/button"
 
 // =========================
 
@@ -93,12 +94,12 @@ function BlogAddForm({ user }) {
     return (
         <>
             <div style={{ display: visible ? "none" : "" }}>
-                <button
+                <Button
                     type="button"
                     onClick={() => setVisible(true)}
                 >
                     New Blog
-                </button>
+                </Button>
             </div>
             <FormDiv
                 as="form"
@@ -136,13 +137,13 @@ function BlogAddForm({ user }) {
                     onChange={ev => setUrl(ev.target.value)}
                     id="blog-add-form-url-input"
                 ></input>
-                <button type="submit">Add Blog</button>
-                <button
+                <Button type="submit">Add Blog</Button>
+                <Button
                     type="button"
                     onClick={() => setVisible(false)}
                 >
                     Cancel
-                </button>
+                </Button>
             </FormDiv>
         </>
     )

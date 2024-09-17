@@ -20,6 +20,10 @@ export const Header = styled.header`
     position: fixed;
     width: 100%;
     height: 100px;
+
+    display: grid;
+    grid-template-areas: ". user-info";
+    grid-template-columns: 90% 10%;
 `
 
 export const Nav = styled.nav`
@@ -34,7 +38,7 @@ export const Nav = styled.nav`
 
     display: grid;
     grid-template-columns: 1fr;
-    grid-auto-rows: min(3em);
+    grid-auto-rows: fit-content(2em);
     border: 2px solid black;
 `
 

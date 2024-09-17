@@ -1,3 +1,5 @@
+import { Button } from "../style/button"
+
 import { useState } from "react"
 
 function LoginForm({ submitAction }) {
@@ -37,7 +39,7 @@ function LoginForm({ submitAction }) {
                 ></input>
             </div>
             <div>
-                <button type="submit">Login</button>
+                <Button type="submit">Login</Button>
             </div>
         </form>
     )
