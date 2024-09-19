@@ -93,9 +93,6 @@ let books = [
     },
 ]
 
-/*
-  you can remove the placeholder query once your first one has been implemented 
-*/
 
 const typeDefs = `
 
@@ -106,18 +103,39 @@ const typeDefs = `
     genres: [String!]
   }
 
+  type Author {
+    name: String!
+    born: Int
+    bookCount: Int!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks: [Book]
+    allBooks: [Book!]
+    allAuthors: [Author!]
   }
 `
+
+function countOccurence(occurenceOf, occurenceIn) {
+    return occurenceIn.filter(arrayItem => arrayItem === occurenceOf).length
+}
 
 const resolvers = {
     Query: {
         bookCount: () => books.length,
         authorCount: () => authors.length,
-        allBooks: () => books
+        allBooks: () => books,
+        allAuthors: () => {
+            const bookAuthors = books.map(book => book.author)
+            return authors.map(author => {
+                return {
+                    name: author.name,
+                    born: author.born,
+                    bookCount: countOccurence(author.name, bookAuthors)
+                }
+            })
+        }
     }
 }
 
