@@ -123,7 +123,9 @@ const typeDefs = `
       author: String!
       published: Int!
       genres: [String!]!
-    ): Book
+    ): Book!
+
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
@@ -135,7 +137,7 @@ const resolvers = {
     Query: {
         bookCount: () => books.length,
         authorCount: () => authors.length,
-        allBooks: (parent, args) => {
+        allBooks: (_parent, args) => {
             const { author, genre } = args
             let filteredBooks = books.slice()
             if (author) filteredBooks = filteredBooks.filter(
@@ -158,7 +160,7 @@ const resolvers = {
         }
     },
     Mutation: {
-        addBook: (parent, { title, author, published, genres }) => {
+        addBook: (_parent, { title, author, published, genres }) => {
             const newBook = { title, author, published, id: createId(), genres }
             books = books.concat(newBook)
 
@@ -168,6 +170,15 @@ const resolvers = {
             }
 
             return newBook
+        },
+        editAuthor: (_parent, { name, setBornTo }) => {
+            const authorIdx = authors.findIndex(auth => auth.name === name)
+            if (-1 === authorIdx) return null
+            const editedAuthor = { ...authors[authorIdx], born: setBornTo }
+            const newAuthors = authors.slice()
+            newAuthors[authorIdx] = editedAuthor
+            authors = newAuthors.slice()
+            return editedAuthor
         }
     }
 }
