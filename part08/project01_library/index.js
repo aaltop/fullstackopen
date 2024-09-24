@@ -164,9 +164,17 @@ const resolvers = {
             const newBook = { title, author, published, id: createId(), genres }
             books = books.concat(newBook)
 
-            // add author if not yet in collection
-            if (!authors.find(aut => aut.name === author)) {
-                authors = authors.concat({ name: author, bookCount: 1 })
+            const authorIdx = authors.findIndex(aut => aut.name === author)
+            if (-1 === authorIdx) { // add author if not yet in collection
+                authors = authors.concat({ name: author, bookCount: 1, id: createId() })
+            } else { // otherwise update bookCount
+                const updatedAuthors = authors.slice()
+                const updatedAuthor = updatedAuthors[authorIdx]
+                updatedAuthors[authorIdx] = {
+                    ...updatedAuthor,
+                    bookCount: updatedAuthor.bookCount + 1
+                }
+                authors = updatedAuthors
             }
 
             return newBook
