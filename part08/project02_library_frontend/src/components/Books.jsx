@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client"
 
 const Books = ({ show }) => {
   
-    const { loading, error, data } = useQuery(bookQuery.getAll({ noGetProps: ["genres"] }))
+    const { loading, error, data } = useQuery(bookQuery.GET_ALL)
   
     if (!show) return null
     if (loading) return <>Loading...</>

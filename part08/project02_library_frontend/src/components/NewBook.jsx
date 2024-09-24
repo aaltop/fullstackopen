@@ -10,12 +10,28 @@ const NewBook = ({ show }) => {
     const [genre, setGenre] = useState('')
     const [genres, setGenres] = useState([])
     const [addBook, { data, loading, error }] = useMutation(
-        bookQuery.addBook(), 
+        bookQuery.ADD_BOOK, 
         {
             variables: {
                 title, author, published: parseInt(published), genres
+            },
+            update(cache, { data: { addBook }}) {
+                const { allBooks: currentBooks } = cache.readQuery({ query: bookQuery.GET_ALL })
+
+                if (currentBooks) {
+                    cache.writeQuery({
+                        query: bookQuery.GET_ALL,
+                        data: {
+                            allBooks: [
+                                ...currentBooks,
+                                addBook
+                            ]
+                        }
+                    })
+                }
             }
-    })
+        }
+)
 
     if (!show) return null
     if (loading) return <>Loading...</>
@@ -27,9 +43,7 @@ const NewBook = ({ show }) => {
         event.preventDefault()
 
         console.log('add book...')
-        addBook({
-            refetchQueries: [{ query: bookQuery.getAll() }]
-        })
+        addBook()
 
         setTitle('')
         setPublished('')
