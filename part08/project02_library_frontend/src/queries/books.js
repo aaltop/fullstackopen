@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client"
 
-const allProps = ["title", "author", "published", "genres"]
+const allProps = ["title", "author", "published", "genres"].join()
 
 
 const GET_ALL = gql`
     query getBooks($author: String, $genre: String) {
         allBooks(author: $author, genre: $genre) {
-            ${allProps.join()}
+            ${allProps}
         }
     }
 `
@@ -25,7 +25,7 @@ const ADD_BOOK = gql`
                 genres: $genres
             )
             {
-                ${allProps.join()}
+                ${allProps}
             }
     }
 `
