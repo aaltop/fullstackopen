@@ -1,4 +1,5 @@
 import bookQuery from "../queries/books"
+import authorQuery from "../queries/authors"
 
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
@@ -29,7 +30,8 @@ const NewBook = ({ show }) => {
                         }
                     })
                 }
-            }
+            },
+            refetchQueries: [{ query: authorQuery.GET_ALL }]
         }
 )
 
