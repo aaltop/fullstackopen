@@ -19,8 +19,4 @@ const schema = new mongoose.Schema({
     ]
 })
 
-schema.set("toObject", {
-    flattenObjectIds: true
-})
-
 module.exports = mongoose.model('Book', schema)

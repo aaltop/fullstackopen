@@ -62,17 +62,8 @@ const resolvers = {
             if (genre) filter = { ...filter, genres: genre }
             console.log(filter)
 
-            const filteredBooks = await Book.find().populate("author").exec()
-            console.log(filteredBooks)
-            return filteredBooks.filter(book => {
-                const pass = (
-                    (filter.author ? book.author.id === filter.author : true)
-                    && (filter.genres ? book.genres.includes(filter.genres) : true)
-                )
+            return await Book.find(filter).populate("author").exec()
 
-
-                return pass
-            })
         },
         allAuthors: async () => {
 
