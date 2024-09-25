@@ -95,14 +95,8 @@ const resolvers = {
 
             return createdBook.populate("author")
         },
-        editAuthor: (_parent, { name, setBornTo }) => {
-            const authorIdx = authors.findIndex(auth => auth.name === name)
-            if (-1 === authorIdx) return null
-            const editedAuthor = { ...authors[authorIdx], born: setBornTo }
-            const newAuthors = authors.slice()
-            newAuthors[authorIdx] = editedAuthor
-            authors = newAuthors.slice()
-            return editedAuthor
+        editAuthor: async (_parent, { name, setBornTo }) => {
+            return await Author.findOneAndUpdate({ name }, { born: setBornTo }, { returnDocument: "after" })
         }
     }
 }
