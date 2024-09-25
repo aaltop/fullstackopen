@@ -45,8 +45,8 @@ function countOccurence(occurenceOf, occurenceIn) {
 
 const resolvers = {
     Query: {
-        bookCount: Book.countDocuments,
-        authorCount: Author.countDocuments,
+        bookCount: async () => Book.countDocuments(),
+        authorCount: async () => Author.countDocuments(),
         allBooks: async (_parent, args) => {
 
             const { author, genre } = args
@@ -55,12 +55,10 @@ const resolvers = {
             let filter = {}
             if (author) {
                 const authorId = (await Author.findOne({ name: author }).exec()).id
-                console.log(author, authorId)
                 if (!authorId) return { data: { allBooks: [] } }
                 filter = { author: authorId }
             }
             if (genre) filter = { ...filter, genres: genre }
-            console.log(filter)
 
             return await Book.find(filter).populate("author").exec()
 
@@ -81,24 +79,21 @@ const resolvers = {
         }
     },
     Mutation: {
-        addBook: (_parent, { title, author, published, genres }) => {
-            const newBook = { title, author, published, id: createId(), genres }
-            books = books.concat(newBook)
+        addBook: async (_parent, { title, author, published, genres }) => {
 
-            const authorIdx = authors.findIndex(aut => aut.name === author)
-            if (-1 === authorIdx) { // add author if not yet in collection
-                authors = authors.concat({ name: author, bookCount: 1, id: createId() })
-            } else { // otherwise update bookCount
-                const updatedAuthors = authors.slice()
-                const updatedAuthor = updatedAuthors[authorIdx]
-                updatedAuthors[authorIdx] = {
-                    ...updatedAuthor,
-                    bookCount: updatedAuthor.bookCount + 1
-                }
-                authors = updatedAuthors
+            let authorDoc = await Author.findOne({ name: author })
+            if (!authorDoc) {
+                const newAuthor = new Author({ name: author })
+                authorDoc = await newAuthor.save()
             }
 
-            return newBook
+            const newBook = new Book({ title, author: authorDoc._id, published, genres })
+            const createdBook = await newBook.save()
+
+            authorDoc.books = authorDoc.books.concat(createdBook._id)
+            authorDoc.save()
+
+            return createdBook.populate("author")
         },
         editAuthor: (_parent, { name, setBornTo }) => {
             const authorIdx = authors.findIndex(auth => auth.name === name)
