@@ -67,6 +67,14 @@ function countOccurence(occurenceOf, occurenceIn) {
     return occurenceIn.filter(arrayItem => arrayItem === occurenceOf).length
 }
 
+function checkAuthorization(context) {
+    if (!context.currentUser) throw new GraphQLError("Unauthorized mutation", {
+        extensions: {
+            code: "UNAUTHORIZED"
+        }
+    })
+}
+
 const resolvers = {
     Query: {
         bookCount: async () => Book.countDocuments(),
@@ -106,7 +114,9 @@ const resolvers = {
         }
     },
     Mutation: {
-        addBook: async (_parent, { title, author, published, genres }) => {
+        addBook: async (_parent, { title, author, published, genres }, context) => {
+
+            checkAuthorization(context)
 
             let authorDoc = await Author.findOne({ name: author })
             if (!authorDoc) {
@@ -123,7 +133,10 @@ const resolvers = {
             return createdBook.populate("author")
 
         },
-        editAuthor: async (_parent, { name, setBornTo }) => {
+        editAuthor: async (_parent, { name, setBornTo }, context) => {
+
+            checkAuthorization(context)
+
             return await Author.findOneAndUpdate({ name }, { born: setBornTo }, { returnDocument: "after" })
         },
         createUser: async (_parent, { username, favoriteGenre }) => {
