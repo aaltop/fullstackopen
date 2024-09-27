@@ -1,9 +1,9 @@
-const { default: mongoose } = require("mongoose")
 const Author = require("./models/author")
 const Book = require("./models/book")
 
 const { ApolloServer } = require('@apollo/server')
-const { v1: createId } = require("uuid")
+const mongoose = require("mongoose")
+const { GraphQLError } = require("graphql")
 
 const typeDefs = `
 
@@ -81,19 +81,48 @@ const resolvers = {
     Mutation: {
         addBook: async (_parent, { title, author, published, genres }) => {
 
-            let authorDoc = await Author.findOne({ name: author })
-            if (!authorDoc) {
-                const newAuthor = new Author({ name: author })
-                authorDoc = await newAuthor.save()
+
+            try {
+                let authorDoc = await Author.findOne({ name: author })
+                if (!authorDoc) {
+                    const newAuthor = new Author({ name: author })
+                    authorDoc = await newAuthor.save()
+                }
+
+                const newBook = new Book({ title, author: authorDoc._id, published, genres })
+                const createdBook = await newBook.save()
+
+                authorDoc.books = authorDoc.books.concat(createdBook._id)
+                authorDoc.save()
+
+                return createdBook.populate("author")
+
+            } catch (error) {
+
+                if (error instanceof mongoose.Error.ValidationError) {
+                    throw new GraphQLError(error.message, {
+                        extensions: {
+                            code: "BAD_INPUT",
+                        }
+                    })
+                } else if (error.name === "MongoServerError") {
+                    switch (error.code) {
+                        case 11000: {
+                            throw new GraphQLError("The item being added has a non-unique field already found in the database", {
+                                extensions: {
+                                    code: "DUPLICATE_KEY",
+                                    keyValue: error.keyValue
+                                }
+                            })
+                        }
+                    }
+                }
+                console.log("Uncaught Error:")
+                console.log(JSON.stringify(error))
+                console.log(error.name)
+                throw error
             }
 
-            const newBook = new Book({ title, author: authorDoc._id, published, genres })
-            const createdBook = await newBook.save()
-
-            authorDoc.books = authorDoc.books.concat(createdBook._id)
-            authorDoc.save()
-
-            return createdBook.populate("author")
         },
         editAuthor: async (_parent, { name, setBornTo }) => {
             return await Author.findOneAndUpdate({ name }, { born: setBornTo }, { returnDocument: "after" })
