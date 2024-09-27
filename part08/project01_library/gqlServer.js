@@ -1,9 +1,12 @@
 const Author = require("./models/author")
 const Book = require("./models/book")
+const User = require("./models/user")
 
 const { ApolloServer } = require('@apollo/server')
 const mongoose = require("mongoose")
 const { GraphQLError } = require("graphql")
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 const typeDefs = `
 
@@ -20,11 +23,22 @@ const typeDefs = `
     bookCount: Int!
   }
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]
     allAuthors: [Author!]
+    me: User
   }
 
   type Mutation {
@@ -36,6 +50,16 @@ const typeDefs = `
     ): Book!
 
     editAuthor(name: String!, setBornTo: Int!): Author
+
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `
 
@@ -76,6 +100,9 @@ const resolvers = {
                     bookCount: author.bookCount
                 }
             })
+        },
+        me: async (_parent, _args, context) => {
+            return context.currentUser
         }
     },
     Mutation: {
@@ -98,6 +125,31 @@ const resolvers = {
         },
         editAuthor: async (_parent, { name, setBornTo }) => {
             return await Author.findOneAndUpdate({ name }, { born: setBornTo }, { returnDocument: "after" })
+        },
+        createUser: async (_parent, { username, favoriteGenre }) => {
+            const user = new User({ username, favoriteGenre })
+            const id = (await user.save()).id
+            return { username, favoriteGenre, id }
+        },
+        login: async (_parent, { username, password }) => {
+            const user = await User.findOne({ username })
+
+            // likely highly unnecessary, but just trying to keep in mind
+            // timing attacks
+            let incorrect = !user
+            incorrect ||= password !== "secret"
+            if (incorrect) {
+                throw new GraphQLError("Incorrect username or password", {
+                    code: "BAD_USER_INPUT"
+                })
+            }
+
+            const tokenData = {
+                username: user.username,
+                id: user._id
+            }
+
+            return { value: jwt.sign(tokenData, process.env.JWT_SECRET) }
         }
     }
 }
@@ -124,9 +176,15 @@ const server = new ApolloServer({
                     })
                 }
             }
+
+        } else if (error instanceof GraphQLError) {
+            // assume that the error is thrown in the user code,
+            // so just let it pass
+            return error
         }
         console.log(`Uncaught ${error.name}:`)
         console.log(JSON.stringify(error))
+        console.log(JSON.stringify(_formattedError))
         return error
     }
 })
