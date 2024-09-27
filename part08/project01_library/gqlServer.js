@@ -81,47 +81,19 @@ const resolvers = {
     Mutation: {
         addBook: async (_parent, { title, author, published, genres }) => {
 
-
-            try {
-                let authorDoc = await Author.findOne({ name: author })
-                if (!authorDoc) {
-                    const newAuthor = new Author({ name: author })
-                    authorDoc = await newAuthor.save()
-                }
-
-                const newBook = new Book({ title, author: authorDoc._id, published, genres })
-                const createdBook = await newBook.save()
-
-                authorDoc.books = authorDoc.books.concat(createdBook._id)
-                authorDoc.save()
-
-                return createdBook.populate("author")
-
-            } catch (error) {
-
-                if (error instanceof mongoose.Error.ValidationError) {
-                    throw new GraphQLError(error.message, {
-                        extensions: {
-                            code: "BAD_INPUT",
-                        }
-                    })
-                } else if (error.name === "MongoServerError") {
-                    switch (error.code) {
-                        case 11000: {
-                            throw new GraphQLError("The item being added has a non-unique field already found in the database", {
-                                extensions: {
-                                    code: "DUPLICATE_KEY",
-                                    keyValue: error.keyValue
-                                }
-                            })
-                        }
-                    }
-                }
-                console.log("Uncaught Error:")
-                console.log(JSON.stringify(error))
-                console.log(error.name)
-                throw error
+            let authorDoc = await Author.findOne({ name: author })
+            if (!authorDoc) {
+                const newAuthor = new Author({ name: author })
+                authorDoc = await newAuthor.save()
             }
+
+            const newBook = new Book({ title, author: authorDoc._id, published, genres })
+            const createdBook = await newBook.save()
+
+            authorDoc.books = authorDoc.books.concat(createdBook._id)
+            authorDoc.save()
+
+            return createdBook.populate("author")
 
         },
         editAuthor: async (_parent, { name, setBornTo }) => {
@@ -133,6 +105,30 @@ const resolvers = {
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    formatError: (_formattedError, error) => {
+        error = error.originalError
+        if (error instanceof mongoose.Error.ValidationError) {
+            return new GraphQLError(error.message, {
+                extensions: {
+                    code: "BAD_INPUT",
+                }
+            })
+        } else if (error.name === "MongoServerError") {
+            switch (error.code) {
+                case 11000: {
+                    return new GraphQLError("The item being added has a non-unique field already found in the database", {
+                        extensions: {
+                            code: "DUPLICATE_KEY",
+                            keyValue: error.keyValue
+                        }
+                    })
+                }
+            }
+        }
+        console.log(`Uncaught ${error.name}:`)
+        console.log(JSON.stringify(error))
+        return error
+    }
 })
 
 module.exports = server
