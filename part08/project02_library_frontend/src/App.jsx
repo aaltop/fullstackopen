@@ -2,13 +2,18 @@ import Authors from "./components/Authors"
 import Books from "./components/Books"
 import NewBook from "./components/NewBook"
 import Login from "./components/Login"
+import BooksRecommendations from "./components/BooksRecommendations"
+
 import { LoginContext, actions as loginActions } from "./contexts/login"
+import userQuery from "./queries/user"
 
 import { useState, useEffect, useContext } from "react"
+import { useQuery } from "@apollo/client"
 
 const App = () => {
   const [page, setPage] = useState("")
   const [loginState, loginDispatch] = useContext(LoginContext)
+  const queriedUser = useQuery(userQuery.GET_USER)
 
   useEffect(() => {
     loginDispatch(loginActions.updateLoginState())
@@ -17,6 +22,12 @@ const App = () => {
   useEffect(() => {
     setPage("authors")
   }, [loginState.loggedIn])
+
+  if (queriedUser.loading) return <>Loading...</>
+  if (queriedUser.error) return <>Error: {queriedUser.error.message}</>
+
+
+  const userData = queriedUser.data.me
 
   const pages = [
     {
@@ -29,6 +40,10 @@ const App = () => {
     },
     {
         name: "add book",
+        show: loginState.loggedIn
+    },
+    {
+        name: "recommendations",
         show: loginState.loggedIn
     },
     {
@@ -57,6 +72,11 @@ const App = () => {
       <Books show={page === "books"} />
 
       <NewBook show={page === "add book"} />
+
+      <BooksRecommendations
+        userData={userData}
+        show={page === "recommendations"}
+      />
 
       <Login show={page === "login"} />
     </div>

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client"
 
-
+const userProps = ["username", "favoriteGenre"].join()
 
 const LOGIN = gql`
     mutation userLogin($username: String!, $password: String!) {
@@ -10,7 +10,16 @@ const LOGIN = gql`
     }
 `
 
+const GET_USER = gql`
+    query getUser {
+        me {
+            ${userProps}
+        }
+    }
+`
+
 
 export default {
-    LOGIN
+    LOGIN,
+    GET_USER
 }

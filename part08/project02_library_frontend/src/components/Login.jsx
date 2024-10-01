@@ -1,5 +1,5 @@
 import Input from "./Input"
-import loginQuery from "../queries/login"
+import userQuery from "../queries/user"
 import { LoginContext, actions as loginActions} from "../contexts/login"
 
 import { useMutation } from "@apollo/client"
@@ -10,7 +10,7 @@ import { useContext } from "react"
 export default function Login({ show })
 {
     
-    const [login] = useMutation(loginQuery.LOGIN)
+    const [login] = useMutation(userQuery.LOGIN)
     const [_loginState, loginDispatch] = useContext(LoginContext)
     
     if (!show) return null
