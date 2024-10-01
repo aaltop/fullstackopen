@@ -128,19 +128,28 @@ const resolvers = {
             }
 
             const newBook = new Book({ title, author: authorDoc._id, published, genres })
-            const createdBook = await newBook.save()
+            let createdBook = await newBook.save()
 
             authorDoc.books = authorDoc.books.concat(createdBook._id)
             authorDoc.save()
 
-            return createdBook.populate("author")
+            await createdBook.populate("author")
+            const returnedBook = { ...createdBook.toObject(), author: createdBook.author.toObject() }
+
+            return returnedBook
 
         },
         editAuthor: async (_parent, { name, setBornTo }, context) => {
 
             checkAuthorization(context)
 
-            return await Author.findOneAndUpdate({ name }, { born: setBornTo }, { returnDocument: "after" })
+            const updatedAuthor = await Author.findOneAndUpdate(
+                { name },
+                { born: setBornTo },
+                { returnDocument: "after" }
+            )
+
+            return updatedAuthor.toObject()
         },
         createUser: async (_parent, { username, favoriteGenre }) => {
             const user = new User({ username, favoriteGenre })
