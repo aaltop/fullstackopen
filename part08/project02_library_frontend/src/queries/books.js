@@ -1,6 +1,15 @@
 import { gql } from "@apollo/client"
 
-const allProps = ["title", "author", "published", "genres"].join()
+const allProps = `
+title
+published
+genres
+author {
+    name
+    born
+    bookCount
+}
+`
 
 
 const GET_ALL = gql`
