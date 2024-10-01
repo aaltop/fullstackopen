@@ -7,26 +7,49 @@ import { LoginContext, actions as loginActions } from "./contexts/login"
 import { useState, useEffect, useContext } from "react"
 
 const App = () => {
-  const [page, setPage] = useState("authors")
+  const [page, setPage] = useState("")
   const [loginState, loginDispatch] = useContext(LoginContext)
 
   useEffect(() => {
-    loginDispatch(loginActions.isLoggedIn())
+    loginDispatch(loginActions.updateLoginState())
   }, [])
 
+  useEffect(() => {
+    setPage("authors")
+  }, [loginState.loggedIn])
+
   const pages = [
-    "authors",
-    "books",
-    "add book",
-    "login"
+    {
+        name: "authors",
+        show: true
+    },
+    {
+        name: "books",
+        show: true
+    },
+    {
+        name: "add book",
+        show: loginState.loggedIn
+    },
+    {
+        name: "login",
+        show: !loginState.loggedIn
+    }
   ]
+
+  const logOutButton = !loginState.loggedIn
+    ? null
+    : <button onClick={() => loginDispatch(loginActions.logout())}>Log out</button>
 
   return (
     <div>
       <div>
-        {pages.map(page => (
-            <button key={page} onClick={() => setPage(page)}>{page}</button>
-        ))}
+        {pages.map(({name, show}) => {
+            return (
+                !show ? null : <button key={name} onClick={() => setPage(name)}>{name}</button>
+            )
+        })}
+        {logOutButton}
       </div>
 
       <Authors show={page === "authors"} />

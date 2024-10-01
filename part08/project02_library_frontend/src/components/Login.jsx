@@ -1,8 +1,9 @@
 import Input from "./Input"
 import loginQuery from "../queries/login"
+import { LoginContext, actions as loginActions} from "../contexts/login"
 
 import { useMutation } from "@apollo/client"
-
+import { useContext } from "react"
 
 
 
@@ -10,6 +11,7 @@ export default function Login({ show })
 {
     
     const [login] = useMutation(loginQuery.LOGIN)
+    const [_loginState, loginDispatch] = useContext(LoginContext)
     
     if (!show) return null
 
@@ -25,7 +27,7 @@ export default function Login({ show })
             password: loginPassword.value
         }})
         const token = ret.data.login.value
-        localStorage.setItem("userToken", token)
+        loginDispatch(loginActions.login(token))
     }
 
     return (
