@@ -1,3 +1,5 @@
+import { LoginContextProvider } from './contexts/providers'
+
 import {
     ApolloClient,
     InMemoryCache,
@@ -8,6 +10,8 @@ import {
 import { setContext } from "@apollo/client/link/context"
 
 
+// Apollo client setup
+// --------------------
 const httpLink = createHttpLink({
     uri: "http://localhost:4000/",
 })
@@ -32,13 +36,18 @@ const apolloClient = new ApolloClient({
         }
     })
 })
+// ======================================
+
+
 
 
 export default function Provider(props)
 {
     return (
         <ApolloProvider client={apolloClient}>
+        <LoginContextProvider>
             {props.children}
+        </LoginContextProvider>
         </ApolloProvider>
     )
 }

@@ -2,26 +2,38 @@ import Authors from "./components/Authors"
 import Books from "./components/Books"
 import NewBook from "./components/NewBook"
 import Login from "./components/Login"
+import { LoginContext, actions as loginActions } from "./contexts/login"
 
-import { useState } from "react"
+import { useState, useEffect, useContext } from "react"
 
 const App = () => {
   const [page, setPage] = useState("authors")
+  const [loginState, loginDispatch] = useContext(LoginContext)
+
+  useEffect(() => {
+    loginDispatch(loginActions.isLoggedIn())
+  }, [])
+
+  const pages = [
+    "authors",
+    "books",
+    "add book",
+    "login"
+  ]
 
   return (
     <div>
       <div>
-        <button onClick={() => setPage("authors")}>authors</button>
-        <button onClick={() => setPage("books")}>books</button>
-        <button onClick={() => setPage("add")}>add book</button>
-        <button onClick={() => setPage("login")}>login</button>
+        {pages.map(page => (
+            <button key={page} onClick={() => setPage(page)}>{page}</button>
+        ))}
       </div>
 
       <Authors show={page === "authors"} />
 
       <Books show={page === "books"} />
 
-      <NewBook show={page === "add"} />
+      <NewBook show={page === "add book"} />
 
       <Login show={page === "login"} />
     </div>
