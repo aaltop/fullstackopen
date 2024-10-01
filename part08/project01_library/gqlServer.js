@@ -92,7 +92,10 @@ const resolvers = {
             }
             if (genre) filter = { ...filter, genres: genre }
 
-            return await Book.find(filter).populate("author").exec()
+            let books = await Book.find(filter).populate("author").exec()
+            books = books.map(book => ({ ...book.toObject(), author: book.author.toObject() }))
+
+            return books
 
         },
         allAuthors: async () => {
