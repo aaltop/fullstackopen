@@ -5,7 +5,7 @@ import { useState } from "react"
 
 
 
-export default function UpdateAuthor( {authors })
+export default function UpdateAuthor( { authors })
 {
 
     const [author, setAuthor] = useState(authors[0])

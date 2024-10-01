@@ -39,7 +39,16 @@ const ADD_BOOK = gql`
     }
 `
 
+const GET_GENRES = gql`
+    query getGenres {
+        allBooks {
+            genres
+        }
+    }
+`
+
 export default {
     GET_ALL,
-    ADD_BOOK
+    ADD_BOOK,
+    GET_GENRES
 }
