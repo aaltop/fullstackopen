@@ -1,17 +1,16 @@
 import Input from "./Input"
 import userQuery from "../queries/user"
-import { LoginContext, actions as loginActions} from "../contexts/login"
+import loginActions from "../loginState"
 
-import { useMutation } from "@apollo/client"
-import { useContext } from "react"
-
+import { useMutation, useApolloClient } from "@apollo/client"
 
 
-export default function Login({ show })
+
+export default function Login({ show, setPage })
 {
     
     const [login] = useMutation(userQuery.LOGIN)
-    const [_loginState, loginDispatch] = useContext(LoginContext)
+    const apolloClient = useApolloClient()
     
     if (!show) return null
 
@@ -27,7 +26,9 @@ export default function Login({ show })
             password: loginPassword.value
         }})
         const token = ret.data.login.value
-        loginDispatch(loginActions.login(token))
+        loginActions.login(token)
+        apolloClient.resetStore()
+        setPage()
     }
 
     return (

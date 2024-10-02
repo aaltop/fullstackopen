@@ -1,15 +1,13 @@
-import { LoginContext } from "../contexts/login"
 import authorQuery from "../queries/authors"
+import loginActions from "../loginState"
 
 import UpdateAuthor from "./UpdateAuthor"
 
 import { useQuery } from "@apollo/client"
-import { useContext } from "react"
 
 
 const Authors = ({ show }) => {
     const { loading, error, data } = useQuery(authorQuery.GET_ALL)
-    const [loginState, _loginDispatch] = useContext(LoginContext)
 
 
     if (!show) return null
@@ -24,7 +22,7 @@ const Authors = ({ show }) => {
     // when the queries are more complex.
     const authors = data.allAuthors
 
-    const authorUpdate = !(loginState.loggedIn)
+    const authorUpdate = !(loginActions.getLoginState())
         ? null
         : <><h2>Update Author</h2>
         <UpdateAuthor authors={authors} /></>

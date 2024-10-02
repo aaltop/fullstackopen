@@ -4,24 +4,16 @@ import NewBook from "./components/NewBook"
 import Login from "./components/Login"
 import BooksRecommendations from "./components/BooksRecommendations"
 
-import { LoginContext, actions as loginActions } from "./contexts/login"
+import loginActions from "./loginState"
 import userQuery from "./queries/user"
 
-import { useState, useEffect, useContext } from "react"
-import { useQuery } from "@apollo/client"
+import { useState } from "react"
+import { useQuery, useApolloClient } from "@apollo/client"
 
 const App = () => {
-  const [page, setPage] = useState("")
-  const [loginState, loginDispatch] = useContext(LoginContext)
+  const [page, setPage] = useState("authors")
   const queriedUser = useQuery(userQuery.GET_USER)
-
-  useEffect(() => {
-    loginDispatch(loginActions.updateLoginState())
-  }, [])
-
-  useEffect(() => {
-    setPage("authors")
-  }, [loginState.loggedIn])
+  const apolloClient = useApolloClient()
 
   if (queriedUser.loading) return <>Loading...</>
   if (queriedUser.error) return <>Error: {queriedUser.error.message}</>
@@ -40,21 +32,32 @@ const App = () => {
     },
     {
         name: "add book",
-        show: loginState.loggedIn
+        show: loginActions.getLoginState()
     },
     {
         name: "recommendations",
-        show: loginState.loggedIn
+        show: loginActions.getLoginState()
     },
     {
         name: "login",
-        show: !loginState.loggedIn
+        show: !loginActions.getLoginState()
     }
   ]
 
-  const logOutButton = !loginState.loggedIn
+  const logOutButton = !loginActions.getLoginState()
     ? null
-    : <button onClick={() => loginDispatch(loginActions.logout())}>Log out</button>
+    : <button onClick={() => {
+        loginActions.logout()
+        apolloClient.resetStore()
+        setPage("authors")
+    }}>Log out</button>
+
+  const recommendations = !userData
+    ? null
+    : (<BooksRecommendations
+      userData={userData}
+      show={page === "recommendations"}
+    />)
 
   return (
     <div>
@@ -73,12 +76,9 @@ const App = () => {
 
       <NewBook show={page === "add book"} />
 
-      <BooksRecommendations
-        userData={userData}
-        show={page === "recommendations"}
-      />
+      {recommendations}
 
-      <Login show={page === "login"} />
+      <Login show={page === "login"} setPage={() => setPage("authors")} />
     </div>
   );
 };

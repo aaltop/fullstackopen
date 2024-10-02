@@ -1,4 +1,3 @@
-import { LoginContextProvider } from './contexts/providers'
 
 import {
     ApolloClient,
@@ -45,9 +44,7 @@ export default function Provider(props)
 {
     return (
         <ApolloProvider client={apolloClient}>
-        <LoginContextProvider>
             {props.children}
-        </LoginContextProvider>
         </ApolloProvider>
     )
 }
