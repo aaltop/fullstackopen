@@ -17,19 +17,7 @@ const NewBook = ({ show }) => {
                 title, author, published: parseInt(published), genres
             },
             update(cache, { data: { addBook }}) {
-                const { allBooks: currentBooks } = cache.readQuery({ query: bookQuery.GET_ALL })
-
-                if (currentBooks) {
-                    cache.writeQuery({
-                        query: bookQuery.GET_ALL,
-                        data: {
-                            allBooks: [
-                                ...currentBooks,
-                                addBook
-                            ]
-                        }
-                    })
-                }
+                cache.evict({ fieldName: "allBooks" })
             },
             refetchQueries: [{ query: authorQuery.GET_ALL }]
         }
