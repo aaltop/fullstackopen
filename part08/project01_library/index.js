@@ -12,6 +12,9 @@ const http = require("http")
 const cors = require("cors")
 const { expressMiddleware } = require("@apollo/server/express4")
 const { ApolloServerPluginDrainHttpServer } = require("@apollo/server/plugin/drainHttpServer")
+const { makeExecutableSchema } = require("@graphql-tools/schema")
+const { WebSocketServer } = require("ws")
+const { useServer } = require("graphql-ws/lib/use/ws")
 
 require("dotenv").config()
 
@@ -120,12 +123,26 @@ async function startServer() {
 
     const app = express()
     const httpServer = http.createServer(app)
+    const schema = makeExecutableSchema({ typeDefs, resolvers })
+    const wsServer = new WebSocketServer({
+        server: httpServer,
+        path: "/"
+    })
+    const serverCleanup = useServer({ schema }, wsServer)
     const apolloServer = new ApolloServer({
-        typeDefs,
-        resolvers,
+        schema,
         formatError,
         plugins: [
-            ApolloServerPluginDrainHttpServer({ httpServer })
+            ApolloServerPluginDrainHttpServer({ httpServer }),
+            {
+                async serverWillStart() {
+                    return {
+                        async drainServer() {
+                            await serverCleanup.dispose()
+                        },
+                    }
+                },
+            },
         ]
     })
 
