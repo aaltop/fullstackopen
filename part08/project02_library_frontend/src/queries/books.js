@@ -47,8 +47,17 @@ const GET_GENRES = gql`
     }
 `
 
+const BOOK_ADDED = gql`
+    subscription bookAdd {
+        bookAdded {
+            ${allProps}
+        }
+    }
+`
+
 export default {
     GET_ALL,
     ADD_BOOK,
-    GET_GENRES
+    GET_GENRES,
+    BOOK_ADDED
 }

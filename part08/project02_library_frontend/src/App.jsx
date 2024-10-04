@@ -6,14 +6,22 @@ import BooksRecommendations from "./components/BooksRecommendations"
 
 import loginActions from "./loginState"
 import userQuery from "./queries/user"
+import bookQuery from "./queries/books"
 
 import { useState } from "react"
-import { useQuery, useApolloClient } from "@apollo/client"
+import { useQuery, useApolloClient, useSubscription } from "@apollo/client"
 
 const App = () => {
   const [page, setPage] = useState("authors")
   const queriedUser = useQuery(userQuery.GET_USER)
   const apolloClient = useApolloClient()
+  const bookAddedSub = useSubscription(bookQuery.BOOK_ADDED, {
+    onData: ({ data: { data } }) => {
+        const { author, title } = data.bookAdded
+        const message = `A new book "${title}" by "${author.name}" was added!`
+        window.alert(message)
+    }
+  })
 
   if (queriedUser.loading) return <>Loading...</>
   if (queriedUser.error) return <>Error: {queriedUser.error.message}</>
