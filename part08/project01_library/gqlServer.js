@@ -2,10 +2,11 @@ const Author = require("./models/author")
 const Book = require("./models/book")
 const User = require("./models/user")
 
-const { ApolloServer } = require('@apollo/server')
 const mongoose = require("mongoose")
 const { GraphQLError } = require("graphql")
 const jwt = require("jsonwebtoken")
+const { PubSub } = require("graphql-subscriptions")
+
 require("dotenv").config()
 
 const typeDefs = `
@@ -79,6 +80,8 @@ function checkAuthorization(context) {
     })
 }
 
+
+const pubsub = new PubSub()
 const resolvers = {
     Query: {
         bookCount: async () => Book.countDocuments(),
@@ -139,6 +142,7 @@ const resolvers = {
 
             await createdBook.populate("author")
             const returnedBook = { ...createdBook.toObject(), author: createdBook.author.toObject() }
+            pubsub.publish("BOOK_ADDED", { bookAdded: returnedBook })
 
             return returnedBook
 
@@ -179,6 +183,11 @@ const resolvers = {
             }
 
             return { value: jwt.sign(tokenData, process.env.JWT_SECRET) }
+        }
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator(["BOOK_ADDED"])
         }
     }
 }
