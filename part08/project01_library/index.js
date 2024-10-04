@@ -1,12 +1,17 @@
-const server = require("./gqlServer")
+const { typeDefs, resolvers, formatError } = require("./gqlServer")
 const config = require("./utils/config")
 const Author = require("./models/author")
 const Book = require("./models/book")
 const User = require("./models/user")
 
-const { startStandaloneServer } = require('@apollo/server/standalone')
+const { ApolloServer } = require("@apollo/server")
 const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
+const express = require("express")
+const http = require("http")
+const cors = require("cors")
+const { expressMiddleware } = require("@apollo/server/express4")
+const { ApolloServerPluginDrainHttpServer } = require("@apollo/server/plugin/drainHttpServer")
 
 require("dotenv").config()
 
@@ -103,22 +108,30 @@ async function initialiseDatabase() {
     }
 }
 
-console.log("Connecting to MongoDB...")
-mongoose.connect(config.MONGODB_URL)
-    .then(() => {
-        console.log("Connected to MongoDB")
-        initialiseDatabase()
-    })
-    .catch(error => {
+async function startServer() {
+    try {
+        await mongoose.connect(config.MONGODB_URL)
+    } catch (error) {
         console.log("Error while connecting to MongoDB:", error.message)
+    }
+
+    console.log("Connected to MongoDB")
+    initialiseDatabase()
+
+    const app = express()
+    const httpServer = http.createServer(app)
+    const apolloServer = new ApolloServer({
+        typeDefs,
+        resolvers,
+        formatError,
+        plugins: [
+            ApolloServerPluginDrainHttpServer({ httpServer })
+        ]
     })
 
+    await apolloServer.start()
 
-
-startStandaloneServer(server, {
-    listen: { port: 4000 },
-    context: async ({ req, res }) => {
-        console.log("Creating context")
+    async function context({ req, res }) {
         const auth = req ? req.headers.authorization : null
 
         if (auth && auth.startsWith('Bearer ')) {
@@ -137,7 +150,24 @@ startStandaloneServer(server, {
                 throw error
             }
         }
-    },
-}).then(({ url }) => {
-    console.log(`Server ready at ${url}`)
-})
+    }
+
+    app.use(
+        "/",
+        cors(),
+        express.json(),
+        expressMiddleware(apolloServer, {
+            context
+        })
+    )
+
+    httpServer.listen({ port: 4000 }, () => {
+        const { port } = httpServer.address()
+        const address = "localhost"
+        const url = `http://${address}:${port}/`
+        console.log(`Server ready at ${url}`)
+    })
+
+}
+
+startServer()

@@ -61,6 +61,10 @@ const typeDefs = `
       password: String!
     ): Token
   }
+
+  type Subscription {
+    bookAdded: Book!
+  }
 `
 
 function countOccurence(occurenceOf, occurenceIn) {
@@ -179,39 +183,39 @@ const resolvers = {
     }
 }
 
-const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    formatError: (_formattedError, error) => {
-        error = error.originalError
-        if (error instanceof mongoose.Error.ValidationError) {
-            return new GraphQLError(error.message, {
-                extensions: {
-                    code: "BAD_INPUT",
-                }
-            })
-        } else if (error.name === "MongoServerError") {
-            switch (error.code) {
-                case 11000: {
-                    return new GraphQLError("The item being added has a non-unique field already found in the database", {
-                        extensions: {
-                            code: "DUPLICATE_KEY",
-                            keyValue: error.keyValue
-                        }
-                    })
-                }
+function formatError(_formattedError, error) {
+    error = error.originalError
+    if (error instanceof mongoose.Error.ValidationError) {
+        return new GraphQLError(error.message, {
+            extensions: {
+                code: "BAD_INPUT",
             }
-
-        } else if (error instanceof GraphQLError) {
-            // assume that the error is thrown in the user code,
-            // so just let it pass
-            return error
+        })
+    } else if (error.name === "MongoServerError") {
+        switch (error.code) {
+            case 11000: {
+                return new GraphQLError("The item being added has a non-unique field already found in the database", {
+                    extensions: {
+                        code: "DUPLICATE_KEY",
+                        keyValue: error.keyValue
+                    }
+                })
+            }
         }
-        console.log(`Uncaught ${error.name}:`)
-        console.log(JSON.stringify(error))
-        console.log(JSON.stringify(_formattedError))
+
+    } else if (error instanceof GraphQLError) {
+        // assume that the error is thrown in the user code,
+        // so just let it pass
         return error
     }
-})
+    console.log(`Uncaught ${error.name}:`)
+    console.log(JSON.stringify(error))
+    console.log(JSON.stringify(_formattedError))
+    return error
+}
 
-module.exports = server
+module.exports = {
+    typeDefs,
+    resolvers,
+    formatError
+}
