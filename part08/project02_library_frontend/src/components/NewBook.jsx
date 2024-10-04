@@ -16,10 +16,10 @@ const NewBook = ({ show }) => {
             variables: {
                 title, author, published: parseInt(published), genres
             },
-            update(cache, { data: { addBook }}) {
-                cache.evict({ fieldName: "allBooks" })
-            },
-            refetchQueries: [{ query: authorQuery.GET_ALL }]
+            // update(cache, { data: { addBook }}) {
+            //     cache.evict({ fieldName: "allBooks" })
+            // },
+            // refetchQueries: [{ query: authorQuery.GET_ALL }]
         }
 )
 

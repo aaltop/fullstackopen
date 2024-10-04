@@ -7,6 +7,7 @@ import BooksRecommendations from "./components/BooksRecommendations"
 import loginActions from "./loginState"
 import userQuery from "./queries/user"
 import bookQuery from "./queries/books"
+import authorQuery from "./queries/authors"
 
 import { useState } from "react"
 import { useQuery, useApolloClient, useSubscription } from "@apollo/client"
@@ -16,10 +17,13 @@ const App = () => {
   const queriedUser = useQuery(userQuery.GET_USER)
   const apolloClient = useApolloClient()
   const bookAddedSub = useSubscription(bookQuery.BOOK_ADDED, {
-    onData: ({ data: { data } }) => {
+    onData: ({ client, data: { data } }) => {
         const { author, title } = data.bookAdded
         const message = `A new book "${title}" by "${author.name}" was added!`
         window.alert(message)
+        client.cache.evict({ fieldName: "allBooks" })
+        client.refetchQueries([{ query: authorQuery.GET_ALL }])
+
     }
   })
 
