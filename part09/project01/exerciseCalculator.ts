@@ -47,5 +47,51 @@ function calculateExercises(exerciseHours: number[], target: number): calculateE
     }
 }
 
+interface Args {
+    target: number,
+    exerciseHours: number[]
+}
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+function parseArgs(args: string[]): Args {
+    const stringNums: string[] = args.slice(2)
+
+    const usage: string = `
+        usage: exerciseCalculator <targetAverage> <...hoursPerDay>
+
+        targetAverage: number
+            The aimed-for average exercise hours over the course of the
+            training period.
+        
+        hoursPerDay: number
+            The exercise hours per day during the training period.
+
+        All values should be positive.
+    `
+
+    if (stringNums.length < 2) {
+        console.log(usage)
+        throw Error("Invalid number of command line arguments!")
+    }
+
+    const nums = stringNums.map(parseFloat)
+    if (nums.some(isNaN)) {
+        console.log(usage)
+        throw Error("Arguments should be parseable to floats!")
+    }
+
+    if (nums.some(num => num < 0)) {
+        console.log(usage)
+        throw Error("Arguments should be positive!")
+    }
+
+    return {
+        target: nums[0],
+        exerciseHours: nums.slice(1)
+    }
+}
+
+const args: Args = parseArgs(process.argv)
+
+console.log(calculateExercises(args.exerciseHours, args.target))
+
+export {}

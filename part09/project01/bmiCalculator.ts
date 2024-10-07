@@ -36,6 +36,8 @@ function parseArgs(args: string[]): Args {
 
             kilograms: number
                 a person's weight.
+
+            All values should be positive.
         `
     
     if (!(centiAndKilo.length === 2)) {
@@ -47,7 +49,12 @@ function parseArgs(args: string[]): Args {
     const kilograms: number = parseFloat(centiAndKilo[1])
     if (isNaN(centimeters) || isNaN(kilograms)) {
         console.log(usage)
-        throw Error("arguments should be parseable to floats!")
+        throw Error("Arguments should be parseable to floats!")
+    }
+
+    if (centimeters < 0 || kilograms < 0) {
+        console.log(usage)
+        throw Error("Arguments should be positive!")
     }
     return {
         centimeters,
@@ -57,3 +64,11 @@ function parseArgs(args: string[]): Args {
 
 const args: Args = parseArgs(process.argv) 
 console.log(calculateBmi(args.centimeters, args.kilograms))
+
+
+// quite hacky, but I'll keep the files as they are. In practice,
+// it seems typescript wants all this above stuff to be imported
+// into a script (considering that no overlap in names is allowed), 
+// so I'd basically just write a main function
+// here, then import and execute that in the script.
+export {}
