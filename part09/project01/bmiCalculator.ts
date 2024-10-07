@@ -21,4 +21,39 @@ function calculateBmi(centimeters: number, kilograms: number): string
     }
 }
 
-console.log(calculateBmi(180, 74))
+interface Args {
+    centimeters: number,
+    kilograms: number
+}
+
+function parseArgs(args: string[]): Args {
+    const centiAndKilo: string[] = args.slice(2)
+    const usage: string = `
+            usage: bmiCalculator <centimeters> <kilograms>
+
+            centimeters: number
+                a person's height.
+
+            kilograms: number
+                a person's weight.
+        `
+    
+    if (!(centiAndKilo.length === 2)) {
+        console.log(usage)
+        throw Error("Invalid number of command line arguments!")
+    }
+
+    const centimeters: number = parseFloat(centiAndKilo[0])
+    const kilograms: number = parseFloat(centiAndKilo[1])
+    if (isNaN(centimeters) || isNaN(kilograms)) {
+        console.log(usage)
+        throw Error("arguments should be parseable to floats!")
+    }
+    return {
+        centimeters,
+        kilograms
+    }
+}
+
+const args: Args = parseArgs(process.argv) 
+console.log(calculateBmi(args.centimeters, args.kilograms))
