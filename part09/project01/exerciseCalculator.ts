@@ -14,26 +14,26 @@ interface calculateExercisesReturn {
 
 function calculateExercises(exerciseHours: number[], target: number): calculateExercisesReturn {
 
-    const periodLength: number = exerciseHours.length
-    const trainingDays: number = exerciseHours.reduce((prev, cur) => prev + ((0 < cur) ? 1 : 0), 0)
+    const periodLength: number = exerciseHours.length;
+    const trainingDays: number = exerciseHours.reduce((prev, cur) => prev + ((0 < cur) ? 1 : 0), 0);
 
     const average: number = (
         exerciseHours.reduce((prev, cur) => prev+cur)
         /periodLength
-    )
-    const success: boolean = average >= target
+    );
+    const success: boolean = average >= target;
 
-    let rating: calculateExercisesReturn["rating"]
-    let ratingDescription: calculateExercisesReturn["ratingDescription"]
+    let rating: calculateExercisesReturn["rating"];
+    let ratingDescription: calculateExercisesReturn["ratingDescription"];
     if (average < 0.5*target) {
-        rating = 1
-        ratingDescription = "too bad"
+        rating = 1;
+        ratingDescription = "too bad";
     } else if (average < target) {
-        rating = 2
-        ratingDescription = "not too bad but could be better"
+        rating = 2;
+        ratingDescription = "not too bad but could be better";
     } else {
-        rating = 3
-        ratingDescription = "better"
+        rating = 3;
+        ratingDescription = "better";
     }
 
     return {
@@ -44,7 +44,7 @@ function calculateExercises(exerciseHours: number[], target: number): calculateE
         ratingDescription,
         target,
         average
-    }
+    };
 }
 
 interface Args {
@@ -53,7 +53,7 @@ interface Args {
 }
 
 function parseArgs(args: string[]): Args {
-    const stringNums: string[] = args.slice(2)
+    const stringNums: string[] = args.slice(2);
 
     const usage: string = `
         usage: exerciseCalculator <targetAverage> <...hoursPerDay>
@@ -66,32 +66,32 @@ function parseArgs(args: string[]): Args {
             The exercise hours per day during the training period.
 
         All values should be positive.
-    `
+    `;
 
     if (stringNums.length < 2) {
-        console.log(usage)
-        throw Error("Invalid number of command line arguments!")
+        console.log(usage);
+        throw Error("Invalid number of command line arguments!");
     }
 
-    const nums = stringNums.map(parseFloat)
+    const nums = stringNums.map(parseFloat);
     if (nums.some(isNaN)) {
-        console.log(usage)
-        throw Error("Arguments should be parseable to floats!")
+        console.log(usage);
+        throw Error("Arguments should be parseable to floats!");
     }
 
     if (nums.some(num => num < 0)) {
-        console.log(usage)
-        throw Error("Arguments should be positive!")
+        console.log(usage);
+        throw Error("Arguments should be positive!");
     }
 
     return {
         target: nums[0],
         exerciseHours: nums.slice(1)
-    }
+    };
 }
 
-const args: Args = parseArgs(process.argv)
+const args: Args = parseArgs(process.argv);
 
-console.log(calculateExercises(args.exerciseHours, args.target))
+console.log(calculateExercises(args.exerciseHours, args.target));
 
-export {}
+export {};
