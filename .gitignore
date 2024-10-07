@@ -6,6 +6,8 @@
 !package.json
 !package-lock.json
 !*.html
+!*.ts
+!tsconfig.json
 
 # vs code rest client
 !*.rest
