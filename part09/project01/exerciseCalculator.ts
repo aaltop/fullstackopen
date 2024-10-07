@@ -52,36 +52,22 @@ interface Args {
     exerciseHours: number[]
 }
 
-function parseArgs(args: string[]): Args {
-    const stringNums: string[] = args.slice(2);
-
-    const usage: string = `
-        usage: exerciseCalculator <targetAverage> <...hoursPerDay>
-
-        targetAverage: number
-            The aimed-for average exercise hours over the course of the
-            training period.
-        
-        hoursPerDay: number
-            The exercise hours per day during the training period.
-
-        All values should be positive.
-    `;
+function parseArgs(stringNums: string[], printHelp: () => void = () => { }): Args {
 
     if (stringNums.length < 2) {
-        console.log(usage);
+        printHelp();
         throw Error("Invalid number of command line arguments!");
     }
 
     const nums = stringNums.map(parseFloat);
     if (nums.some(isNaN)) {
-        console.log(usage);
+        printHelp();
         throw Error("Arguments should be parseable to floats!");
     }
 
     if (nums.some(num => num < 0)) {
-        console.log(usage);
-        throw Error("Arguments should be positive!");
+        printHelp();
+        throw Error("Arguments should be non-negative!");
     }
 
     return {
@@ -90,8 +76,24 @@ function parseArgs(args: string[]): Args {
     };
 }
 
-const args: Args = parseArgs(process.argv);
+const helpMessage = `
+    usage: exerciseCalculator <targetAverage> <...hoursPerDay>
 
-console.log(calculateExercises(args.exerciseHours, args.target));
+    targetAverage: number
+        The aimed-for average exercise hours over the course of the
+        training period.
+    
+    hoursPerDay: number
+        The exercise hours per day during the training period.
 
-export {};
+    All values should be positive.
+`;
+
+if (require.main === module) {
+
+    const args: Args = parseArgs(process.argv.slice(2), () => console.log(helpMessage));    
+    console.log(calculateExercises(args.exerciseHours, args.target));
+}
+
+
+export { calculateExercises, parseArgs };

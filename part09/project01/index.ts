@@ -1,4 +1,5 @@
 import { calculateBmi, parseArgs as bmiParse } from "./bmiCalculator";
+import { calculateExercises } from "./exerciseCalculator";
 
 import express from "express";
 
@@ -31,6 +32,38 @@ app.get("/bmi", (req, res) => {
             if (error instanceof Error) {
                 res.status(400).send({error: error.message}).end();
             }
+        }
+    }
+});
+
+
+app.get("/exercises", (req, res) => {
+    
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { daily_exercises, target } = req.body;
+
+    if (!daily_exercises || (daily_exercises as unknown[]).length < 1 || !target) {
+        res.status(400).json({ error: "parameters missing"});
+        return;
+    };
+
+    for (const val of daily_exercises) {
+        if (typeof(val) !== "number") {
+            res.status(400).json({ error: "malformatted parameters"});
+            return;
+        }
+    };
+
+    if (typeof(target) !== "number") {
+        res.status(400).json({ error: "malformatted parameters"});
+        return;
+    }
+
+    try {
+        res.status(200).json(calculateExercises(daily_exercises as number[], target));
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message});
         }
     }
 });
