@@ -26,8 +26,7 @@ interface Args {
     kilograms: number
 }
 
-function parseArgs(args: string[]): Args {
-    const centiAndKilo: string[] = args.slice(2)
+function parseArgs(centiAndKilo: string[]): Args {
     const usage: string = `
             usage: bmiCalculator <centimeters> <kilograms>
 
@@ -52,7 +51,7 @@ function parseArgs(args: string[]): Args {
         throw Error("Arguments should be parseable to floats!")
     }
 
-    if (centimeters < 0 || kilograms < 0) {
+    if (centimeters <= 0 || kilograms <= 0) {
         console.log(usage)
         throw Error("Arguments should be positive!")
     }
@@ -62,13 +61,16 @@ function parseArgs(args: string[]): Args {
     }
 }
 
-const args: Args = parseArgs(process.argv) 
-console.log(calculateBmi(args.centimeters, args.kilograms))
+
+function main(strArgs: string[]): void {
+    const args: Args = parseArgs(strArgs)
+    console.log(calculateBmi(args.centimeters, args.kilograms))
+}
 
 
-// quite hacky, but I'll keep the files as they are. In practice,
-// it seems typescript wants all this above stuff to be imported
-// into a script (considering that no overlap in names is allowed), 
-// so I'd basically just write a main function
-// here, then import and execute that in the script.
-export {}
+if (require.main === module) {
+    main(process.argv.slice(2))
+}
+
+
+export { main, calculateBmi, parseArgs }
