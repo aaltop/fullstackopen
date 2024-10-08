@@ -1,4 +1,5 @@
 import diagnosesRouter from "./routes/diagnoses";
+import patientsRouter from "./routes/patients";
 
 import express from 'express';
 import cors from "cors";
@@ -10,6 +11,7 @@ const apiRouter = express.Router();
 // for the routes, rather than just nilly-willy chucking cors on everything
 // or having to assume that .json() is applied)
 apiRouter.use("/diagnoses",diagnosesRouter);
+apiRouter.use("/patients", patientsRouter);
 
 apiRouter.use(express.json());
 apiRouter.use(cors());
