@@ -1,0 +1,5 @@
+!*.css
+!tsconfig.node.json
+!.eslintrc.cjs
+!.eslintignore
+!vite.svg
