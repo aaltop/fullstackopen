@@ -19,4 +19,4 @@ node_modules
 dist
 
 # ESlint
-!*eslint.config.cjs
+!*eslint.config*
