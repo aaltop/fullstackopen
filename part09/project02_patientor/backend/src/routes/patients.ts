@@ -1,7 +1,7 @@
-import { NonSensitivePatient } from "../types";
+import { NonSensitivePatient, NewPatient } from "../types";
 import patientService from "../services/patients";
 
-import express, { Response } from "express";
+import express, { Response, Request } from "express";
 import cors from "cors";
 
 const router = express.Router();
@@ -14,6 +14,10 @@ router.use(
 router.route("/")
     .get((_req, res: Response<NonSensitivePatient[]>) => {
         res.json(patientService.getAll());
+    })
+    .post((req: Request<unknown, unknown, NewPatient>, res: Response<NonSensitivePatient>) => {
+        const newPatient: NewPatient = req.body;
+        res.json(patientService.addPatient(newPatient));
     });
 
 
