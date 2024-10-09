@@ -1,5 +1,5 @@
 import data from "../data/diagnoses";
-import { Diagnosis } from "../types";
+import { Diagnosis } from "../typing/types";
 
 
 function getAll(): Diagnosis[]

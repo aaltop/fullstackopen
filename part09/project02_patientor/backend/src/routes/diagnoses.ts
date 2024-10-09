@@ -1,5 +1,5 @@
 import diagnosisService from "../services/diagnoses";
-import { Diagnosis } from "../types";
+import { Diagnosis } from "../typing/types";
 
 import express, { Response } from "express";
 import cors from "cors";

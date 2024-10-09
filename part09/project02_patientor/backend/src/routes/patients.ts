@@ -1,5 +1,6 @@
-import { NonSensitivePatient, NewPatient } from "../types";
+import { NonSensitivePatient, NewPatient } from "../typing/types";
 import patientService from "../services/patients";
+import parsers from "../typing/parsers";
 
 import express, { Response, Request } from "express";
 import cors from "cors";
@@ -15,8 +16,8 @@ router.route("/")
     .get((_req, res: Response<NonSensitivePatient[]>) => {
         res.json(patientService.getAll());
     })
-    .post((req: Request<unknown, unknown, NewPatient>, res: Response<NonSensitivePatient>) => {
-        const newPatient: NewPatient = req.body;
+    .post((req: Request, res: Response<NonSensitivePatient>) => {
+        const newPatient: NewPatient = parsers.NewPatient.parse(req.body);
         res.json(patientService.addPatient(newPatient));
     });
 

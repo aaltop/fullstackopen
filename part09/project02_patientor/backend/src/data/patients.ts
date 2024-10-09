@@ -1,4 +1,8 @@
-const data = [
+import parsers from "../typing/parsers";
+import { Patient} from "../typing/types";
+
+
+const rawData = [
     {
         "id": "d2773336-f723-11e9-8f0b-362b9e155667",
         "name": "John McClane",
@@ -40,5 +44,7 @@ const data = [
         "occupation": "Digital evangelist"
     }
 ];
+
+const data: Patient[] = rawData.map((val: object):Patient  => parsers.Patient.parse(val));
 
 export default data;
