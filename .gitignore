@@ -8,7 +8,7 @@
 !*.html
 !*.ts
 !*.tsx
-!tsconfig.json
+!tsconfig*
 
 # vs code rest client
 !*.rest
