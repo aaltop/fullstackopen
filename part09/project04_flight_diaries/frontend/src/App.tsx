@@ -4,6 +4,7 @@ import DiaryEntries from './components/DiaryEntries';
 import { NonSensitiveDiaryEntrySchema } from './typing/utils';
 
 import AddDiaryEntryForm from './components/AddDiaryEntryForm';
+import Notification from './components/Notification';
 
 import { useState, useEffect } from 'react';
 
@@ -22,6 +23,7 @@ function App() {
 
     return (
         <>
+        <Notification />
         <h2>New Entry</h2>
         <AddDiaryEntryForm onSubmit={async (ev, newEntry) => {
             ev.preventDefault()

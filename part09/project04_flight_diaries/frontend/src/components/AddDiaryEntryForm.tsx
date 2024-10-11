@@ -1,7 +1,8 @@
 import { NewEntrySchema } from "../typing/utils";
 import { NewDiaryEntry } from "../typing/types";
+import { NotificationContext } from "../contexts";
 
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { ZodError } from "zod";
 
 
@@ -18,6 +19,8 @@ export default function AddDiaryEntryForm({ onSubmit }: AddDiaryEntryFormProps)
     const [weather, setWeather] = useState("");
     const [visibility, setVisibility] = useState("");
     const [comment, setComment] = useState("");
+
+    const [_notifications, notificationMethods] = useContext(NotificationContext);
 
     function resetStates()
     {
@@ -42,9 +45,9 @@ export default function AddDiaryEntryForm({ onSubmit }: AddDiaryEntryFormProps)
         } catch (error) {
             ev.preventDefault()
             if (error instanceof ZodError) {
-                console.log("Whoopsie Daisy!")
                 const errorMessages: string[] = error.errors.map(error => error.message);
-                console.log(errorMessages);
+                notificationMethods.setNotifications(errorMessages);
+                return;
             }
             throw new Error("Something went wrong.");
         }
