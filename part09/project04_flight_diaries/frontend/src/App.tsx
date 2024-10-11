@@ -1,5 +1,6 @@
 import { NonSensitiveDiaryEntry } from './typing/types';
 import diaryService from './services/diaryService';
+import DiaryEntries from './components/DiaryEntries';
 
 import { useState, useEffect } from 'react';
 
@@ -19,7 +20,7 @@ function App() {
     return (
         <>
         <h2>Diary Entries</h2>
-        {diaries.map(diary => <div key={diary.id}>{diary.date}</div>)}
+        <DiaryEntries entries={diaries} />
         </>
     );
 };
