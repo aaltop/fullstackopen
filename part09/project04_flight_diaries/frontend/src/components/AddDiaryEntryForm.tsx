@@ -1,5 +1,5 @@
 import { NewEntrySchema, VisibilityEnum, WeatherEnum } from "../typing/utils";
-import { NewDiaryEntry } from "../typing/types";
+import { NewDiaryEntry, Weather, Visibility } from "../typing/types";
 import { NotificationContext } from "../contexts";
 import RadioChoice from "./RadioChoice";
 
@@ -66,11 +66,11 @@ export default function AddDiaryEntryForm({ onSubmit }: AddDiaryEntryFormProps)
             </label>
             <label style={labelStyle}>
                 {"weather: "}
-                <RadioChoice name="weather" choices={WeatherEnum.options} />
+                <RadioChoice<Weather> name="weather" choices={WeatherEnum.options} />
             </label>
             <label style={labelStyle}>
                 {"visibility: "}
-                <RadioChoice name="visibility" choices={VisibilityEnum.options} />
+                <RadioChoice<Visibility> name="visibility" choices={VisibilityEnum.options} />
             </label>
             <label style={labelStyle}>
                 {"comment: "}
