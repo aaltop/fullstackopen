@@ -1,6 +1,7 @@
-import { NewEntrySchema } from "../typing/utils";
+import { NewEntrySchema, VisibilityEnum, WeatherEnum } from "../typing/utils";
 import { NewDiaryEntry } from "../typing/types";
 import { NotificationContext } from "../contexts";
+import RadioChoice from "./RadioChoice";
 
 import { useContext, useState } from "react"
 import { ZodError } from "zod";
@@ -16,8 +17,6 @@ interface AddDiaryEntryFormProps {
 export default function AddDiaryEntryForm({ onSubmit }: AddDiaryEntryFormProps)
 {
     const [date, setDate] = useState("");
-    const [weather, setWeather] = useState("");
-    const [visibility, setVisibility] = useState("");
     const [comment, setComment] = useState("");
 
     const [_notifications, notificationMethods] = useContext(NotificationContext);
@@ -25,13 +24,18 @@ export default function AddDiaryEntryForm({ onSubmit }: AddDiaryEntryFormProps)
     function resetStates()
     {
         setDate("");
-        setWeather("");
-        setVisibility("");
         setComment("");
     }
 
-    async function submitForm(ev: React.SyntheticEvent)
+    async function submitForm(ev: React.FormEvent<HTMLFormElement>)
     {
+        // interestingly, this is just directly in the typescript
+        // docs, so I guess it's okay-ish?
+        const target = ev.target as typeof ev.target & {
+            elements: { visibility: RadioNodeList, weather: RadioNodeList}
+        }
+        const visibility = target.elements.visibility.value
+        const weather = target.elements.weather.value
         try {
             const submittedEntry: NewDiaryEntry = NewEntrySchema.parse({
                 date,
@@ -39,7 +43,6 @@ export default function AddDiaryEntryForm({ onSubmit }: AddDiaryEntryFormProps)
                 visibility,
                 comment
             });
-    
             await onSubmit(ev, submittedEntry);
             resetStates();
         } catch (error) {
@@ -53,21 +56,23 @@ export default function AddDiaryEntryForm({ onSubmit }: AddDiaryEntryFormProps)
         }
     }
 
+    const labelStyle = {display: "block"}
+
     return (
         <form onSubmit={submitForm}>
-            <label>
+            <label style={labelStyle}>
                 {"date: "}
-                <input type="date" value={date} onChange={ev => setDate(ev.target.value)}></input>
+                <input type="date" value={date} onChange={ev => setDate(ev.target.value)} required></input>
             </label>
-            <label>
+            <label style={labelStyle}>
                 {"weather: "}
-                <input type="text" value={weather} onChange={ev => setWeather(ev.target.value)}></input>
+                <RadioChoice name="weather" choices={WeatherEnum.options} />
             </label>
-            <label>
+            <label style={labelStyle}>
                 {"visibility: "}
-                <input type="text" value={visibility} onChange={ev => setVisibility(ev.target.value)}></input>
+                <RadioChoice name="visibility" choices={VisibilityEnum.options} />
             </label>
-            <label>
+            <label style={labelStyle}>
                 {"comment: "}
                 <input type="text" value={comment} onChange={ev => setComment(ev.target.value)}></input>
             </label>

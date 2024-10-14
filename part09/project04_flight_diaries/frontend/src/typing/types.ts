@@ -1,17 +1,9 @@
-export enum Weather {
-  Sunny = 'sunny',
-  Rainy = 'rainy',
-  Cloudy = 'cloudy',
-  Stormy = 'stormy',
-  Windy = 'windy',
-}
+import { WeatherEnum, VisibilityEnum } from "./utils";
 
-export enum Visibility {
-  Great = 'great',
-  Good = 'good',
-  Ok = 'ok',
-  Poor = 'poor',
-}
+import { z } from "zod";
+
+export type Visibility = z.infer<typeof VisibilityEnum>;
+export type Weather = z.infer<typeof WeatherEnum>;
 
 export interface DiaryEntry {
   id: number;

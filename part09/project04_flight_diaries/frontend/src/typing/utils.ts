@@ -1,10 +1,24 @@
-import { Weather, Visibility } from './types';
 import { z } from 'zod';
+
+export const WeatherEnum = z.enum([
+    "sunny",
+    "rainy",
+    "cloudy",
+    "stormy",
+    "windy"
+]);
+
+export const VisibilityEnum = z.enum([
+    "great",
+    "good",
+    "ok",
+    "poor"
+]);
 
 export const DiaryEntrySchema = z.object({
     id: z.number(),
-    weather: z.nativeEnum(Weather),
-    visibility: z.nativeEnum(Visibility),
+    weather: WeatherEnum,
+    visibility: VisibilityEnum,
     date: z.string().date(),
     comment: z.string().optional()
 })
