@@ -11,7 +11,7 @@ function patientToNonSensitive(patient: Patient): NonSensitivePatient {
         gender,
         occupation
     }: NonSensitivePatient = patient;
-    return { id, name, dateOfBirth, gender, occupation};
+    return { id, name, dateOfBirth, gender, occupation };
 }
 
 function getAll(nonSensitive: boolean = true): NonSensitivePatient[] | Patient[]
@@ -33,8 +33,25 @@ NonSensitivePatient
     return patientToNonSensitive(addedPatient);
 } 
 
+function getPatient(patientId: string, nonSensitive: true): NonSensitivePatient | null;
+function getPatient(patientId:string, nonSensitive: false): Patient | null;
+function getPatient(patientId: string, nonSensitive: boolean = true):
+NonSensitivePatient
+| Patient
+| null
+{
+    const foundPatient: Patient | undefined = data.find(({ id }) => id === patientId);
+    if (foundPatient === undefined) return null;
+    if (nonSensitive) {
+        return patientToNonSensitive(foundPatient);
+    } else {
+        return foundPatient;
+    }
+}
+
 
 export default {
     getAll,
-    addPatient
+    addPatient,
+    getPatient
 };
