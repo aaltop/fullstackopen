@@ -3,12 +3,45 @@ import { z } from "zod";
 
 const GenderEnum = z.enum(["male", "female", "other"]);
 
-const Entry = z.object({
-    description: z.string(),
-    creationDate: z.string().date(),
-    creatorInfo: z.string(),
-    diagnosisCodes: z.array(z.string())
+
+const Diagnosis = z.object({
+    code: z.string(),
+    name: z.string(),
+    latin: z.string().optional()
 });
+
+const Entry = z.object({
+    id: z.string(),
+    description: z.string(),
+    date: z.string().date(),
+    specialist: z.string(),
+    diagnosisCodes: z.array(Diagnosis.shape.latin).optional()
+});
+
+const sickLeave = z.object({
+    startDate: z.string().optional(),
+    endDate: z.string().optional()
+});
+const OccupationalHealthcareEntry = Entry.extend({
+    type: z.literal("OccupationalHealthcare"),
+    employerName: z.string(),
+    sickLeave: sickLeave.optional()
+});
+
+const HospitalEntry = Entry.extend({
+    type: z.literal("Hospital"),
+    discharge: z.object({
+        date: z.string().date(),
+        criteria: z.string()
+    })
+});
+
+const HealthCheckEntry = Entry.extend({
+    type: z.literal("HealthCheck"),
+    healthCheckRating: z.number()
+});
+
+const EntryUnion = z.union([HospitalEntry, HealthCheckEntry, OccupationalHealthcareEntry]);
 
 const Patient = z.object({
     id: z.string(),
@@ -17,7 +50,7 @@ const Patient = z.object({
     ssn: z.string(),
     gender: GenderEnum,
     occupation: z.string(),
-    entries: z.array(Entry)
+    entries: z.array(EntryUnion)
 });
 
 const NewPatient = Patient.omit({
@@ -34,5 +67,10 @@ export default {
     GenderEnum,
     Patient,
     NewPatient,
-    NonSensitivePatient
+    NonSensitivePatient,
+    Diagnosis,
+    HospitalEntry,
+    HealthCheckEntry,
+    OccupationalHealthcareEntry,
+    EntryUnion
 };
