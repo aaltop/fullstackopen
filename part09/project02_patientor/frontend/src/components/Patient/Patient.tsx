@@ -1,19 +1,32 @@
-import { Patient as PatientType } from "../types";
+import { Patient as PatientType } from "../../types";
+import patientService from "../../services/patients";
 
 import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+
 import { Container, Typography } from "@mui/material";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from "@mui/icons-material/Female";
 
 
-export default function Patient( { patients }: { patients: PatientType[]})
+
+export default function Patient()
 {
-    const { id } = useParams();
+    const params = useParams();
+    const [patient, setPatient] = useState<PatientType | null>(null);
 
-    if (id === undefined) return null;
+    useEffect(() => {
+        async function fetchPatient()
+        {
+            const { id } = params;
+            if (id === undefined) return;
+            const patient = await patientService.getById(id);
+            setPatient(patient);
+        }
+        fetchPatient();
+    }, [params]);
 
-    const patient = patients.find(patient => patient.id === id);
-    if (patient === undefined) return null;
+    if (patient === null) return null;
 
     let genderIcon = null;
     if (patient.gender === "male") genderIcon = <MaleIcon />;
