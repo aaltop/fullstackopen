@@ -21,7 +21,8 @@ const Patient = z.object({
 });
 
 const NewPatient = Patient.omit({
-    id: true
+    id: true,
+    entries: true
 });
 
 const NonSensitivePatient = Patient.omit({

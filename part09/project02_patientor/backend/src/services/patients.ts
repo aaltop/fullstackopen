@@ -26,7 +26,7 @@ function addPatient(newPatient: NewPatient, nonSensitive: boolean = true):
 NonSensitivePatient 
 | Patient 
 {
-    const addedPatient: Patient = {...newPatient, id: uuid()};
+    const addedPatient: Patient = {...newPatient, id: uuid(), entries: []};
     data.push(addedPatient);
 
     if (!nonSensitive) return addedPatient;
