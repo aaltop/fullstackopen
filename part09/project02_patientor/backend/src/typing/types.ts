@@ -9,6 +9,7 @@ export type NonSensitivePatient = z.infer<typeof parsers.NonSensitivePatient>;
 export type NewPatient = z.infer<typeof parsers.NewPatient>;
 
 export type Entry = z.infer<typeof parsers.EntryUnion>;
+export type NewEntry = z.infer<typeof parsers.NewEntryUnion>;
 
 export type ErrorResponse = {
     error: string

@@ -1,4 +1,5 @@
-import { NonSensitivePatient, Patient, NewPatient } from "../typing/types";
+import { NonSensitivePatient, Patient, NewPatient, NewEntry, Entry } from "../typing/types";
+import parsers from "../typing/parsers";
 import data from "../data/patients";
 
 import { v1 as uuid} from "uuid";
@@ -49,9 +50,23 @@ NonSensitivePatient
     }
 }
 
+function addEntry(patientId: string, entry: unknown): Entry | null
+{
+    const patientIndex = data.findIndex(patient => patient.id === patientId);
+    if (patientIndex === -1) return null;
+
+    const parsedEntry: NewEntry = parsers.NewEntryUnion.parse(entry);
+    const entryWithId: Entry = parsers.EntryUnion.parse({ ...parsedEntry, id: uuid() });
+    const newEntries: Entry[] = data[patientIndex].entries.concat(
+        entryWithId
+    );
+    data[patientIndex].entries = newEntries;
+    return entryWithId;
+}
 
 export default {
     getAll,
     addPatient,
-    getPatient
+    getPatient,
+    addEntry
 };

@@ -1,4 +1,4 @@
-import { NonSensitivePatient, NewPatient, ErrorResponse, Patient } from "../typing/types";
+import { NonSensitivePatient, NewPatient, ErrorResponse, Patient, Entry, NewEntry} from "../typing/types";
 import patientService from "../services/patients";
 import parsers from "../typing/parsers";
 
@@ -21,15 +21,34 @@ router.route("/")
         res.json(patientService.addPatient(newPatient));
     });
 
+function invalidIdMessage(id: string): { error: string }
+{
+    return {
+        error: `Patient with id '${id}' not found.`
+    };
+}
+
 router.route("/:id")
     .get((req: Request, res: Response<Patient | ErrorResponse>) => {
         const id: string = req.params.id;
         const foundPatient: Patient | null = patientService.getPatient(id, false);
         if (foundPatient === null) {
-            res.status(404).json({ error: `Patient with id '${id}' not found.` }).end();
+            res.status(404).json(invalidIdMessage(id)).end();
             return;
         }
         res.json(foundPatient);
+    });
+
+router.route("/:id/entries")
+    .post((req: Request, res: Response<Entry | ErrorResponse>) => {
+        const id = req.params.id;
+        const entry: NewEntry = parsers.NewEntryUnion.parse(req.body);
+        const entryData = patientService.addEntry(id, entry);
+        if (entryData === null) {
+            res.status(404).json(invalidIdMessage(id)).end();
+            return;
+        }
+        res.json(entryData);
     });
 
 
