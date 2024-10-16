@@ -1,8 +1,9 @@
-import { Patient as PatientType, Entry as EntryType } from "../../types";
+import { Patient as PatientType, Entry as EntryType, Diagnosis } from "../../types";
 import patientService from "../../services/patients";
+import { DiagnosesContext } from "../../contexts";
 
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { Container, Typography } from "@mui/material";
 import MaleIcon from '@mui/icons-material/Male';
@@ -12,8 +13,19 @@ import FemaleIcon from "@mui/icons-material/Female";
 function Entry({ entry }: { entry: EntryType })
 {
 
-    let codes = entry.diagnosisCodes?.join(", ") ?? null;
-    if (codes) codes = `Diagnosis codes: ${codes}`;
+    const diagnoses: Diagnosis[] = useContext(DiagnosesContext);
+
+    let codes: string[] = [];
+    if (entry.diagnosisCodes && entry.diagnosisCodes.length > 0) {
+        codes = entry.diagnosisCodes.map(code => {
+            const foundDiag = diagnoses.find(diag => {
+                return diag.code === code;
+            });
+            if (foundDiag === undefined) return `${code}`;
+            return `${foundDiag.code}: ${foundDiag.name}`;
+        });
+
+    }
 
     return (
         <div style={{
@@ -22,7 +34,13 @@ function Entry({ entry }: { entry: EntryType })
             marginBlock: "1px"
         }}>
             {`${entry.date}: `} <i>{entry.description}</i><br></br>
-            {codes}
+            <Typography
+                variant="h6"
+                style={{ display: codes.length > 0 ? "" : "none"}}
+            >
+                Diagnoses
+            </Typography>
+            {codes.map((code, i) => <div key={i}>{code}</div>)}
         </div>
     );
 }
