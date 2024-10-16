@@ -1,4 +1,7 @@
-const data = [
+import parsers from "../typing/parsers";
+import { Diagnosis } from "../typing/types";
+
+const rawData = [
   {
     "code": "M24.2",
     "name": "Disorder of ligament",
@@ -77,5 +80,7 @@ const data = [
     "latin": "Alia retinopathia proliferativa"
   }
 ];
+
+const data: Diagnosis[] = rawData.map(dat => parsers.Diagnosis.parse(dat));
 
 export default data;
