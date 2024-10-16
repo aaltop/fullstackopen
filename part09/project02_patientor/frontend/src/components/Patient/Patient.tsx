@@ -1,19 +1,53 @@
-import { Patient as PatientType, Entry as EntryType, Diagnosis } from "../../types";
+import {
+    Patient as PatientType,
+    Entry as EntryType,
+    Diagnosis,
+    
+} from "../../types";
 import patientService from "../../services/patients";
 import { DiagnosesContext } from "../../contexts";
+import {
+    isHealthCheckEntry,
+    isOccupationalHealthcareEntry,
+    isHospitalEntry
+} from "../../typeGuards";
 
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 
 import { Container, Typography } from "@mui/material";
+
+// MUI Icons
+// ---------------
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from "@mui/icons-material/Female";
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import WorkIcon from '@mui/icons-material/Work';
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
+// ===================
 
 
 function Entry({ entry }: { entry: EntryType })
 {
 
     const diagnoses: Diagnosis[] = useContext(DiagnosesContext);
+
+    let Icon: typeof LocalHospitalIcon | undefined = undefined;
+    switch (true) {
+        case (isHealthCheckEntry(entry)): {
+            Icon = MonitorHeartIcon;
+            break;
+        } case (isOccupationalHealthcareEntry(entry)): {
+            Icon = WorkIcon;
+            break;
+        } case (isHospitalEntry(entry)): {
+            Icon = LocalHospitalIcon;
+            break;
+        } default: {
+            // fine to just do this too, no?
+            throw new Error("Unhandled entry type");
+        }
+    }
 
     let codes: string[] = [];
     if (entry.diagnosisCodes && entry.diagnosisCodes.length > 0) {
@@ -33,7 +67,11 @@ function Entry({ entry }: { entry: EntryType })
             paddingBlock: "1em",
             marginBlock: "1px"
         }}>
-            {`${entry.date}: `} <i>{entry.description}</i><br></br>
+            <Typography variant="h6"
+            >
+                {entry.date} <Icon />
+            </Typography>
+            <i>{entry.description}</i>
             <Typography
                 variant="h6"
                 style={{ display: codes.length > 0 ? "" : "none"}}
