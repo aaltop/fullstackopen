@@ -13,7 +13,7 @@ import {
 } from "../../typeGuards";
 
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, ReactElement } from "react";
 
 import { Container, Typography } from "@mui/material";
 
@@ -32,16 +32,30 @@ function Entry({ entry }: { entry: EntryType })
 
     const diagnoses: Diagnosis[] = useContext(DiagnosesContext);
 
-    let Icon: typeof LocalHospitalIcon | undefined = undefined;
+    let Icon: ReactElement | null = null;
+    let ExtraInfo: ReactElement | null = null;
     switch (true) {
         case (isHealthCheckEntry(entry)): {
-            Icon = MonitorHeartIcon;
+            Icon = <><MonitorHeartIcon /></>;
+            ExtraInfo = <>{`Health rating: ${entry.healthCheckRating}`}</>;
             break;
         } case (isOccupationalHealthcareEntry(entry)): {
-            Icon = WorkIcon;
+            Icon = <><WorkIcon />{entry.employerName}</>;
+            if (entry.sickLeave !== undefined
+                && (entry.sickLeave.startDate !== undefined 
+                    || entry.sickLeave.endDate !== undefined
+                )
+            ) {
+                // not sure why I've set it as optional, but whatever.
+                const start = entry.sickLeave.startDate ?? "";
+                const end = entry.sickLeave.endDate ?? "";
+                ExtraInfo = <>{`Sick leave period: ${start}--${end}`}</>;
+            }
             break;
         } case (isHospitalEntry(entry)): {
-            Icon = LocalHospitalIcon;
+            Icon = <><LocalHospitalIcon /></>;
+            const { date, criteria } = entry.discharge;
+            ExtraInfo = <>{`Discharged on ${date}: ${criteria}`}</>;
             break;
         } default: {
             // fine to just do this too, no?
@@ -69,9 +83,10 @@ function Entry({ entry }: { entry: EntryType })
         }}>
             <Typography variant="h6"
             >
-                {entry.date} <Icon />
+                {entry.date} {Icon}
             </Typography>
-            <i>{entry.description}</i>
+            <i>{entry.description}</i><br></br>
+            {`Diagnosed by ${entry.specialist}`}
             <Typography
                 variant="h6"
                 style={{ display: codes.length > 0 ? "" : "none"}}
@@ -79,6 +94,12 @@ function Entry({ entry }: { entry: EntryType })
                 Diagnoses
             </Typography>
             {codes.map((code, i) => <div key={i}>{code}</div>)}
+            <Typography
+                variant="h6"
+            >
+                Other Info
+            </Typography>
+            {ExtraInfo}
         </div>
     );
 }
