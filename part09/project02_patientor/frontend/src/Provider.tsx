@@ -1,4 +1,4 @@
-import { Diagnosis } from "./types";
+import { Diagnosis } from "./typing/types";
 import diagnosisService from "./services/diagnoses";
 import { DiagnosesContext } from "./contexts";
 

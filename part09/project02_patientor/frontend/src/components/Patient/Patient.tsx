@@ -1,9 +1,9 @@
 import {
     Patient as PatientType,
-    Entry as EntryType,
+    EntryUnion as EntryType,
     Diagnosis,
     
-} from "../../types";
+} from "../../typing/types";
 import patientService from "../../services/patients";
 import { DiagnosesContext } from "../../contexts";
 import {

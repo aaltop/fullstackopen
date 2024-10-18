@@ -18,6 +18,8 @@ const Entry = z.object({
     diagnosisCodes: z.array(Diagnosis.shape.latin).optional()
 });
 
+const NewEntry = Entry.omit({ id: true});
+
 const sickLeave = z.object({
     startDate: z.string().optional(),
     endDate: z.string().optional()
@@ -27,6 +29,9 @@ const OccupationalHealthcareEntry = Entry.extend({
     employerName: z.string(),
     sickLeave: sickLeave.optional()
 });
+const NewOccupationalHealthcareEntry = OccupationalHealthcareEntry.omit({
+    id: true
+});
 
 const HospitalEntry = Entry.extend({
     type: z.literal("Hospital"),
@@ -35,13 +40,22 @@ const HospitalEntry = Entry.extend({
         criteria: z.string()
     })
 });
+const NewHospitalEntry = HospitalEntry.omit({ id: true});
 
 const HealthCheckEntry = Entry.extend({
     type: z.literal("HealthCheck"),
     healthCheckRating: z.number()
 });
+const NewHealthCheckEntry = HealthCheckEntry.omit({
+    id: true
+});
 
 const EntryUnion = z.union([HospitalEntry, HealthCheckEntry, OccupationalHealthcareEntry]);
+const NewEntryUnion = z.union([
+    NewHospitalEntry,
+    NewHealthCheckEntry,
+    NewOccupationalHealthcareEntry
+]);
 
 const Patient = z.object({
     id: z.string(),
@@ -69,8 +83,11 @@ export default {
     NewPatient,
     NonSensitivePatient,
     Diagnosis,
+    Entry,
+    NewEntry,
     HospitalEntry,
     HealthCheckEntry,
     OccupationalHealthcareEntry,
-    EntryUnion
+    EntryUnion,
+    NewEntryUnion
 };

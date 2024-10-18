@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { Diagnosis } from "./types";
+import { Diagnosis } from "./typing/types";
 
 
 

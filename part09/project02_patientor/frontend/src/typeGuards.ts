@@ -1,22 +1,22 @@
 import {
     HealthCheckEntry,
-    Entry,
+    EntryUnion,
     OccupationalHealthcareEntry,
     HospitalEntry
-} from "./types";
+} from "./typing/types";
 
 
-export function isHealthCheckEntry(obj: Entry): obj is HealthCheckEntry
+export function isHealthCheckEntry(obj: EntryUnion): obj is HealthCheckEntry
 {
     return (obj.type === "HealthCheck");
 }
 
-export function isOccupationalHealthcareEntry(obj: Entry): obj is OccupationalHealthcareEntry
+export function isOccupationalHealthcareEntry(obj: EntryUnion): obj is OccupationalHealthcareEntry
 {
     return (obj.type === "OccupationalHealthcare");
 }
 
-export function isHospitalEntry(obj: Entry): obj is HospitalEntry
+export function isHospitalEntry(obj: EntryUnion): obj is HospitalEntry
 {
     return (obj.type === "Hospital");
 }

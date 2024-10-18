@@ -1,5 +1,5 @@
 import { apiBaseUrl } from "../constants";
-import { Diagnosis } from "../types";
+import { Diagnosis } from "../typing/types";
 
 import axios from "axios";
 
