@@ -11,6 +11,7 @@ import {
     isOccupationalHealthcareEntry,
     isHospitalEntry
 } from "../../typeGuards";
+import NewEntryForm from "./NewEntryForm";
 
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useContext, ReactElement } from "react";
@@ -129,6 +130,10 @@ export default function Patient()
 
     return (
         <Container style={{ marginBlock: "1em"}}>
+            <NewEntryForm onSubmit={(ev, entry) => {
+                ev.preventDefault();
+                console.log(entry);
+            }} />
             <Typography variant="h4">{patient.name} {genderIcon}</Typography>
             {`ssn: ${patient.ssn ?? "unknown"}`} <br></br>
             {`occupation: ${patient.occupation}`}

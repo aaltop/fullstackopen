@@ -87,6 +87,7 @@ export default {
     NewEntry,
     HospitalEntry,
     HealthCheckEntry,
+    NewHealthCheckEntry,
     OccupationalHealthcareEntry,
     EntryUnion,
     NewEntryUnion
