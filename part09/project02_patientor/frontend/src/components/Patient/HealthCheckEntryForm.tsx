@@ -2,16 +2,19 @@ import NewEntryForm from "./NewEntryForm";
 import { NewHealthCheckEntry } from "../../typing/types";
 import parsers from "../../typing/parsers";
 import { emptyNewEntry } from "./formUtils";
+import useModalControls from "../hooks/useModalControls";
 
 import { useState } from "react";
 import { TextField } from "@mui/material";
+import { ZodError } from "zod";
 
 interface Props {
-    onSubmit(ev: React.SyntheticEvent, entry: NewHealthCheckEntry): void
-    onCancel(): void
+    onSubmit(ev: React.SyntheticEvent, entry: NewHealthCheckEntry): void;
+    onCancel(): void;
+    modalControls: ReturnType<typeof useModalControls>;
 }
 
-export default function HealthCheckEntryForm({ onSubmit, onCancel }: Props)
+export default function HealthCheckEntryForm({ onSubmit, onCancel, modalControls }: Props)
 {
 
     const [baseEntry, setBaseEntry] = useState(emptyNewEntry);
@@ -39,7 +42,17 @@ export default function HealthCheckEntryForm({ onSubmit, onCancel }: Props)
             onSubmit(ev, form);
         } catch (error) {
             ev.preventDefault();
-            console.log("Error encountered");
+            switch (true) {
+                case (error instanceof ZodError): {
+                    // doesn't really seem to work properly with 
+                    // the Alert thingy
+                    const message: string = error.errors.map(err => err.message).join("\n");
+                    modalControls.setError(message);
+                    break;
+                } default: {
+                    console.log("Error encountered");
+                }
+            }
         }
 
     }

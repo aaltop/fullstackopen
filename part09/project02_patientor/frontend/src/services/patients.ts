@@ -1,5 +1,5 @@
-import axios from "axios";
-import { Patient, NewPatient } from "../typing/types";
+import axios, { AxiosError } from "axios";
+import { Patient, NewPatient, NewEntryUnion, EntryUnion, ErrorResponse } from "../typing/types";
 
 import { apiBaseUrl } from "../constants";
 
@@ -31,7 +31,30 @@ async function getById(id: string): Promise<Patient>
     return data;
 }
 
+async function addEntry(id: string, entry: NewEntryUnion): Promise<EntryUnion | ErrorResponse>
+{
+    try {
+        const { data } = await axios.post(
+            `${baseUrl}/${id}/entries`,
+            entry
+        );
+    
+        return data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.log(error);
+            if (error.code === "ERR_NETWORK") {
+                return { error: "Network error."};
+            }
+            return error.response?.data;
+        }
+        return {
+            error: "Error encountered."
+        };
+    }
+}
+
 export default {
-  getAll, create, getById
+  getAll, create, getById, addEntry
 };
 

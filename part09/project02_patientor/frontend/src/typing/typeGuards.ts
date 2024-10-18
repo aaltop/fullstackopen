@@ -2,8 +2,9 @@ import {
     HealthCheckEntry,
     EntryUnion,
     OccupationalHealthcareEntry,
-    HospitalEntry
-} from "./typing/types";
+    HospitalEntry,
+    ErrorResponse
+} from "./types";
 
 
 export function isHealthCheckEntry(obj: EntryUnion): obj is HealthCheckEntry
@@ -19,4 +20,9 @@ export function isOccupationalHealthcareEntry(obj: EntryUnion): obj is Occupatio
 export function isHospitalEntry(obj: EntryUnion): obj is HospitalEntry
 {
     return (obj.type === "Hospital");
+}
+
+export function isErrorResponse(obj: object): obj is ErrorResponse
+{
+    return ("error" in obj && typeof obj.error === "string");
 }

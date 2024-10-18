@@ -42,7 +42,14 @@ router.route("/:id")
 router.route("/:id/entries")
     .post((req: Request, res: Response<Entry | ErrorResponse>) => {
         const id = req.params.id;
-        const entry: NewEntry = parsers.NewEntryUnion.parse(req.body);
+        const parsedData = parsers.NewEntryUnion.safeParse(req.body);
+
+        if (!parsedData.success) {
+            res.status(400).json({ error: "Sent data did not parse correctly."}).end();
+            return;
+        }
+
+        const entry: NewEntry = parsedData.data;
         const entryData = patientService.addEntry(id, entry);
         if (entryData === null) {
             res.status(404).json(invalidIdMessage(id)).end();

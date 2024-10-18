@@ -9,8 +9,9 @@ import { DiagnosesContext } from "../../contexts";
 import {
     isHealthCheckEntry,
     isOccupationalHealthcareEntry,
-    isHospitalEntry
-} from "../../typeGuards";
+    isHospitalEntry,
+    isErrorResponse
+} from "../../typing/typeGuards";
 
 import HealthCheckEntryForm from "./HealthCheckEntryForm";
 import Modal from "../Modal";
@@ -20,7 +21,6 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect, useContext, ReactElement } from "react";
 
 import { Button, Container, Typography } from "@mui/material";
-
 // MUI Icons
 // ---------------
 import MaleIcon from '@mui/icons-material/Male';
@@ -138,13 +138,25 @@ export default function Patient()
                 modalOpen={modalControls.modalIsOpen}
                 onClose={modalControls.closeModal}
                 dialogTitle="Add a new entry"
+                error={modalControls.error}
             >
                 <HealthCheckEntryForm
-                    onSubmit={(ev, entry) => {
+                    onSubmit={async (ev, entry) => {
                         ev.preventDefault();
-                        console.log(entry);
+                        try {
+                            const response = await patientService.addEntry(patient.id, entry);
+                            if (isErrorResponse(response)) {
+                                modalControls.setError(response.error);
+                            } else {
+                                patient.entries = patient.entries.concat(response);
+                                modalControls.closeModal();
+                            }
+                        } catch (error) {
+                            console.log(error);
+                        }
                     }}
                     onCancel={modalControls.closeModal}
+                    modalControls={modalControls}
                 />
             </Modal>
             <Button variant="contained" onClick={modalControls.openModal}>
