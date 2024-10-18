@@ -11,12 +11,15 @@ import {
     isOccupationalHealthcareEntry,
     isHospitalEntry
 } from "../../typeGuards";
+
 import HealthCheckEntryForm from "./HealthCheckEntryForm";
+import Modal from "../Modal";
+import useModalControls from "../hooks/useModalControls";
 
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useContext, ReactElement } from "react";
 
-import { Container, Typography } from "@mui/material";
+import { Button, Container, Typography } from "@mui/material";
 
 // MUI Icons
 // ---------------
@@ -110,6 +113,7 @@ export default function Patient()
 {
     const params = useParams();
     const [patient, setPatient] = useState<PatientType | null>(null);
+    const modalControls = useModalControls();
 
     useEffect(() => {
         async function fetchPatient()
@@ -130,10 +134,22 @@ export default function Patient()
 
     return (
         <Container style={{ marginBlock: "1em"}}>
-            <HealthCheckEntryForm onSubmit={(ev, entry) => {
-                ev.preventDefault();
-                console.log(entry);
-            }} />
+            <Modal
+                modalOpen={modalControls.modalIsOpen}
+                onClose={modalControls.closeModal}
+                dialogTitle="Add a new entry"
+            >
+                <HealthCheckEntryForm
+                    onSubmit={(ev, entry) => {
+                        ev.preventDefault();
+                        console.log(entry);
+                    }}
+                    onCancel={modalControls.closeModal}
+                />
+            </Modal>
+            <Button variant="contained" onClick={modalControls.openModal}>
+                Add new entry
+            </Button>
             <Typography variant="h4">{patient.name} {genderIcon}</Typography>
             {`ssn: ${patient.ssn ?? "unknown"}`} <br></br>
             {`occupation: ${patient.occupation}`}

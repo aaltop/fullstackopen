@@ -6,8 +6,12 @@ import { emptyNewEntry } from "./formUtils";
 import { useState } from "react";
 import { TextField } from "@mui/material";
 
+interface Props {
+    onSubmit(ev: React.SyntheticEvent, entry: NewHealthCheckEntry): void
+    onCancel(): void
+}
 
-export default function HealthCheckEntryForm({ onSubmit }: { onSubmit: (ev: React.SyntheticEvent, entry: NewHealthCheckEntry) => void})
+export default function HealthCheckEntryForm({ onSubmit, onCancel }: Props)
 {
 
     const [baseEntry, setBaseEntry] = useState(emptyNewEntry);
@@ -58,6 +62,7 @@ export default function HealthCheckEntryForm({ onSubmit }: { onSubmit: (ev: Reac
             onSubmit={submitForm}
             baseEntry={baseEntry}
             setBaseEntry={setBaseEntry}
+            onCancel={onCancel}
         >
             {AddedFields}
         </NewEntryForm>

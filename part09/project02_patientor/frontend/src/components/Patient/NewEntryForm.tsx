@@ -7,10 +7,11 @@ import { TextField, Button} from "@mui/material";
 interface Props {
     onSubmit(ev: React.SyntheticEvent): void,
     baseEntry: NewEntry,
-    setBaseEntry: React.Dispatch<React.SetStateAction<NewEntry>>
+    setBaseEntry: React.Dispatch<React.SetStateAction<NewEntry>>,
+    onCancel(): void
 }
 
-export default function NewEntryForm({ onSubmit, baseEntry, setBaseEntry, children }: Props & PropsWithChildren)
+export default function NewEntryForm({ onSubmit, baseEntry, setBaseEntry, children, onCancel }: Props & PropsWithChildren)
 {
 
     return (
@@ -34,7 +35,14 @@ export default function NewEntryForm({ onSubmit, baseEntry, setBaseEntry, childr
                 onChange={ev => setBaseEntry({ ...baseEntry, specialist: ev.target.value})}
             ></TextField>
             {children}
-            <Button type="submit">Add</Button>
+            <Button variant="contained" type="submit">Add</Button>
+            <Button
+                variant="contained"
+                type="button"
+                onClick={onCancel}
+            >
+                Cancel
+            </Button>
         </form>
     );
 }
