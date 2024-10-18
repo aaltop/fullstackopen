@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
 import axios from 'axios';
 import { Link } from "react-router-dom";
@@ -10,6 +9,8 @@ import HealthRatingBar from "../HealthRatingBar";
 
 import patientService from "../../services/patients";
 
+import useModalControls from "../hooks/useModalControls";
+
 interface Props {
   patients : Patient[]
   setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
@@ -17,21 +18,13 @@ interface Props {
 
 const PatientListPage = ({ patients, setPatients } : Props ) => {
 
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
-
-  const openModal = (): void => setModalOpen(true);
-
-  const closeModal = (): void => {
-    setModalOpen(false);
-    setError(undefined);
-  };
+  const { modalIsOpen: modalOpen, setModalIsOpen, error, setError, openModal, closeModal } = useModalControls();
 
   const submitNewPatient = async (values: NewPatient) => {
     try {
       const patient = await patientService.create(values);
       setPatients(patients.concat(patient));
-      setModalOpen(false);
+      setModalIsOpen(false);
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         if (e?.response?.data && typeof e?.response?.data === "string") {

@@ -11,7 +11,7 @@ import {
     isOccupationalHealthcareEntry,
     isHospitalEntry
 } from "../../typeGuards";
-import NewEntryForm from "./NewEntryForm";
+import HealthCheckEntryForm from "./HealthCheckEntryForm";
 
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useContext, ReactElement } from "react";
@@ -130,7 +130,7 @@ export default function Patient()
 
     return (
         <Container style={{ marginBlock: "1em"}}>
-            <NewEntryForm onSubmit={(ev, entry) => {
+            <HealthCheckEntryForm onSubmit={(ev, entry) => {
                 ev.preventDefault();
                 console.log(entry);
             }} />

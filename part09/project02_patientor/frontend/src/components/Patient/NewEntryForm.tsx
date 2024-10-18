@@ -1,89 +1,40 @@
-import { NewEntryUnion, NewEntry } from "../../typing/types";
-import parsers from "../../typing/parsers";
+import { NewEntry } from "../../typing/types";
 
-import { useState } from "react";
-import { TextField } from "@mui/material";
+import { PropsWithChildren } from "react";
+import { TextField, Button} from "@mui/material";
 
 
 interface Props {
-    onSubmit(ev: React.SyntheticEvent, newEntry: NewEntryUnion): void
+    onSubmit(ev: React.SyntheticEvent): void,
+    baseEntry: NewEntry,
+    setBaseEntry: React.Dispatch<React.SetStateAction<NewEntry>>
 }
 
-function emptyNewEntry(): NewEntry
+export default function NewEntryForm({ onSubmit, baseEntry, setBaseEntry, children }: Props & PropsWithChildren)
 {
-    return {
-        date: "",
-        description: "",
-        specialist: ""
-    };
-}
-
-function HealthCheckEntryForm({ rating, setRating }: { rating: number, setRating: React.Dispatch<React.SetStateAction<number>>})
-{
-
-    // TextField does not allow min and max, it looks like,
-    // so do this
-    function minmaxRating(rat: string)
-    {
-        return Math.min(
-            1,
-            Math.max(0, parseInt(rat))
-        );
-    }
-    // Number type apparently not recommended, but the correct
-    // one isn't currently available
-    return (
-        <>
-            <TextField
-                label="health check rating"
-                type="number"
-                value={rating}
-                onChange={ev => setRating(minmaxRating(ev.target.value))}
-            ></TextField>
-        </>
-    );
-}
-
-export default function NewEntryForm({ onSubmit }: Props)
-{
-    const [baseEntry, setBaseEntry] = useState(emptyNewEntry);
-    const [rating, setRating] = useState(0);
-
-    function submitForm(ev: React.SyntheticEvent)
-    {
-
-        try {
-            const form = parsers.NewEntryUnion.parse({
-                ...baseEntry,
-                healthCheckRating: rating,
-                type: "HealthCheck"
-            });
-            onSubmit(ev, form);
-        } catch (error) {
-            console.log("Error encountered");
-        }
-
-    }
 
     return (
-        <form onSubmit={submitForm}>
+        <form onSubmit={onSubmit}>
             <TextField
                 label="date"
+                fullWidth
                 value={baseEntry.date}
                 onChange={ev => setBaseEntry({ ...baseEntry, date: ev.target.value})}
             ></TextField>
             <TextField
                 label="description"
+                fullWidth
                 value={baseEntry.description}
                 onChange={ev => setBaseEntry({ ...baseEntry, description: ev.target.value})}
             ></TextField>
             <TextField
                 label="specialist"
+                fullWidth
                 value={baseEntry.specialist}
                 onChange={ev => setBaseEntry({ ...baseEntry, specialist: ev.target.value})}
             ></TextField>
-            <HealthCheckEntryForm rating={rating} setRating={setRating}/>
-            <button type="submit">Add</button>
+            {children}
+            <Button type="submit">Add</Button>
         </form>
     );
 }
