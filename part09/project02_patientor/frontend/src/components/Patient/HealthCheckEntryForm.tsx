@@ -1,24 +1,22 @@
-import NewEntryForm from "./NewEntryForm";
-import { NewHealthCheckEntry } from "../../typing/types";
+import BaseEntryForm from "./BaseEntryForm";
+import FormWrapper from "../FormWrapper";
 import parsers from "../../typing/parsers";
-import { emptyNewEntry } from "./formUtils";
-import useModalControls from "../hooks/useModalControls";
+import { FormProps, submitForm } from "../formUtils";
+import { emptyHealthCheckEntry, emptyNewEntry } from "./emptyEntryFactories";
+import { NewHealthCheckEntry } from "../../typing/types";
 
 import { useState } from "react";
 import { TextField } from "@mui/material";
-import { ZodError } from "zod";
 
-interface Props {
-    onSubmit(ev: React.SyntheticEvent, entry: NewHealthCheckEntry): void;
-    onCancel(): void;
-    modalControls: ReturnType<typeof useModalControls>;
+interface Props extends FormProps {
+    onSubmit(ev: React.SyntheticEvent, entry: NewHealthCheckEntry): void
 }
 
 export default function HealthCheckEntryForm({ onSubmit, onCancel, modalControls }: Props)
 {
 
     const [baseEntry, setBaseEntry] = useState(emptyNewEntry);
-    const [rating, setRating] = useState(0);
+    const [addedEntry, setAddedEntry] = useState(emptyHealthCheckEntry);
 
     // TextField does not allow min and max, it looks like,
     // so do this
@@ -29,33 +27,6 @@ export default function HealthCheckEntryForm({ onSubmit, onCancel, modalControls
             Math.max(0, parseInt(rat))
         );
     }
-
-    function submitForm(ev: React.SyntheticEvent)
-    {
-
-        try {
-            const form = parsers.NewHealthCheckEntry.parse({
-                ...baseEntry,
-                healthCheckRating: rating,
-                type: "HealthCheck"
-            });
-            onSubmit(ev, form);
-        } catch (error) {
-            ev.preventDefault();
-            switch (true) {
-                case (error instanceof ZodError): {
-                    // doesn't really seem to work properly with 
-                    // the Alert thingy
-                    const message: string = error.errors.map(err => err.message).join("\n");
-                    modalControls.setError(message);
-                    break;
-                } default: {
-                    console.log("Error encountered");
-                }
-            }
-        }
-
-    }
     
     // Number type apparently not recommended, but the correct
     // one isn't currently available
@@ -65,19 +36,30 @@ export default function HealthCheckEntryForm({ onSubmit, onCancel, modalControls
                 label="health check rating"
                 type="number"
                 fullWidth
-                value={rating}
-                onChange={ev => setRating(minmaxRating(ev.target.value))}
+                value={addedEntry.healthCheckRating}
+                onChange={ev => setAddedEntry({
+                    ...addedEntry,
+                    healthCheckRating: minmaxRating(ev.target.value)
+                })}
             ></TextField>
         </>
     );
     return (
-        <NewEntryForm
-            onSubmit={submitForm}
-            baseEntry={baseEntry}
-            setBaseEntry={setBaseEntry}
+        <FormWrapper
+            onSubmit={ev => submitForm(ev, modalControls, (eve) => {
+                const form = parsers.NewHealthCheckEntry.parse({
+                    ...baseEntry,
+                    ...addedEntry
+                });
+                onSubmit(eve, form);
+            })}
             onCancel={onCancel}
         >
+            <BaseEntryForm
+                state={baseEntry}
+                setState={setBaseEntry}
+            ></BaseEntryForm>
             {AddedFields}
-        </NewEntryForm>
+        </FormWrapper>
     );
 }

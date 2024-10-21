@@ -46,6 +46,13 @@ const HealthCheckEntry = Entry.extend({
     type: z.literal("HealthCheck"),
     healthCheckRating: z.number()
 });
+
+const EntryTypeUnion = z.union([
+    z.literal("OccupationalHealthcare"),
+    z.literal("Hospital"),
+    z.literal("HealthCheck"),
+]);
+
 const NewHealthCheckEntry = HealthCheckEntry.omit({
     id: true
 });
@@ -86,9 +93,12 @@ export default {
     Entry,
     NewEntry,
     HospitalEntry,
+    NewHospitalEntry,
     HealthCheckEntry,
     NewHealthCheckEntry,
     OccupationalHealthcareEntry,
+    NewOccupationalHealthcareEntry,
     EntryUnion,
-    NewEntryUnion
+    NewEntryUnion,
+    EntryTypeUnion
 };
