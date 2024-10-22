@@ -1,4 +1,9 @@
-import { NewEntry, NewHealthCheckEntry, NewOccupationalHealthcareEntry} from "../../typing/types";
+import {
+    NewEntry,
+    NewHealthCheckEntry,
+    NewOccupationalHealthcareEntry,
+    NewHospitalEntry,
+} from "../../typing/types";
 
 
 export function emptyNewEntry(): NewEntry
@@ -27,6 +32,17 @@ export function emptyOccupationalHealthcareEntry(): Omit<NewOccupationalHealthca
         sickLeave: {
             startDate: "",
             endDate: ""
+        }
+    };
+}
+
+export function emptyHospitalEntry(): Omit<NewHospitalEntry, keyof NewEntry>
+{
+    return {
+        type: "Hospital",
+        discharge: {
+            date: "",
+            criteria: ""
         }
     };
 }

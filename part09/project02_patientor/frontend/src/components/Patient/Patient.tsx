@@ -13,9 +13,7 @@ import {
     isErrorResponse
 } from "../../typing/typeGuards";
 
-// import HealthCheckEntryForm from "./HealthCheckEntryForm";
-import OccupationalHealthcareEntryForm from "./OccupationalHealthcareEntryForm";
-
+import HospitalEntryForm from "./HospitalEntryForm";
 
 import Modal from "../Modal";
 import useModalControls from "../hooks/useModalControls";
@@ -129,6 +127,8 @@ export default function Patient()
         fetchPatient();
     }, [params]);
 
+    console.log("TODO: add diagnosis code options to entry addition");
+
     if (patient === null) return null;
 
     let genderIcon = null;
@@ -143,7 +143,7 @@ export default function Patient()
                 dialogTitle="Add a new entry"
                 error={modalControls.error}
             >
-                <OccupationalHealthcareEntryForm
+                <HospitalEntryForm
                     onSubmit={async (ev, entry) => {
                         ev.preventDefault();
                         try {
