@@ -52,7 +52,6 @@ function Entry({ entry }: { entry: EntryType })
                     || entry.sickLeave.endDate !== undefined
                 )
             ) {
-                // not sure why I've set it as optional, but whatever.
                 const start = entry.sickLeave.startDate ?? "";
                 const end = entry.sickLeave.endDate ?? "";
                 ExtraInfo = <>{`Sick leave period: ${start}--${end}`}</>;
@@ -129,8 +128,6 @@ export default function Patient()
         }
         fetchPatient();
     }, [params]);
-
-    console.log("TODO: add diagnosis code options to entry addition");
 
     if (patient === null) return null;
 

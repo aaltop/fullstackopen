@@ -11,7 +11,8 @@ export function emptyNewEntry(): NewEntry
     return {
         date: "",
         description: "",
-        specialist: ""
+        specialist: "",
+        diagnosisCodes: []
     };
 }
 
