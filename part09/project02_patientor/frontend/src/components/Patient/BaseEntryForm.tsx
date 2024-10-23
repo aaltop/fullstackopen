@@ -39,6 +39,7 @@ export default function BaseEntryForm({ state, setState }: UseStateProps<NewEntr
             <Select
                 value={state.diagnosisCodes}
                 multiple
+                fullWidth
                 label="Diagnosis Codes"
                 onChange={ev => setState({
                     ...state,

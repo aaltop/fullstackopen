@@ -7,7 +7,7 @@ import { NewOccupationalHealthcareEntry } from "../../typing/types";
 import { useState } from "react";
 import FormWrapper from "../FormWrapper";
 
-import { TextField } from "@mui/material";
+import { FormLabel, Input, TextField } from "@mui/material";
 
 interface Props extends FormProps {
     onSubmit(ev: React.SyntheticEvent, entry: NewOccupationalHealthcareEntry): void
@@ -31,32 +31,36 @@ export default function OccupationalHealthcareEntryForm({ onSubmit, onCancel, mo
                     employerName: ev.target.value
                 })}
             ></TextField>
-            <TextField
-                label="sick leave start date"
-                type="date"
-                fullWidth
-                value={addedEntry.sickLeave?.startDate}
-                onChange={ev => setAddedEntry({
-                    ...addedEntry,
-                    sickLeave: {
-                        ...addedEntry.sickLeave,
-                        startDate: ev.target.value
-                    }
-                })}
-            ></TextField>
-            <TextField
-                label="sick leave end date"
-                type="date"
-                fullWidth
-                value={addedEntry.sickLeave?.endDate}
-                onChange={ev => setAddedEntry({
-                    ...addedEntry,
-                    sickLeave: {
-                        ...addedEntry.sickLeave,
-                        endDate: ev.target.value
-                    }
-                })}
-            ></TextField>
+            <FormLabel>
+                {"sick leave start date"}
+                <Input
+                    type="date"
+                    fullWidth
+                    value={addedEntry.sickLeave?.startDate}
+                    onChange={ev => setAddedEntry({
+                        ...addedEntry,
+                        sickLeave: {
+                            ...addedEntry.sickLeave,
+                            startDate: ev.target.value
+                        }
+                    })}
+                ></Input>
+            </FormLabel>
+            <FormLabel>
+                {"sick leave end date"}
+                <Input
+                    type="date"
+                    fullWidth
+                    value={addedEntry.sickLeave?.endDate}
+                    onChange={ev => setAddedEntry({
+                        ...addedEntry,
+                        sickLeave: {
+                            ...addedEntry.sickLeave,
+                            endDate: ev.target.value
+                        }
+                    })}
+                ></Input>
+            </FormLabel>
         </>
     );
 

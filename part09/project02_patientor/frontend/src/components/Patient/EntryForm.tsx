@@ -15,6 +15,7 @@ export default function EntryForm(props: FormProps)
         <>
             <Select
                 value={type}
+                fullWidth
                 label="Entry type"
                 onChange={ev => setType(ev.target.value)}
             >
