@@ -2,6 +2,7 @@ import {
     Patient as PatientType,
     EntryUnion as EntryType,
     Diagnosis,
+    NewEntryUnion,
     
 } from "../../typing/types";
 import patientService from "../../services/patients";
@@ -13,7 +14,7 @@ import {
     isErrorResponse
 } from "../../typing/typeGuards";
 
-import HospitalEntryForm from "./HospitalEntryForm";
+import EntryForm from "./EntryForm";
 
 import Modal from "../Modal";
 import useModalControls from "../hooks/useModalControls";
@@ -143,8 +144,8 @@ export default function Patient()
                 dialogTitle="Add a new entry"
                 error={modalControls.error}
             >
-                <HospitalEntryForm
-                    onSubmit={async (ev, entry) => {
+                <EntryForm
+                    onSubmit={async (ev, entry: NewEntryUnion) => {
                         ev.preventDefault();
                         try {
                             const response = await patientService.addEntry(patient.id, entry);
