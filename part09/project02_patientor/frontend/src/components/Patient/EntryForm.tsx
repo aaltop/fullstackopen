@@ -20,6 +20,7 @@ export default function EntryForm(props: FormProps)
             >
                 {parsers.EntryTypeEnum.options.map(entryType => (
                     <MenuItem
+                        key={entryType}
                         id={entryType}
                         value={entryType}
                     >

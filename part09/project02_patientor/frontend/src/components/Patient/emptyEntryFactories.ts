@@ -16,7 +16,7 @@ export function emptyNewEntry(): NewEntry
 }
 
 
-export function emptyHealthCheckEntry(): Omit<NewHealthCheckEntry, keyof NewEntry>
+export function emptyHealthCheckEntry(): Required<Omit<NewHealthCheckEntry, keyof NewEntry>>
 {
     return {
         type: "HealthCheck",
@@ -24,7 +24,7 @@ export function emptyHealthCheckEntry(): Omit<NewHealthCheckEntry, keyof NewEntr
     };
 }
 
-export function emptyOccupationalHealthcareEntry(): Omit<NewOccupationalHealthcareEntry, keyof NewEntry>
+export function emptyOccupationalHealthcareEntry(): Required<Omit<NewOccupationalHealthcareEntry, keyof NewEntry>>
 {
     return {
         type: "OccupationalHealthcare",
@@ -36,7 +36,7 @@ export function emptyOccupationalHealthcareEntry(): Omit<NewOccupationalHealthca
     };
 }
 
-export function emptyHospitalEntry(): Omit<NewHospitalEntry, keyof NewEntry>
+export function emptyHospitalEntry(): Required<Omit<NewHospitalEntry, keyof NewEntry>>
 {
     return {
         type: "Hospital",

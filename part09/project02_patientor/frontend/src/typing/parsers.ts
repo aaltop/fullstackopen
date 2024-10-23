@@ -38,7 +38,7 @@ const HospitalEntry = Entry.extend({
     discharge: z.object({
         date: z.string().date(),
         criteria: z.string()
-    })
+    }).optional()
 });
 const NewHospitalEntry = HospitalEntry.omit({ id: true});
 

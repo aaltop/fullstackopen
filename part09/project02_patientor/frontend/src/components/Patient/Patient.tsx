@@ -60,8 +60,10 @@ function Entry({ entry }: { entry: EntryType })
             break;
         } case (isHospitalEntry(entry)): {
             Icon = <><LocalHospitalIcon /></>;
-            const { date, criteria } = entry.discharge;
-            ExtraInfo = <>{`Discharged on ${date}: ${criteria}`}</>;
+            if (entry.discharge) {
+                const { date, criteria } = entry.discharge;
+                ExtraInfo = <>{`Discharged on ${date}: ${criteria}`}</>;
+            }
             break;
         } default: {
             // fine to just do this too, no?

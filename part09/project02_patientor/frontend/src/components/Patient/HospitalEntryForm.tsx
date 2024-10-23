@@ -3,7 +3,7 @@ import FormWrapper from "../FormWrapper";
 import parsers from "../../typing/parsers";
 import { FormProps, submitForm } from "../formUtils";
 import { emptyNewEntry, emptyHospitalEntry } from "./emptyEntryFactories";
-import { NewHospitalEntry } from "../../typing/types";
+import { NewEntry, NewHospitalEntry } from "../../typing/types";
 
 import { useState } from "react";
 import { Input, FormLabel, TextField } from "@mui/material";
@@ -17,15 +17,19 @@ export default function HospitalEntryForm({ onSubmit, onCancel, modalControls }:
 
     const [baseEntry, setBaseEntry] = useState(emptyNewEntry);
     const [addedEntry, setAddedEntry] = useState(emptyHospitalEntry);
+
+    // if there is a reason given for discharge, must have a date too
+    // but not necessary to have a reason always
+    const dateRequired = addedEntry.discharge.criteria.length > 0;
     
     const AddedFields = (
         <>
             <FormLabel>
             {"Discharge date"}
                 <Input
-                    required
                     type="date"
                     fullWidth
+                    required={dateRequired}
                     value={addedEntry.discharge.date}
                     onChange={ev => setAddedEntry({
                         ...addedEntry,
@@ -37,7 +41,6 @@ export default function HospitalEntryForm({ onSubmit, onCancel, modalControls }:
                 ></Input>
             </FormLabel>
             <TextField
-                required
                 label="Reason for discharge"
                 fullWidth
                 value={addedEntry.discharge.criteria}
@@ -58,10 +61,17 @@ export default function HospitalEntryForm({ onSubmit, onCancel, modalControls }:
     return (
         <FormWrapper
             onSubmit={ev => submitForm(ev, modalControls, (eve) => {
-                const form = parsers.NewHospitalEntry.parse({
-                    ...baseEntry,
-                    ...addedEntry
-                });
+
+                let actualEntry: Omit<NewHospitalEntry, keyof NewEntry> = addedEntry;
+
+                // If no valid date string, don't use "discharge"
+                const validDate = parsers.HospitalEntry.shape
+                    .date.safeParse(addedEntry.discharge.date)
+                    .success;
+                actualEntry = validDate
+                    ? actualEntry
+                    : { ...actualEntry, discharge: undefined};
+                const form = parsers.NewHospitalEntry.parse({ ...baseEntry, ...actualEntry});
                 onSubmit(eve, form);
             })}
             onCancel={onCancel}

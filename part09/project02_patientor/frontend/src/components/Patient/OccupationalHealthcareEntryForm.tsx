@@ -23,6 +23,7 @@ export default function OccupationalHealthcareEntryForm({ onSubmit, onCancel, mo
             <TextField
                 label="employer name"
                 type="text"
+                required
                 fullWidth
                 value={addedEntry.employerName}
                 onChange={ev => setAddedEntry({

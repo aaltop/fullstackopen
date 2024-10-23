@@ -18,6 +18,8 @@ const Entry = z.object({
     diagnosisCodes: z.array(Diagnosis.shape.latin).optional()
 });
 
+const NewEntry = Entry.omit({ id: true});
+
 const sickLeave = z.object({
     startDate: z.string().optional(),
     endDate: z.string().optional()
@@ -36,7 +38,7 @@ const HospitalEntry = Entry.extend({
     discharge: z.object({
         date: z.string().date(),
         criteria: z.string()
-    })
+    }).optional()
 });
 const NewHospitalEntry = HospitalEntry.omit({ id: true});
 
@@ -44,6 +46,13 @@ const HealthCheckEntry = Entry.extend({
     type: z.literal("HealthCheck"),
     healthCheckRating: z.number()
 });
+
+const EntryTypeEnum = z.enum([
+    "OccupationalHealthcare",
+    "Hospital",
+    "HealthCheck",
+]);
+
 const NewHealthCheckEntry = HealthCheckEntry.omit({
     id: true
 });
@@ -81,9 +90,15 @@ export default {
     NewPatient,
     NonSensitivePatient,
     Diagnosis,
+    Entry,
+    NewEntry,
     HospitalEntry,
+    NewHospitalEntry,
     HealthCheckEntry,
+    NewHealthCheckEntry,
     OccupationalHealthcareEntry,
+    NewOccupationalHealthcareEntry,
     EntryUnion,
-    NewEntryUnion
+    NewEntryUnion,
+    EntryTypeEnum
 };
