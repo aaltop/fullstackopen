@@ -1,0 +1,14 @@
+services:
+  blogapp-backend-dev:
+    environment:
+      - PORT=3000
+    # I don't suppose there's much difference in using the .env
+    # in local development vs. here like this (security considerations -wise)
+    env_file:
+      - ./.env
+    image: blogapp-backend-dev
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    ports:
+      - 3000:3000

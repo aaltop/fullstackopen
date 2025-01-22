@@ -9,6 +9,8 @@
 !*.ts
 !*.tsx
 !tsconfig*
+!*Dockerfile
+!.dockerignore
 
 !.github
 !*.yml
