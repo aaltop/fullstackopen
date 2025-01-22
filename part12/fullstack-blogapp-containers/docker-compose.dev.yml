@@ -1,0 +1,33 @@
+services:
+  backend:
+    environment:
+      - PORT=3000
+    # I don't suppose there's much difference in using the .env
+    # in local development vs. here like this (security considerations -wise)
+    env_file:
+      - ./backend/.env
+    image: blogapp-backend-dev
+    build:
+      context: ./backend/
+      dockerfile: dev.Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./backend/models/:/home/node/app/models/
+      - ./backend/routers/:/home/node/app/routers/
+      - ./backend/tests/:/home/node/app/tests/
+      - ./backend/utils/:/home/node/app/utils/
+  
+  frontend:
+    environment:
+      - VITE_BACKEND_URL=http://backend:3000/
+    image: blogapp-frontend-dev
+    build:
+      context: ./frontend/
+      dockerfile: dev.Dockerfile
+    ports:
+      - 5173:5173
+    volumes:
+      - ./frontend/src/:/home/node/app/src/
+    
+  

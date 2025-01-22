@@ -7,18 +7,20 @@ export default defineConfig({
     server: {
         proxy: {
             "/api": {
-                target: "http://localhost:3001",
+                target: process.env.VITE_BACKEND_URL,
                 changeOrigin: true,
             },
         },
+        // windows-wsl2 integration
+        watch: { usePolling: true }
     },
     test: {
         environment: "jsdom",
         globals: true,
         setupFiles: "./testSetup.js"
     },
-    build: {
-        outDir: "../dist",
-        emptyOutDir: true
-    }
+    // build: {
+    //     outDir: "../dist",
+    //     emptyOutDir: true
+    // }
 })
