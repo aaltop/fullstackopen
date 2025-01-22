@@ -13,10 +13,10 @@ services:
     # ports:
     #   - 3000:3000
     volumes:
-      - ./backend/models/:/home/node/app/models/
-      - ./backend/routers/:/home/node/app/routers/
-      - ./backend/tests/:/home/node/app/tests/
-      - ./backend/utils/:/home/node/app/utils/
+      - ./backend/models/:/home/node/app/models/:ro
+      - ./backend/routers/:/home/node/app/routers/:ro
+      - ./backend/tests/:/home/node/app/tests/:ro
+      - ./backend/utils/:/home/node/app/utils/:ro
   
   frontend:
     environment:
@@ -28,7 +28,7 @@ services:
     # ports:
     #   - 5173:5173
     volumes:
-      - ./frontend/src/:/home/node/app/src/
+      - ./frontend/src/:/home/node/app/src/:ro
 
   proxy:
     image: nginx:1.27.3
