@@ -1,0 +1,28 @@
+*.*
+!.gitignore
+!README.md
+!*.js
+!*.jsx
+!package.json
+!package-lock.json
+!*.html
+!*.ts
+!*.tsx
+!tsconfig*
+
+!.github
+!*.yml
+
+# vs code rest client
+!*.rest
+
+# node stuff
+node_modules
+
+# build file
+dist
+
+# ESlint
+!*eslint.config*
+
+playwright-report
