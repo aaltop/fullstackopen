@@ -10,8 +10,8 @@ services:
     build:
       context: ./backend/
       dockerfile: dev.Dockerfile
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000
     volumes:
       - ./backend/models/:/home/node/app/models/
       - ./backend/routers/:/home/node/app/routers/
@@ -20,14 +20,24 @@ services:
   
   frontend:
     environment:
-      - VITE_BACKEND_URL=http://backend:3000/
+      - VITE_BACKEND_URL=http://localhost:8080/
     image: blogapp-frontend-dev
     build:
       context: ./frontend/
       dockerfile: dev.Dockerfile
-    ports:
-      - 5173:5173
+    # ports:
+    #   - 5173:5173
     volumes:
       - ./frontend/src/:/home/node/app/src/
+
+  proxy:
+    image: nginx:1.27.3
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
     
   
