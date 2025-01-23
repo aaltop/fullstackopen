@@ -1,3 +1,5 @@
+name: blogapp-development
+
 services:
   backend:
     environment:
