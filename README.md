@@ -1,4 +1,4 @@
-A repository for solutions to the problems on the [Full Stack Open](https://fullstackopen.com/) course.
+A repository for solutions to the problems on the [Full Stack Open](https://fullstackopen.com/) course. See each part's folder's README for a description of covered concepts.
 
 Other parts in separate repositories:
 - [part 10](https://github.com/aaltop/fullstackopen-rate-repo)
